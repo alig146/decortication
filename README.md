@@ -1,3 +1,3 @@
-# Decordication
+# Decortication
 
-A python module specific to my fatjet study.
+A python package specific to my fatjet study.
