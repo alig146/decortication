@@ -1,3 +1,5 @@
+ntuple_location = "/eos/uscms/store/user/tote/data/fat"
+
 qcd_info = {
 	"spring15": {
 		"QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8": [19204300.0],
@@ -25,4 +27,6 @@ qcd_info = {
 	},
 }
 
-samples = {j: k for key, value in qcd_info.iteritems() for j, k in value.iteritems()}		# Combined, single dictionary.
+samples = {j: k for key, value in qcd_info.iteritems() for j, k in value.iteritems()}		# Combined, single dictionary
+
+collections = ["ak8_pf", "ca8_pf", "ca10_pf", "ca12_pf"]		# This should match the list that's in FatjetAnalyzer.cc
