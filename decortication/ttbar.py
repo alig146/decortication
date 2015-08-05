@@ -3,9 +3,11 @@ import samples
 from truculence import *
 from decortication import samples, plots
 
-def get_ttrees(dataset_name="spring15", ttree_name="analyzer/events"):
+def get_ttree(ds_version="spring15", ttree_name="analyzer/events"):
+	ds_name = "ttbar"
+	
 	tts = {}
-	for sample_name in samples.ttbar_info[dataset_name].keys():
+	for sample_name, values in samples.info[ds_name][ds_version].iteritems():
 		location = "{0}/{1}_ntuple.root".format(samples.ntuple_location, sample_name)
 		tts[sample_name] = analysis.get_ttree(location)
 	return tts

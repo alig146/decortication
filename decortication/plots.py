@@ -1,58 +1,65 @@
 from truculence import *
-import samples
+import samples, variables
 import math
 from ROOT import TFile
 
-def make_th1(ntuple, max_events=-1):
+# CLASSES:
+class distribution:
+	def __init__(self, d=-1, variables=[]):
+		self.d = self.dimension = d
+		if not variables:
+			variables = []
+		self.variables = variables
+
+# FUNCTIONS:
+def make_th1s(ntuple, max_events=-1):
+	# Form distribution information:
 	info = {}
 	for collection in samples.collections:
-		info["pthat_{0}".format(collection)] = ["p_{T} Hat", "p_{T} hat (GeV)", 25, 0, 700]
+#		info["pthat_{0}".format(collection)] = ["p_{T} Hat", "p_{T} hat (GeV)", 25, 0, 700]
+		for v in variables.variables:
+			v_name = "{0}_{1}".format(collection, v.name)
+			if v.minimum == None or v.maximum == None:
+				info[v_name] = [v.name, v.name_formatted]
+			else:
+				info[v_name] = [v.name, v.name_formatted, 50, v.minimum, v.maximum]
 	
-	th1 = analysis.setup_th1(info)
+	# Make distributions:
+	th1s = analysis.setup_th1(info)
 	
-	# Fill TH1s:
+	# Fill distributions:
 	if max_events < 0:
 		max_events = ntuple.GetEntries()
 	n = -1
 	for event in ntuple:		# Loop over the ntuple.
 		n += 1
 		if n < max_events:
+			# Progress:
 			percent = n/float(utilities.roundup(max_events)) * 100
 			if percent % 10 == 0:
 				print "\t{0}%".format(int(percent))
-			for collection in samples.collections:
-				# Define variables:
-				try:		# The variable might not be in the event ...
-					# Kinematics:
-					pt0 = getattr(event, "{0}_pt".format(collection))[0]
-					pt1 = getattr(event, "{0}_pt".format(collection))[1]
-					pt_hat = getattr(event, "{0}_pt_hat".format(collection))[0]
-					m0 = getattr(event, "{0}_m".format(collection))[0]
-					m1 = getattr(event, "{0}_m".format(collection))[1]
-					m = (m0 + m1) / 2
-					dm = abs(m0 - m1)
-					eta0 = getattr(event, "{0}_eta".format(collection))[0]
-					eta1 = getattr(event, "{0}_eta".format(collection))[1]
-					phi0 = getattr(event, "{0}_phi".format(collection))[0]
-					phi1 = getattr(event, "{0}_phi".format(collection))[1]
-					dR = ((eta0 - eta1)**2 + (phi0 - phi1)**2)**(0.5)
-					
-					# Weighting:
-					sigma = getattr(event, "{0}_sigma".format(collection))[0]
-					nnorm = getattr(event, "{0}_nevents".format(collection))[0]
-					L = 10000		# The target luminosity in pb-1.
-					w = (sigma/nnorm)*L		# Calculate the event weight.
-#					w = 1
-				except Exception as ex:
-#					print ex
-					pass
-				else:
-					# Fill histograms:
-					## Fill single FJ plots:
-					th1["pthat_{0}".format(collection)].Fill(pt_hat, w)
+			
+			# Weighting:
+			try:
+				sigma = getattr(event, "{0}_sigma".format(collection))[0]
+				nnorm = getattr(event, "{0}_nevents".format(collection))[0]
+				L = 10000		# The target luminosity in pb-1.
+				w = (sigma/nnorm)*L		# Calculate the event weight.
+	#			w = 1
+			except Exception as ex:
+				pass
+			
+			# Fill histograms:
+			else:
+				for collection in samples.collections:
+					for v in variables.variables:
+						v_name = "{0}_{1}".format(collection, v.name)
+						values = getattr(event, v_name)
+						for value in values:
+							th1s[v_name].Fill(value, w)
 		else:
 			break
-	return th1
+	return th1s
 
 def make_th2(ntuple, max_events=-1):
 	# Construct TH2s:
@@ -82,7 +89,9 @@ def make_th2(ntuple, max_events=-1):
 		n += 1
 		if n < max_events:
 			percent = n/float(utilities.roundup(max_events)) * 100
-			if percent % 10 == 0:
+			if n % 10000 == 0:
+				print "\tEvent {0}: {1:.2f}%".format(n, percent)
+			if percent % 2 == 0:
 				print "\t{0}%".format(int(percent))
 			for collection in samples.collections:
 				# Define variables:
@@ -133,40 +142,34 @@ def make_th2(ntuple, max_events=-1):
 			break
 	return th2
 
-def get_th2(f=""):
-#	names = ["eta_phi", "pt_m", "eta_pt", "phi_pt", "m0_m1", "pt0_pt1", "pt0_m0", "pt1_m1", "minpt_m", "m_dm"]
-	
-	th2 = {}
+def get_th2s(f=""):
+	# Variables:
+	th2s = {}
 	
 	if "f":
+		# Discover file and turn it into a TFile:
 		if"/" in f:
 			tfile = TFile(f)
 		else:
 			tfile = TFile("{0}/{1}".format(samples.ntuple_location, f))
 		
-		tobjects = analysis.get_tobjects_all(tfile)
+		# Get TH2Fs from the file:
+		tobjects = analysis.get_tobjects_all(tfile, kind="th2f")
+		
+		# Construct and return result:
 		for tobject in tobjects:
-			th2[tobject.GetName()] = tobject
-		return th2
+			th2s[tobject.GetName()] = tobject
+		return th2s
 	else:
 		print "You need to input a file name."
-		return th2
+		return th2s
 
-def make_mass_distributions(th2):
-#	info = {}
-#	for collection in samples.collections:
-#		info["m_{0}".format(collection)] = ["Di-FJ Invariant Mass", "#bar{m} (GeV)", 25, 0, 700]
-#	th1 = analysis.setup_th1(info)
-	
+def make_mass_distributions(th2):	
 	tcanvas = analysis.setup_root()
 	
 	th1 = {}
-#	for i, th2 in enumerate(th2s):
 	for collection in samples.collections:
 		for x in range(25):
 			th1["m_{0}_cut{1}".format(collection, x)] = th2["minpt_m_{0}".format(collection)].ProjectionY("m_{0}_cut{1}".format(collection, x), x, 25, "e")
 	return th1
-#			if i == 0:
-#				th1d.Draw()
-#			else:
-#				
+# /FUNCTIONS

@@ -1,8 +1,44 @@
+# VARIABLES:
 ntuple_location = "/eos/uscms/store/user/tote/data/fat"
 
 # Signals:
-sqtojjjj_info = {}
-lqtottau_info = {
+info = {}
+#info["sqtojjjj"] = {}
+## LqToUE:
+info["lqtoue"] = {
+	"spring15": {
+		"LQToUE_M-200_BetaOne_TuneCUETP8M1_13TeV-pythia8": [
+			"/LQToUE_M-200_BetaOne_TuneCUETP8M1_13TeV-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/MINIAODSIM",
+			60.6,
+			200,
+		],
+		"LQToUE_M-250_BetaOne_TuneCUETP8M1_13TeV-pythia8": [
+			"/LQToUE_M-250_BetaOne_TuneCUETP8M1_13TeV-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
+			20.3,
+			250,
+		],
+		"LQToUE_M-300_BetaOne_TuneCUETP8M1_13TeV-pythia8": [
+			"/LQToUE_M-300_BetaOne_TuneCUETP8M1_13TeV-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
+			8.04,
+			300,
+		],
+		"LQToUE_M-450_BetaOne_TuneCUETP8M1_13TeV-pythia8": [
+			"/LQToUE_M-450_BetaOne_TuneCUETP8M1_13TeV-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
+			0.906,
+			450,
+		],
+		"LQToUE_M-500_BetaOne_TuneCUETP8M1_13TeV-pythia8": [
+			"/LQToUE_M-500_BetaOne_TuneCUETP8M1_13TeV-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
+			0.496,
+			500,
+		],
+	},
+}
+lqtoue_ms = sorted([values[2] for key, values in info["lqtoue"]["spring15"].iteritems()])
+## /LqToUE
+
+## LqToTTau:
+info["lqtottau"] = {
 	"spring15": {
 		"LQLQToTopTau_M-200_TuneCUETP8M1_13TeV_pythia8": [
 			"/LQLQToTopTau_M-200_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/MINIAODSIM",
@@ -21,9 +57,11 @@ lqtottau_info = {
 		],
 	},
 }
+# /Signals
 
 # Backgrounds:
-qcd_info = {
+## QCD:
+info["qcd"] = {
 	"spring15": {
 		"QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8": [
 			"/QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/MINIAODSIM",
@@ -89,7 +127,12 @@ qcd_info = {
 		"QCD_Pt-1400to1800_Tune4C_13TeV_pythia8": [0.7346],
 	},
 }
-ttbar_info = {
+qcd_pts = [values[2] for key, values in info["qcd"]["spring15"].iteritems()]
+qcd_pts_mins = sorted([i for i, j in qcd_pts])
+## /QCD
+
+## TTbar:
+info["ttbar"] = {
 	"spring15": {
 		"TTJets_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8": [
 			"/TTJets_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM",
@@ -98,15 +141,18 @@ ttbar_info = {
 	},
 }
 
-qcd_samples = {j: k for key, value in qcd_info.iteritems() for j, k in value.iteritems()}		# Combined, single dictionary
-ttbar_samples = {j: k for key, value in ttbar_info.iteritems() for j, k in value.iteritems()}
-lqtottau_samples = {j: k for key, value in lqtottau_info.iteritems() for j, k in value.iteritems()}
+datasets = [i for i in info.keys()]
+
 samples = {}
-samples.update(qcd_samples)
-samples.update(ttbar_samples)
-samples.update(lqtottau_samples)
+for name, information in info.iteritems():
+	samples[name] = {j: k for key, value in information.iteritems() for j, k in value.iteritems()}		# Combined, single dictionary
+samples["all"] = {}
+for name in info.keys():
+	samples["all"].update(samples[name])
 
 collections = [		# This should match the list that's in FatjetAnalyzer.cc
 	"ak8_pf", "ca8_pf", "ak10_pf", "ca10_pf", "ak12_pf", "ca12_pf", "ak14_pf", "ca14_pf",
 	"ak8_gn", "ca8_gn", "ak10_gn", "ca10_gn", "ak12_gn", "ca12_gn", "ak14_gn", "ca14_gn",
 ]
+# /VARIABLES
+
