@@ -42,6 +42,7 @@ def get_variable(name="", collection="", event=None):
 #}
 #variables_all = reduce(lambda x, y: x + y, [values for key, values in variables.iteritems()])
 variables = [
+	variable(name="pt_hat", name_formatted="p_{T} hat"),
 	variable(name="m", name_formatted="m"),
 	variable(name="pt", name_formatted="p_{T}"),
 	variable(name="eta", name_formatted="#eta"),

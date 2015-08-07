@@ -3,8 +3,8 @@ import samples
 from truculence import *
 from decortication import samples, plots
 
-def get_ttree(ds_version="spring15", ttree_name="analyzer/events", ms=None):
-	ds_name = "lqtoue"
+def get_ttree(version="spring15", ttree_name="analyzer/events", ms=None):
+	process = "lqtoue"
 	
 	if ms == None:
 		ms = samples.lqtoue_ms
@@ -13,16 +13,16 @@ def get_ttree(ds_version="spring15", ttree_name="analyzer/events", ms=None):
 	
 	if set(ms).issubset(set(samples.lqtoue_ms)):
 		tts = {}
-		for sample_name, values in samples.info[ds_name][ds_version].iteritems():
-#			print sample_name, values
-			if values[2] in ms:
-				location = "{0}/{1}_ntuple.root".format(samples.ntuple_location, sample_name)
-				tts[sample_name] = analysis.get_ttree(location)
+		for d in samples.datasets[process][version]:
+			if d.m in ms:
+				location = "{0}/{1}_ntuple.root".format(samples.ntuple_location, d.name)
+				tts[d.name] = analysis.get_ttree(location)
 		return tts
 	else:
 		print "ERROR (lqtoue.get_ttree): The masses you entered (\"{0}\") were not recognized. The following values are accepted:\n\t{1}".format(ms, samples.lqtoue_ms)
 		return False
 
+# OLD:
 def make_plots(dataset_name="spring15", ttree_name="analyzer/events", max_events=-1):
 	print "Getting ttrees ..."
 	tts = get_ttrees(dataset_name=dataset_name, ttree_name=ttree_name)
