@@ -38,7 +38,9 @@ def make_plots(process=None, version="spring15", ms=None, pt_mins=None, ttree_na
 	tts = get_ntuple(process=process, version=version, ms=ms, pt_mins=pt_mins, ttree_name=ttree_name)
 	if tts:
 		for name, tt in tts.iteritems():
+			print tt.GetEntries()
 			th1s = plots.make_th1s(tt, max_events=max_events)
+			print th1s
 			analysis.save_histograms([th1s, {}], samples.ntuple_location + "/{0}_plots.root".format(name))
 	else:
 		print "ERROR (decorticate.make_plots): Failed to get the ntuple for the \"{0}\" process.".format(process)
