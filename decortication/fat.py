@@ -7,6 +7,7 @@
 # IMPORTS:
 from itertools import combinations
 from truculence import physics
+from numpy import mean
 # /IMPORTS
 
 # VARIABLES:
@@ -16,7 +17,7 @@ from truculence import physics
 # /CLASSES
 
 # FUNCTIONS:
-def get_pair(event, cut_pt=175, cut_m=50, cut_eta=2.5, r=12, ca=True, pf=True, v=False):
+def get_pair(event, cut_pt=175, cut_m=50, cut_eta=2.5, r=12, ca=True, pf=True, v=False, leading=True):
 	# Get information about the event from the tuple:
 	prefix = "{0}{1}_{2}".format(("ak", "ca")[ca == True], r, ("gn", "pf")[pf == True])
 	pxs = getattr(event, "{0}_px".format(prefix))
@@ -47,15 +48,22 @@ def get_pair(event, cut_pt=175, cut_m=50, cut_eta=2.5, r=12, ca=True, pf=True, v
 #		print i, eta, jet_temp.eta
 #		print i, phi, jet_temp.phi, " ({}, {}, {})".format(pxs[i], pys[i], pzs[i])
 	
-	# Apply cuts:
-	jets = [j for j in jets if (j.pt >= cut_pt) and (abs(j.eta) <= cut_eta)]
+	pair = False
 	
-	# Select jet pair:
-	pairs = sorted([pair for pair in [p for p in combinations(jets, 2) if any(j.m >= cut_m for j in p)]], key=physics.delta_m)
-	if v: print "There were {} jet(s) left after applying the pT cut of {} GeV. This resulted in {} viable pair(s) after the m cut of {} GeV.".format(len(jets), cut_pt, len(pairs), cut_m)
-	
-	if pairs:
-		return pairs[0]
+	if leading:
+		jets = [j for j in jets if (j.pt >= cut_pt) and (abs(j.eta) <= cut_eta)]
+		if len(jets) >= 2:
+			pair = (jets[0], jets[1])
 	else:
-		return False
+		# Apply cuts:
+		jets = [j for j in jets if (j.pt >= cut_pt) and (abs(j.eta) <= cut_eta)]
+	
+		# Select jet pair:
+	#	pairs = sorted([pair for pair in [p for p in combinations(jets, 2) if any(j.m >= cut_m for j in p)]], key=physics.delta_m)
+		pairs = sorted([pair for pair in [p for p in combinations(jets, 2) if mean([j.m for j in p]) >= cut_m]], key=physics.delta_m)
+		if v: print "There were {} jet(s) left after applying the pT cut of {} GeV. This resulted in {} viable pair(s) after the m cut of {} GeV.".format(len(jets), cut_pt, len(pairs), cut_m)
+		if pairs:
+			pair = pairs[0]
+	
+	return pair
 # /FUNCTIONS

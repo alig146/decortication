@@ -125,6 +125,7 @@ class dataset:
 			n += analysis.get_nevents(f)
 		self.n = n
 		self.nevents = n
+		return n
 		
 	# /Methods
 # /CLASSES
