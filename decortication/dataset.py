@@ -22,10 +22,18 @@ signal_processes = ["sqtojjjj", "sqtojj"]
 # CLASSES:
 class dataset:
 	# Construction:
-	def __init__(self, info=None, set_info=False):
+	def __init__(self, info=None, process=None, set_info=False):
 		# Basic attributes:
 		for key, value in info.iteritems():
 			setattr(self, key, value)
+		self.n_miniaod = self.n
+		if process:
+			self.process == process
+		## Allow absence of "subprocess" field:
+		if "subprocess" not in info:
+			assert process
+			self.subprocess = process
+		## I do teh following to make sure that dataset booleans work (see __nonzero__ below):
 		if "name" not in info:
 			self.name = False
 		
@@ -153,12 +161,12 @@ def get_datasets(path=os.path.join(decortication.__path__[0], "..", "resources/s
 	
 	# Find the dataset(s):
 	datasets = {}
-	for key, list_of_ds in info.iteritems():		# e.g., sq150tojjjj, qcdmg
+	for key, list_of_ds in info.iteritems():		# e.g., sq150to4j, qcdmg
 		datasets[key] = []
 		for ds in list_of_ds:		# The info for each dataset
 			if ds["generation"] == generation:
 				if (name and ds["name"] == name) or (not name):
-					datasets[key].append(dataset(ds, set_info=set_info))
+					datasets[key].append(dataset(process=key, info=ds, set_info=set_info))
 	
 	# Trim results:
 	datasets = {key: value for key, value in datasets.iteritems() if value}		# Delete any keys if the associated value is null.
