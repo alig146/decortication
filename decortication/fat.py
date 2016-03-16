@@ -26,7 +26,10 @@ def get_pair(event, cut_pt=175, cut_m=50, cut_eta=2.5, r=12, ca=True, pf=True, v
 	es = getattr(event, "{0}_e".format(prefix))
 	pts = getattr(event, "{0}_pt".format(prefix))
 	Ms = getattr(event, "{0}_M".format(prefix))
-	ms = getattr(event, "{0}_m".format(prefix))
+	mts = getattr(event, "{0}_m_t".format(prefix))
+	mps = getattr(event, "{0}_m_p".format(prefix))
+	mss = getattr(event, "{0}_m_s".format(prefix))
+	mfs = getattr(event, "{0}_m_f".format(prefix))
 	etas = getattr(event, "{0}_eta".format(prefix))
 	phis = getattr(event, "{0}_phi".format(prefix))
 	tau1s = getattr(event, "{0}_tau1".format(prefix))
@@ -44,6 +47,10 @@ def get_pair(event, cut_pt=175, cut_m=50, cut_eta=2.5, r=12, ca=True, pf=True, v
 #		phi = phis[i]
 ##		theta = thetas[i]
 		jet_temp = physics.jet(pxs[i], pys[i], pzs[i], es[i], tau=(tau1s[i], tau2s[i], tau3s[i], tau4s[i]))
+		jet_temp.m_t = mts[i]
+		jet_temp.m_p = mps[i]
+		jet_temp.m_s = mss[i]
+		jet_temp.m_f = mfs[i]
 		jets.append(jet_temp)
 #		print i, eta, jet_temp.eta
 #		print i, phi, jet_temp.phi, " ({}, {}, {})".format(pxs[i], pys[i], pzs[i])
