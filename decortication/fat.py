@@ -17,7 +17,7 @@ from numpy import mean
 # /CLASSES
 
 # FUNCTIONS:
-def get_pair(event, cut_pt=175, cut_m=50, cut_eta=2.5, r=12, ca=True, pf=True, v=False, leading=True):
+def get_pair(event, cut_pt=400, cut_m=50, cut_eta=2.5, r=12, ca=True, pf=True, v=False, leading=True):
 	# Get information about the event from the tuple:
 	prefix = "{0}{1}_{2}".format(("ak", "ca")[ca == True], r, ("gn", "pf")[pf == True])
 	pxs = getattr(event, "{0}_px".format(prefix))
@@ -47,6 +47,8 @@ def get_pair(event, cut_pt=175, cut_m=50, cut_eta=2.5, r=12, ca=True, pf=True, v
 #		phi = phis[i]
 ##		theta = thetas[i]
 		jet_temp = physics.jet(pxs[i], pys[i], pzs[i], es[i], tau=(tau1s[i], tau2s[i], tau3s[i], tau4s[i]))
+		if pt != jet_temp.pt:
+			print "ERROR:", i, pt, jet_temp.pt
 		jet_temp.m_t = mts[i]
 		jet_temp.m_p = mps[i]
 		jet_temp.m_s = mss[i]
@@ -58,7 +60,7 @@ def get_pair(event, cut_pt=175, cut_m=50, cut_eta=2.5, r=12, ca=True, pf=True, v
 	pair = False
 	
 	if leading:
-		jets = [j for j in jets if (j.pt >= cut_pt) and (abs(j.eta) <= cut_eta)]
+		jets = [j for j in jets if (j.pt >= cut_pt) and (abs(j.eta) <= cut_eta)]		# This results in a bug
 		if len(jets) >= 2:
 			pair = (jets[0], jets[1])
 	else:

@@ -118,7 +118,6 @@ qcd:
           miniaod: RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM
           miniaod_n: 2933611
           jets: elhughes-qcd_pythia300to470_fatjets-9b82f7179d2913162228be8cae6ede05/USER
-          analyze: False
         
         - name: QCD_Pt_470to600_TuneCUETP8M1_13TeV_pythia8
           subprocess: qcdp470
@@ -128,7 +127,6 @@ qcd:
           miniaod: RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/MINIAODSIM
           miniaod_n: 1936832
           jets: elhughes-qcd_pythia470to600_fatjets-9b82f7179d2913162228be8cae6ede05/USER
-          analyze: False
         
         - name: QCD_Pt_600to800_TuneCUETP8M1_13TeV_pythia8
           subprocess: qcdp600
@@ -138,7 +136,6 @@ qcd:
           miniaod: RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v3/MINIAODSIM
           miniaod_n: 1964128
           jets: elhughes-qcd_pythia600to800_fatjets-9b82f7179d2913162228be8cae6ede05/USER
-          analyze: False
         
         - name: QCD_Pt_800to1000_TuneCUETP8M1_13TeV_pythia8
           subprocess: qcdp800
@@ -148,7 +145,6 @@ qcd:
           miniaod: RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/MINIAODSIM
           miniaod_n: 1937216
           jets: elhughes-qcd_pythia800to1000_fatjets-9b82f7179d2913162228be8cae6ede05/USER
-          analyze: False
         
         - name: QCD_Pt_1000to1400_TuneCUETP8M1_13TeV_pythia8
           subprocess: qcdp1000
@@ -158,7 +154,6 @@ qcd:
           miniaod: RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM
           miniaod_n: 1487136
           jets: elhughes-qcd_pythia1000to1400_fatjets-9b82f7179d2913162228be8cae6ede05/USER
-          analyze: False
         
         - name: QCD_Pt_1400to1800_TuneCUETP8M1_13TeV_pythia8
           subprocess: qcdp1400
@@ -168,7 +163,6 @@ qcd:
           miniaod: RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM
           miniaod_n: 197959
           jets: elhughes-qcd_pythia1400to1800_fatjets-9b82f7179d2913162228be8cae6ede05/USER
-          analyze: False
     
     qcdmg:
         - name: QCD_HT100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
