@@ -2,6 +2,9 @@
 
 A python package specific to my fatjet study.
 
+## Installation
+1. Download the package with `git clone git@github.com:elliot-hughes/decortication.git`.
+
 ## Datasets
 Dataset information is stored in `resources/samples.yaml`. The format is a dictionary of dictionaries. The outer dictionary is keyed by the dataset *category*; the inner dictionary is keyed by the dataset *process* and has a list of dictionaries corresponding to datasets representing each unique *subprocesses*. These dataset dictionaries have the following keys:
 * `name`: The official dataset name (**unique**)
