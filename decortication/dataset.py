@@ -23,9 +23,10 @@ info_path_default = os.path.join(decortication.__path__[0], "..", "resources/sam
 # CLASSES:
 class dataset:
 	# Construction:
-	def __init__(self, info=None, set_info=False):
+	def __init__(self, info=None, set_info=False, suffix=""):
 		# Basic attributes:
 		self.luminosity = 10000		# In inverse pb
+		self.suffix = suffix
 		for key, value in info.iteritems():
 			setattr(self, key, value)
 		self.weight = self.sigma*self.luminosity/self.miniaod_n
@@ -115,7 +116,10 @@ class dataset:
 			results["jets"]["files"] = None
 		
 		## Tuple:
-		dirs_fatjet = [d for d in dirs_flavor if d == "{}_tuple".format(self.subprocess)]
+		if self.suffix:
+			dirs_fatjet = [d for d in dirs_flavor if d == "{}_tuple_{}".format(self.subprocess, self.suffix)]
+		else:
+			dirs_fatjet = [d for d in dirs_flavor if d == "{}_tuple".format(self.subprocess)]
 		results["tuple"] = {}
 		if len(dirs_fatjet) > 1:
 			print "ERROR (decortication.dataset.get_files): There is more than one tuple directory: {0}".format(dirs_fatjet)
@@ -209,7 +213,7 @@ def get_info(path=info_path_default):
 	return info_filled
 
 
-def get_datasets(path=info_path_default, name=None, subprocess=None, process=None, category=None, generation="spring15", set_info=False):
+def get_datasets(path=info_path_default, name=None, subprocess=None, process=None, category=None, generation="spring15", suffix='', set_info=False):
 	# Get dataset info:
 	info = get_info(path=path)
 	
@@ -248,9 +252,9 @@ def get_datasets(path=info_path_default, name=None, subprocess=None, process=Non
 			if ds["generation"] == generation:
 				if call:
 					if ds["subprocess"] in subprocess:
-						datasets[process].append(dataset(info=ds, set_info=set_info))
+						datasets[process].append(dataset(info=ds, suffix=suffix, set_info=set_info))
 				else:
-					datasets[process].append(dataset(info=ds, set_info=set_info))
+					datasets[process].append(dataset(info=ds, suffix=suffix, set_info=set_info))
 	
 	# Trim results:
 	datasets = {key: value for key, value in datasets.iteritems() if value}		# Delete any keys if the associated value is null.

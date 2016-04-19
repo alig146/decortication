@@ -22,7 +22,7 @@ configure.Data.splitting = 'EventAwareLumiBased'
 configure.Data.unitsPerJob = n
 configure.Data.totalUnits = units
 configure.Data.outLFNDirBase = '/store/user/elhughes'         # Only other option: "/store/group/<groupname>/<subdir>"
-configure.Data.publication = True
+configure.Data.publication = False
 configure.Data.outputDatasetTag = '{0}_{1}'.format(subprocess, kind)
 
 configure.JobType.maxMemoryMB = 5000

@@ -1,38 +1,42 @@
 sqto4j:
     sq150to4j:
-        - name: SqToJJJJ_150
+        - name: Sq150To4J
           m: 150
           sigma: 249.409
           generation: spring15
+          total_n: 1000000
           miniaod: elhughes-SqToJJJJ_150-a8bc5525fb601f2f2f57bdb9ea72969e/USER
-          miniaod_n: 100000
+          miniaod_n: 94801
           jets: elhughes-sqtojjjj_150_fatjets-842caf43e0953ccc8d6b5ad00587851e/USER
     
     sq200to4j:
-        - name: SqToJJJJ_200
+        - name: Sq200To4J
           m: 200
           sigma: 64.5085
           generation: spring15
-          miniaod: elhughes-SqToJJJJ_200-a8bc5525fb601f2f2f57bdb9ea72969e/USER
-          miniaod_n: 200000
+          total_n: 1000000
+          miniaod: elhughes-Sq200To4J-a8bc5525fb601f2f2f57bdb9ea72969e/USER
+          miniaod_n: 131616
           jets: elhughes-sqtojjjj_200_fatjets-842caf43e0953ccc8d6b5ad00587851e/USER
     
     sq250to4j:
-        - name: SqToJJJJ_250
+        - name: Sq250To4J
           m: 250
           sigma: 21.5949
           generation: spring15
+          total_n: 1000000
           miniaod: elhughes-SqToJJJJ_250-a8bc5525fb601f2f2f57bdb9ea72969e/USER
-          miniaod_n: 100000
+          miniaod_n: 207295
           jets: elhughes-sqtojjjj_250_fatjets-f5e7b14b31cc30d1092b9906ea6f2283/USER
     
     sq300to4j:
-        - name: SqToJJJJ_300
+        - name: Sq300To4J
           m: 300
           sigma: 8.51615
           generation: spring15
+          total_n: 1000000
           miniaod: elhughes-SqToJJJJ_300-a8bc5525fb601f2f2f57bdb9ea72969e/USER
-          miniaod_n: 98500
+          miniaod_n: 293902
           jets: elhughes-sqtojjjj_300_fatjets-842caf43e0953ccc8d6b5ad00587851e/USER
 
 sqto2j:
@@ -247,3 +251,16 @@ qcd:
           miniaod_n: 1961774
           jets: elhughes-qcdmg2000_jets-73ed698f29854ce5208cc2c1713159ec/USER
           jets_n: 1959558
+
+ttbar:
+    ttbar:
+        - name: TTJets_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
+          subprocess: ttbar
+          m: 173.34
+          sigma: 670.3
+          generation: spring15
+          total_n: 42730273
+          miniaod: RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM
+          miniaod_n: 42730273
+          jets: nothing
+          analyze: True
