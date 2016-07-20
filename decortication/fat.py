@@ -8,6 +8,7 @@
 from itertools import combinations
 from truculence import physics
 from numpy import mean
+from re import search
 # /IMPORTS
 
 # VARIABLES:
@@ -17,9 +18,18 @@ from numpy import mean
 # /CLASSES
 
 # FUNCTIONS:
-def get_pair(event, cut_pt=400, cut_m=50, cut_eta=2.5, r=12, ca=True, pf=True, v=False, leading=True):
+def get_pair(event, cut_pt=400, cut_m=50, cut_eta=2.5, alg="ca12", pf=True, v=False, leading=True):
+	# Parse:
+	match = search("(\w+)(\d+)", alg)
+	if match:
+		alg_name = match.group(1)
+		alg_r = int(match.group(2))
+	else:
+		alg_name = "ca"
+		alg_r = 12
+	
 	# Get information about the event from the tuple:
-	prefix = "{0}{1}_{2}".format(("ak", "ca")[ca == True], r, ("gn", "pf")[pf == True])
+	prefix = "{}_{}".format(alg, ("gn", "pf")[pf == True])
 	pxs = getattr(event, "{0}_px".format(prefix))
 	pys = getattr(event, "{0}_py".format(prefix))
 	pzs = getattr(event, "{0}_pz".format(prefix))
@@ -36,6 +46,8 @@ def get_pair(event, cut_pt=400, cut_m=50, cut_eta=2.5, r=12, ca=True, pf=True, v
 	tau2s = getattr(event, "{0}_tau2".format(prefix))
 	tau3s = getattr(event, "{0}_tau3".format(prefix))
 	tau4s = getattr(event, "{0}_tau4".format(prefix))
+	jecs = getattr(event, "{0}_jec".format(prefix))
+	jmcs = getattr(event, "{0}_jmc".format(prefix))
 	
 	# Make jet objects for the event:
 	jets = []
@@ -46,13 +58,13 @@ def get_pair(event, cut_pt=400, cut_m=50, cut_eta=2.5, r=12, ca=True, pf=True, v
 #		eta = etas[i]
 #		phi = phis[i]
 ##		theta = thetas[i]
-		jet_temp = physics.jet(pxs[i], pys[i], pzs[i], es[i], tau=(tau1s[i], tau2s[i], tau3s[i], tau4s[i]))
-		if pt != jet_temp.pt:
-			print "ERROR:", i, pt, jet_temp.pt
-		jet_temp.m_t = mts[i]
-		jet_temp.m_p = mps[i]
-		jet_temp.m_s = mss[i]
-		jet_temp.m_f = mfs[i]
+		jet_temp = physics.jet(pxs[i], pys[i], pzs[i], es[i], tau=(tau1s[i], tau2s[i], tau3s[i], tau4s[i]), jec=jecs[i])
+#		if pt != jet_temp.pt:		# This fails with JECs
+#			print "ERROR:", i, pt, jet_temp.pt
+		jet_temp.m_t = mts[i]*jmcs[i]
+		jet_temp.m_p = mps[i]*jmcs[i]
+		jet_temp.m_s = mss[i]*jmcs[i]
+		jet_temp.m_f = mfs[i]*jmcs[i]
 		jets.append(jet_temp)
 #		print i, eta, jet_temp.eta
 #		print i, phi, jet_temp.phi, " ({}, {}, {})".format(pxs[i], pys[i], pzs[i])

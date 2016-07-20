@@ -5,7 +5,7 @@
 ####################################################################
 
 # IMPORTS:
-import os
+import os, sys
 from ROOT import *
 from array import array		# Necessary for creating branches
 from time import time
@@ -13,6 +13,7 @@ import random
 import numpy
 import inspect
 from truculence import utilities, root
+from decortication import dataset
 #from truculence import *
 # /IMPORTS
 
@@ -29,12 +30,14 @@ class analyzer:
 		out_file=None,                  # The name of the output file (including ".root")
 		save=True,
 		v=False,
-		tt_names=["analyzer/events"]    # The names of the input TTrees
+		tt_names=["analyzer/events"],   # The names of the input TTrees
+		count=True,
 	):
 		# Arguments and variables:
 		self.name = inspect.stack()[1][1][:-3] if name == None else name		# This makes the name attribute be the script name if it's not already called something.
 		self.time_string = utilities.time_string()[:-4]		# A time string indicating when the analyzer was created
-#		self.save = save
+		self.save = save
+		self.count = count
 		
 		# Organize input:
 		if isinstance(tuples, dict):
@@ -43,15 +46,31 @@ class analyzer:
 			if isinstance(tuples, str):
 				tuples = [tuples]
 			if isinstance(tuples, list):
-				tuples = {self.name: tuples}
+				if isinstance(tuples[0], str):
+					tuples = {self.name: tuples}
+				else:
+					tuples = {self.Name: tuples}
 		else:
 			print "ERROR (analyzer): \"tuples\" should be a string, list, or dictionary."
+		
+		# Determine if tuples are raw (file locations) or dataset instances:
+		self.food = 1
+		print tuples
+		if isinstance(tuples.values()[0], dataset.dataset):
+			self.food = 2
+		
+		print "Initialization info:"
+		print "\t* food = {}".format(self.food)
+		
 		if v: print "Making TChain(s) ..."
 		self.tt_in = {}
 		self.tc = TCanvas("tc_{}".format(name), "tc_{}".format(name), 500, 500)
 		SetOwnership(self.tc, 0)
 		samples = tuples.keys()
 		for sample, tups in tuples.iteritems():
+			if self.food == 2:
+				# A bit KLUDGY:
+				tups = [f if "root://cmsxrootd.fnal.gov/" in f else "root://cmsxrootd.fnal.gov/" + f for f in tups.files]
 			if v: print "\tMaking TChain(s) for {} ...".format(sample)
 #			self.tt_in[sample] = []
 			for tt_name in tt_names:
@@ -106,10 +125,14 @@ class analyzer:
 				SetOwnership(self.tt_out[key], 0)
 			### Histograms:
 			self.plots = []
-			## Event loops
-			self.loops = {}
-			for key, tt in self.tt_in.iteritems():
+		
+		# Event loops
+		self.loops = {}
+		for key, tt in self.tt_in.iteritems():
+			if self.food == 1:
 				self.loops[key] = event_loop(self, key)
+			elif self.food == 2:
+				self.loops[key] = event_loop(self, key, tup=tuples[key])
 	
 	def define_branches(self,
 		variables,               # A dictionary keyed by the outputbranch names and valued by the dimension
@@ -145,6 +168,8 @@ class event_loop:
 		ana,                # The analyzer it's in
 		key,                # Key used to identify the loop
 		n_default=100,              # The default number of events to run over (use "-1" for "all")
+		progress=True,              # Turn on progress bar.
+		tup=None,
 	):
 		self.ana = ana
 		self.key = key
@@ -153,12 +178,16 @@ class event_loop:
 #		self.rand = True               # True: select the events randomly, False: select events from the beginning
 #		self.v = True                  # Verbose mode
 		tt_in = ana.tt_in[key]
+		self.progress = progress
+		self.tup = tup
 		# Apply cuts:
 		if hasattr(self.ana, "cut"):
 			gROOT.cd()
 			tt_in = tt_in.CopyTree(self.ana.cut)
 		self.tt_in = tt_in
-		self.tt_out = ana.tt_out[key]
+		self.tt_out = None
+		if ana.save:
+			self.tt_out = ana.tt_out[key]
 	
 	def update(self, v=True):
 		# Update branches:
@@ -173,12 +202,27 @@ class event_loop:
 			self.tt_in = self.tt_in.CopyTree(self.ana.cut)
 		
 		if v: print "Fetching the number of events in {} ...".format(self.key)
-		self.n_total = self.tt_in.GetEntries()                      # The total number of events in the input dataset
-		self.n_total_list = root.tc_nevents(self.tt_in)         # The total number of events in each file of the input TChain
+#		self.n_total = self.tt_in.GetEntries()                      # The total number of events in the input dataset
+		if self.ana.count:
+			self.n_total_list = root.tc_nevents(self.tt_in)             # The total number of events in each file of the input TChain
+#			self.n_total = self.tt_in.GetEntries()                      # The total number of events in the input dataset
+		else:		# THIS IS COMPLETELY WRONG, I NEED TO USE "tuple_n". When n = -1, this works fine (although it displays the wrong numbers).
+#			tuples = dataset.fetch_tuples(process=self.key, generation="spring15", suffix="pt400")		# KLUDGE
+			if self.ana.food == 1:
+				samples = dataset.fetch_samples(process=self.key)
+				tuples = []
+				for sample in samples:
+					tuples.extend([tup for tup in sample.tuples if tup.generation == "spring15" and tup.suffix == "pt400"])
+				self.n_total_list = [N for tup in tuples for N in tup.ns]
+			elif self.ana.food == 2:
+				if self.tup:
+					self.n_total_list = [self.tup.n]
+		self.n_total = sum(self.n_total_list)
 		if v: print "\tThere are {} events.".format(self.n_total)
 	
 	def run(self,
 		n=None,                 # The number of events to run over ("-1" means "all")
+		arguments=None,
 		rand=True, v=True,
 		variables=[
 			"ak4_pf_pt", "ak4_pf_sigma", "ak4_pf_nevents", "ak4_gn_pt_hat",
@@ -217,7 +261,8 @@ class event_loop:
 				self.treatment(self, self.tt_in)
 			
 				# Display progress:
-				utilities.progress(i_event, len(ns_event), text="Event {}".format(n_event))
+				if self.progress:
+					utilities.progress(i_event, len(ns_event), text="Event {}".format(n_event))
 		
 		# (2):
 		else:
@@ -231,10 +276,11 @@ class event_loop:
 				i_event_file = self.tt_in.LoadTree(i_event)
 			
 				# Deal with event:
-				self.treatment(self, self.tt_in)
+				self.treatment(self, self.tt_in, arguments)
 			
 				# Display progress:
-				utilities.progress(i_event, n, text="Event {}".format(i_event))
+				if self.progress:
+					utilities.progress(i_event, n, text="Event {}".format(i_event))
 	
 		# Print some info:
 		time_total = time() - t0

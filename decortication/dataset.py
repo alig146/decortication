@@ -5,180 +5,336 @@
 ####################################################################
 
 # IMPORTS:
-import os, yaml, re, sys
+import os, yaml, json, re, sys
+from collections import OrderedDict
+from time import time
+import sqlite3
+from time import time
 from subprocess import Popen, PIPE
-from truculence import analysis, das
+from truculence import analysis, das, crab, lhe, utilities
 import decortication
-from decortication import eos
+from decortication import eos, variables, infrastructure
 # /IMPORTS
 
 # VARIABLES
 username = "tote"
 data_dir = "/store/user/" + username
+lhe_dir = "/uscms_data/d3/{}/lhe".format(username)
 tuple_dir = data_dir + "/data/fat"
 signal_processes = ["sqto4j", "sqto2j"]
 info_path_default = os.path.join(decortication.__path__[0], "..", "resources/samples.yaml")
+db_keys_path_default = os.path.join(decortication.__path__[0], "..", "resources/database.yaml")
+db_path_default = os.path.join(decortication.__path__[0], "..", "resources/samples.db")
+json_dir_default = "resources/json"
+luminosity_default = 10000
+
+## Information for DB tables:
+keys_db = {}
+#KLUDGE for compatibility:
+with open(db_keys_path_default, 'r') as f:
+	db_info = utilities.ordered_load(f)
+	for kind, info in db_info.items():
+		keys_db[kind] = OrderedDict()
+		for key, meta_dict in info.items():
+			if "primary" not in meta_dict:
+				meta_dict["primary"] = False
+			keys_db[kind][key] = (meta_dict["type"], meta_dict["primary"])
+
+primary_keys_master = {kind: [key for key, values in key_dict.items() if values[1]] for kind, key_dict in keys_db.items()}
+
+database_info = infrastructure.get_db_info()
+
 # /VARIABLES
 
 # CLASSES:
 class dataset:
-	# Construction:
-	def __init__(self, info=None, set_info=False, suffix=""):
-		# Basic attributes:
-		self.luminosity = 10000		# In inverse pb
-		self.suffix = suffix
-		for key, value in info.iteritems():
-			setattr(self, key, value)
-		self.weight = self.sigma*self.luminosity/self.miniaod_n
-		self.w = self.weight
-		if not hasattr(self, "analyze"):
-			self.analyze = True
-		## I do the following to make sure that dataset booleans work (see __nonzero__ below):
-		if "name" not in info:
-			self.name = False
-		
-		# Simple calculated assignments:
-		self.miniaod_name = "/{}/{}".format(self.name, self.miniaod)
-		if hasattr(self, "jets"):
-			self.jets_name = "/{}/{}".format(self.name, self.jets)
+	def __init__(self, kind, info=None, category=None, process=None, subprocess=None, generation=None, suffix=None, isolated=False):
+		if not info:
+			info = {}
+		# "kind", "primary_key_list":
+		self.kind = kind
+		if kind in keys_db:
+			self.primary_key_list = [key for key, values in database_info[kind].items() if values["primary"]]
 		else:
-			self.jets = None
-			self.jets_name = None
-#		self.tuple_file = "{}_tuple.root".format(self.name)
-#		self.tuple_path = "{}/{}/{}_tuples/{}".format(data_dir, self.name, self.subprocess, self.tuple_file)
-#		self.tuple_path = tuple_dir + "/" + self.tuple_file
-		self.tuple_dir = None
-		self.tuple_path = None
+			"WARNING (dataset.dataset): The '{}' kind is not recognized.".format(kind)
+			self.primary_key_list = []
 		
-		# Local info:
-		if set_info:
-			self.set_info()
-	# /Construction
+		# Add variables to "info":
+		for primary_key in self.primary_key_list:
+			if primary_key not in info:
+				if locals()[primary_key]:
+					info[primary_key] = locals()[primary_key]
+				else:
+					print "WARNING (dataset.dataset.init): The dataset object you wanted to make needs to have the following primary keys: {}".format(self.primary_key_list)
+					info[primary_key] = None
+		
+		# Get "db_info":
+		self.primary_keys = OrderedDict()
+		for key in self.primary_key_list:
+			self.primary_keys[key] = info[key]
+		db_info = fetch_info(primary_keys=self.primary_keys, kind=self.kind)
+		
+		# Compare "info" with "db_info" to construct "info_final":
+		info_final = {}
+#		if self.kind == "miniaod": print info["das"], db_info["das"]
+		for key in keys_db[self.kind].keys():
+			if key in info:                        # Replace any "db_info" fields that are in "info".
+				info_final[key] = info[key]
+			elif key in db_info:
+				info_final[key] = db_info[key]
+			else:
+				info_final[key] = None
+		
+		# Set attributes from "info_final":
+		for key, value in info_final.items():
+			setattr(self, key, value)
+		
+		# Fill calculable and empty attributes:
+		## "Name":
+		self.Name = "_".join(self.primary_keys.values())
+		self.Name_safe = self.Name.replace("-", "")
+		## "time":
+		if not self.time:
+			self.time = 1		# This puts the default "update time" far in the past.
+		## "das":
+		if hasattr(self, "das"):		# KLUDGE: I really need to make a defaults YAML
+			if self.das == None:
+				self.das = True
+		if self.kind == "tuple":
+			self.das = False
+		## "dir":
+		if self.path and not self.dir:
+			self.dir = self.path.split("/")[-1]
+		## "json":
+		if not self.json:
+			self.json = "{}/{}.json".format(json_dir_default, self.Name)
+		self.json_full = os.path.join(decortication.__path__[0], "..", self.json)
+		## "ns", "files":
+		if self.kind != "sample":
+			if os.path.exists(self.json_full):
+				set_ns(self, j=True)
+				set_files(self, j=True)
+			else:
+				print "ERROR (dataset.init): {} doesn't exist. Do a scan of this {} to save the json file.".format(self.json_full, self.kind)
+		if not self.n and hasattr(self, "ns"):
+			self.n = sum(self.ns)
+		## Connect to any children:
+		if not isolated:
+			self.set_connections(down=True, up=False)
+	# :init
 	
-	# Properties:
-	def __nonzero__(self):
-		return self.name != False
 	
 	def __str__(self):
-		return "<dataset object: name = {0}>".format(self.name)
-	# /Properties
+		return "<{} instance named {}>".format(self.kind, self.Name)
 	
-	# Methods:
+	
 	def Print(self):
-		print self
+		print "{} object".format(self.kind.capitalize())
+		print "\t* Identifiers:"
+		for var in variables.identifiers.keys():
+			if hasattr(self, var):
+				print "\t\t* {}: {}".format(var, getattr(self, var))
+		print "\t* Last updated on {}".format(utilities.time_to_string(self.time))
+		if self.kind == "sample":
+			print "\t* Path: {}".format(self.path)
+		else:
+			print "\t* Path: {} (das={})".format(self.path, self.das)
+			if hasattr(self, "files"): print "\t\t* {} files".format(len(self.files))
+		print "\t* n = {}, weight = {}".format(self.n, self.weight)
+		if hasattr(self, "sigma"):
+			print "\t* sigma = {}".format(self.sigma)
+		print
 	
-	def get_files(self):
-		ds_dir = data_dir + "/" + self.name
-	#	print ds_path
-		results = {}
+	
+	def set_connections(self, down=True, up=False):
+		good = True
+		kinds = []
+		if down:        # Add children kinds.
+			kinds.extend([(kind, "child") for kind, keys in primary_keys_master.items() if set(self.primary_keys.keys()) < set(keys)])
+		if up:          # Add parent kinds.
+			kinds.extend([(kind, "parent") for kind, keys in primary_keys_master.items() if set(self.primary_keys.keys()) > set(keys)])
 		
-		# Look in the dataset directory and find the MiniAOD and jets (flavors) directories:
-		dirs_flavor = eos.listdir(ds_dir)
-		## General:
-		results["dir"] = ds_dir
+		for kind, age in kinds:
+			query = {key: value for key, value in self.primary_keys.items() if key in primary_keys_master[kind]}
+			entries = fetch_entries(kind, query, isolated=True)
+			for entry in entries:
+				setattr(entry, "".format(self.kind), self)
+				setattr(entry, "{}".format(self.kind), self)
+			if age == "child":
+				setattr(self, "{}s".format(kind), entries)
+			elif age == "parent":
+				if len(entries) == 1:
+					setattr(self, "{}".format(kind), entries[0])
+				elif len(entries) > 1:
+					print "ERROR (dataset.set_connections): {} had multiple parents of the same kind ({})".format(self.Name, kind)
+					good = False
+				else:
+					print "WARNING (dataset.set_connections): {} had no {} parent.".format(self.Name, kind)
+					good = False
+		return good
+	
+	
+	def scan(self, isolated=False, j=False):
+		print "Scanning {} ...".format(self.Name)
+		if self.kind == "miniaod": print "\t{}".format(self.name)
+		info = dict(self.primary_keys)
 		
-		## MiniAOD:
-		dirs_miniaod = [d for d in dirs_flavor if d == self.name]
-		results["miniaod"] = {}
-		if dirs_miniaod:
-			if len(dirs_miniaod) > 1:
-				print "ERROR (dataset.get_info): There is more than one jets directory: {0}".format(dirs_fatjet)
+		# "path":
+		if not self.path:
+			if self.kind == "sample":
+				self.path = data_dir + "/" + self.name
+			elif self.kind == "miniaod":
+				if hasattr(self, "sample"):
+					if self.sample.path:
+						self.path = self.sample.path + "/" + self.sample.name
+			elif self.kind == "tuple":
+				if hasattr(self, "sample"):
+					if self.sample.path:
+						self.path = self.sample.path + "/tuple_{}".format(self.Name)
+			if self.path:
+				self.dir = self.path.split("/")[-1]
+				info["path"] = self.path
+		elif self.path[-1] == "/":		# Erase trailing "/" in path if it exists.
+			self.path = self.path[:-1]
+			self.dir = self.path.split("/")[-1]
+			info["path"] = self.path
+		
+		# "name_full", "instance":
+		if hasattr(self, "name"):
+			self.name_full = self.name
+		
+		## I used to build it in the following way, but I changed things, so "name" is "name_full".
+#		if self.kind == "miniaod" and not self.name_full:
+#			if hasattr(self, "sample"):
+#				self.name_full = "/{}/{}".format(self.sample.name, self.name)
+#				info["name_full"] = self.name_full
+#			if self.name_full:
+#				if self.name_full.split("/")[-1] == "USER":
+#					self.instance = "phys03"
+#					info["instance"] = self.instance
+		
+		# "files", "ns", "n":
+		if self.kind != "sample":
+			set_files(self, j=j, DAS=self.das)
+			set_ns(self, j=j, DAS=self.das)
+			if len(self.files) > 0 and len(self.ns) > 0:
+				self.save_json()
+			else:
+				print "ERROR (dataset.scan): the file list or n list are empty:"
+				print self.files
+				print self.ns
+			if self.ns:
+				self.n = sum(self.ns)
+				info["n"] = self.n
+		
+		# "weight":
+		if self.kind == "sample" and self.n:
+			self.weight = self.sigma*self.luminosity/self.n
+			info["weight"] = self.weight
+		else:
+			if hasattr(self, "sample"):
+				if self.sample.weight:
+					self.weight = self.sample.weight
+				else:
+					self.weight = self.sample.sigma*self.sample.luminosity/self.n
+				info["weight"] = self.weight
+		
+		# Update DB:
+		update_result = update_db(self.kind, info)
+		
+#		# Scan connections:
+#		if not isolated:
+#			if hasattr(self, "miniaods"):
+#				for miniaod in self.miniaods:
+#					miniaod.scan(isolated=True)
+#			if hasattr(self, "tuples"):
+#				for tup in self.tuples:
+#					tup.scan(isolated=True)
+		
+		return update_result
+	
+	
+	def update(self, info):
+		info.update(self.primary_keys)
+		return update_db(self.kind, info, db_path=db_path_default)
+	
+	
+	def fix(self):
+		info = dict(self.primary_keys)
+		
+		# Set "n" and "weight" for samples that don't have it.
+		if self.n == None and self.kind == "sample":
+			self.n = max(miniaod.n for miniaod in self.miniaods)
+			info["n"] = self.n
+		
+		if self.n and self.kind == "sample":
+			self.weight = self.sigma*self.luminosity/self.n
+			info["weight"] = self.weight
+		elif self.kind != "sample" and not self.weight:
+			if hasattr(self, "sample"):
+				self.weight = self.sample.weight
+				info["weight"] = self.weight
+		
+		# Update DB:
+		update_result = update_db(self.kind, info)
+	
+	
+	def find_tuples(self):
+		tuples = []
+		p = self.path
+		if hasattr(self, "sample"):
+			p = self.sample.path
+		if p:
+			tuple_dirs = [d for d in listpath(p) if "tuple" in d]
+			for d in tuple_dirs:
+				pieces = d.split("_")
+				if len(pieces) == 4:
+					kind = pieces[0]
+					subprocess = pieces[1]
+					generation = pieces[2]
+					suffix = pieces[3]
+					if (subprocess == self.subprocess) and (kind == "tuple"):
+						info = {
+							"category": self.category,		# KLUDGE: this doesn't use meta.yaml
+							"process": self.process,
+							"subprocess": subprocess,
+							"generation": generation,
+							"suffix": suffix,
+							"path": "{}/{}".format(p, d),
+						}
+						tup = dataset("tuple", info=info, isolated=True)
+						tup.set_connections(down=False, up=True)
+						tuples.append(tup)
+				else:
+					print "WARNING (dataset.find_tuples): Something is wrong with the naming of {}/{}.".format(p, d)
+		return tuples
+	
+	
+	def write(self, db_path=db_path_default):
+		info = {}
+		for key_db, meta_db in keys_db[self.kind].items():
+			primary = meta_db[1]
+			if hasattr(self, key_db):
+				info[key_db] = getattr(self, key_db)
+			elif primary:
+				print "ERROR (dataset.write): Cannot write. {} object doesn't have a {} attribute, which is a primary key.".format(self.kind, key_db)
 				return False
-			elif len(dirs_miniaod) == 1:
-				dir_miniaod = ds_dir + "/" + dirs_miniaod[0]
-				results["miniaod"]["dir"] = dir_miniaod
-				dates = eos.listdir(dir_miniaod)
-				path_miniaod = dir_miniaod + "/" + dates[-1] + "/0000"
-				results["miniaod"]["files"] = [path_miniaod + "/" + f for f in eos.listdir(path_miniaod) if ".root" in f]
-		else:
-			results["miniaod"]["dir"] = None
-			results["miniaod"]["files"] = None
-		
-		## Jets:
-		dirs_fatjet = [d for d in dirs_flavor if d == "{}_jets".format(self.subprocess)]
-		results["jets"] = {}
-		if len(dirs_fatjet) > 1:
-			print "ERROR (decortication.dataset.get_files): There is more than one jets directory: {0}".format(dirs_fatjet)
-			return False
-		elif len(dirs_fatjet) == 1:
-			dir_fatjet = ds_dir + "/" + dirs_fatjet[0]
-			dates = eos.listdir(dir_fatjet)
-			dir_fatjet += "/" + dates[-1]
-			results["jets"]["dir"] = dir_fatjet
-			
-			results["jets"]["files"] = []
-			subdirs = eos.listdir(dir_fatjet)		# "0000", "0001", etc.
-			for subdir in subdirs:
-				path_dir = dir_fatjet + "/" + subdir
-				results["jets"]["files"].extend([path_dir + "/" + f for f in eos.listdir(path_dir) if ".root" in f])
-		else:
-			results["jets"]["dir"] = None
-			results["jets"]["files"] = None
-		
-		## Tuple:
-		if self.suffix:
-			dirs_fatjet = [d for d in dirs_flavor if d == "{}_tuple_{}".format(self.subprocess, self.suffix)]
-		else:
-			dirs_fatjet = [d for d in dirs_flavor if d == "{}_tuple".format(self.subprocess)]
-		results["tuple"] = {}
-		if len(dirs_fatjet) > 1:
-			print "ERROR (decortication.dataset.get_files): There is more than one tuple directory: {0}".format(dirs_fatjet)
-			return False
-		elif len(dirs_fatjet) == 1:
-			dir_fatjet = ds_dir + "/" + dirs_fatjet[0]
-			dates = eos.listdir(dir_fatjet)
-			dir_fatjet += "/" + dates[-1]
-			results["tuple"]["dir"] = dir_fatjet
-			
-			results["tuple"]["files"] = []
-			subdirs = eos.listdir(dir_fatjet)		# "0000", "0001", etc.
-			for subdir in subdirs:
-				path_dir = dir_fatjet + "/" + subdir
-				results["tuple"]["files"].extend([path_dir + "/" + f for f in eos.listdir(path_dir) if ".root" in f])
-		else:
-			results["tuple"]["dir"] = None
-			results["tuple"]["files"] = None
-		
-		# Return stuff:
-		return results
+		return insert_db(self.kind, info, db_path=db_path_default)
 	
+	def save_json(self):
+		dir_json = os.path.dirname(self.json_full)
+		if not os.path.exists(dir_json):
+			os.makedirs(dir_json)
+		info = {
+			"files": self.files,
+			"ns": self.ns,
+			"time": self.time
+		}
+		with open(self.json_full, "w") as out:
+			json.dump(info, out)
 	
-	def set_info(self):
-		info = self.get_files()
-#		print info
-		if info:
-			self.dir = info["dir"]
-			# MiniAOD info:
-			if "miniaod" in info.keys():
-				# Set file variables:
-				self.miniaod_dir = info["miniaod"]["dir"]
-				self.miniaod_path = info["miniaod"]["files"]
-			
-			# Jets info:
-			if "jets" in info.keys():
-				# Set file variables:
-				self.jets_dir = info["jets"]["dir"]
-				self.jets_path = info["jets"]["files"]
-				
-			# Tuple info:
-			if "tuple" in info.keys():
-				self.tuple_dir = info["tuple"]["dir"]
-				self.tuple_path = info["tuple"]["files"]
-			return True
-		else:
-			return False
-	
-	
-	def set_nevents(self):
-		n = 0
-		for f in self.jets_path:
-			n += analysis.get_nevents(f)
-		self.jets_n = n
-		self.n_jets = n
-		self.nevents = n
-		return n
-		
-	# /Methods
+	def check(self):
+		return check_db(self)
 # /CLASSES
 
 # FUNCTIONS:
@@ -195,10 +351,52 @@ def explore_dataset_dir(d):
 	return result
 
 
+def parse_yaml(path=info_path_default):
+	ds_info = infrastructure.get_ds_info()
+	
+	datasets = {}
+	for kind, info_list in ds_info.iteritems():
+		datasets[kind] = []
+		for info in info_list:
+			datasets[kind].append(dataset(kind, info=info, isolated=True))
+	
+	return datasets
+
+
+def write_db():
+	create_tables()
+	datasets = parse_yaml()
+	for kind, dss in datasets.items():
+		for ds in dss:
+			ds.write()
+	return True
+
+
+#def get_primitives(path_samples=infrastructure.ds_info_default, path_meta=infrastructure.db_info_default):
+#	ds_info = infrastructure.get_ds_info(path=path_samples)
+#	db_info = infrastructure.get_db_info(path=path_meta)
+#	primaries = {kind: [key for key, meta in kind_info.items() if meta["primary"]] for kind, kind_info in db_info.items()}
+#	
+#	# Fill defaults from db_info:
+#	ds_info_complete = ds_info
+#	for kind, kind_info in db_info.items():
+#		for key, meta in kind_info.items():
+#			for i, info in enumerate(ds_info[kind]):
+#				if key not in info:
+#					ds_info_complete[kind][i][key] = meta["default"]
+#				ds_info_complete[kind][i]["primary"] = primaries[kind]
+#	
+#	# Return primitives in a dictionary:
+##	return {kind: [dataset(kind, info=entry, isolated=True) for entry in entries] for kind, entries in info.items()}
+#	return {kind: [info for info in infos] for kind, infos in ds_info_complete.items()}
+
+
 def get_info(path=info_path_default):
 	# Get YAML information:
 	with open(path, 'r') as f:
 		info = yaml.load(f)
+	
+	t = time()
 	
 	# Fill missing information:
 	info_filled = info
@@ -209,73 +407,38 @@ def get_info(path=info_path_default):
 				info_filled[category][process][i]["process"] = process
 				if "subprocess" not in ds:
 					info_filled[category][process][i]["subprocess"] = process
+#				if "n" not in ds:
+#					info_filled[category][process][i]["n"] = info_filled[category][process][i]["miniaod_n"]
+				if "signal" not in ds:
+					info_filled[category][process][i]["signal"] = False
+				if "hts" in ds:
+					info_filled[category][process][i]["parameter1"] = info_filled[category][process][i]["hts"][0]
+					info_filled[category][process][i]["parameter2"] = info_filled[category][process][i]["hts"][1]
+				if "pts" in ds:
+					info_filled[category][process][i]["parameter1"] = info_filled[category][process][i]["pts"][0]
+					info_filled[category][process][i]["parameter2"] = info_filled[category][process][i]["pts"][1]
+				if "m" in ds:
+					info_filled[category][process][i]["parameter1"] = info_filled[category][process][i]["m"]
+				if "ms" in ds:
+					info_filled[category][process][i]["parameter1"] = info_filled[category][process][i]["ms"][0]
+					info_filled[category][process][i]["parameter2"] = info_filled[category][process][i]["ms"][1]
+				if "luminosity" not in ds:
+					info_filled[category][process][i]["luminosity"] = luminosity_default
+				info_filled[category][process][i]["time"] = t
+				for i_miniaod in range(len(info_filled[category][process][i]["miniaods"])):
+					if "subprocess" not in info_filled[category][process][i]["miniaods"][i_miniaod]:
+						info_filled[category][process][i]["miniaods"][i_miniaod]["subprocess"] = info_filled[category][process][i]["subprocess"]
+					if "das" not in info_filled[category][process][i]["miniaods"][i_miniaod]:
+						info_filled[category][process][i]["miniaods"][i_miniaod]["das"] = True
+#					if "dir" not in info_filled[category][process][i]["miniaod"][i_miniaod]:
+#						info_filled[category][process][i]["miniaod"][i_miniaod]["dir"] = info_filled[category][process][i]["name"]
 	
 	return info_filled
 
 
-def get_datasets(path=info_path_default, name=None, subprocess=None, process=None, category=None, generation="spring15", suffix='', set_info=False):
-	# Get dataset info:
-	info = get_info(path=path)
-	
-	# Arguments:
-	if subprocess and not isinstance("subprocess", list):
-		subprocess = [subprocess]
-	
-	## All datasets are fetched by subprocess or more general info. (Name is converted to subprocess)
-	call = -1
-	if not name and not subprocess:
-		call = False
-	elif not name and subprocess:
-		call = True
-	elif name and not subprocess:
-		subprocess = get_subprocess(name=name)
-		call = True
-	assert call != -1
-	
-	if category and not isinstance(category, list):
-		category = [category]
-	elif not category:
-		category = info.keys()
-	if process and not isinstance(process, list):
-		process = [process]
-	
-	# Apply some search parameters before starting:
-	info = {p: dss for c, dsd in info.iteritems() for p, dss in dsd.iteritems() if c in category}   # Filter categories, then ignore
-	if process:
-		info = {p: dss for p, dss in info.iteritems() if p in process}      # Filter processes
-	
-	# Find the dataset(s):
-	datasets = {}
-	for process, list_of_ds in info.iteritems():		# e.g., sq150to4j, qcdmg
-		datasets[process] = []
-		for ds in list_of_ds:		# The info for each dataset
-			if ds["generation"] == generation:
-				if call:
-					if ds["subprocess"] in subprocess:
-						datasets[process].append(dataset(info=ds, suffix=suffix, set_info=set_info))
-				else:
-					datasets[process].append(dataset(info=ds, suffix=suffix, set_info=set_info))
-	
-	# Trim results:
-	datasets = {key: value for key, value in datasets.iteritems() if value}		# Delete any keys if the associated value is null.
-	
-	return datasets
-
-
-def get_nevents(files):		# This is very slow with many files!
-	nevents = 0
-	for f in files:
-		print f
-		raw_output = Popen(['echo "Events->GetEntries()" | root -l {0}'.format(f)], shell=True, stdout=PIPE, stderr=PIPE).communicate()
-		match = re.search("\(Long64_t\) (\d+)\s", raw_output[0])
-		if match:
-			nevents += int(match.group(1))
-	return nevents
-
-
-def get_paths(miniaod_name):
+def get_paths(miniaod_name_full):
 	das_url = "https://cmsweb.cern.ch"
-	das_query = "file dataset={}".format(miniaod_name)
+	das_query = "file dataset={}".format(miniaod_name_full)
 	data = das.get_data(das_url, das_query, 0, 0, 0, ckey=das.x509(), cert=das.x509())
 	return [f["file"][0]["name"] for f in data["data"]]
 
@@ -296,6 +459,546 @@ def get_subprocess(path=info_path_default, name=None):
 		subprocesses = [ds["subprocess"] for ds in dss]
 	
 	return subprocesses
+
+
+def create_table(keys, name, db_path=db_path_default, v=True):
+	conn = sqlite3.connect(db_path)
+	c = conn.cursor()
+	
+	cmd = "CREATE TABLE {} (".format(name)
+	cmd_primary = "PRIMARY KEY("
+	for key, values in keys.items():
+		dtype = values[0]
+		primary = values[1]
+		cmd += "{} {}, ".format(key, dtype.upper())
+		if primary:
+			cmd_primary += "{}, ".format(key)
+	cmd_primary = cmd_primary[:-2] + ")"
+	cmd = cmd + cmd_primary + ")"
+	
+	if v: print cmd
+	
+	try:
+		c.execute(cmd)
+	except Exception as ex:
+		print ex
+		return False
+	else:
+		conn.commit()
+		return True
+
+
+def create_tables(v=False):
+	good = True
+	
+	for name in keys_db.keys():
+		good *= create_table(keys_db[name], name, v=v)
+		if not good: print "WARNING (dataset.create_tables): '{}' table not created.".format(name)
+	
+	return good
+
+
+def sync_yaml(write_nones=False):
+	primitives_dict = get_primitives()
+	for kind, primitives in primitives_dict.items():
+		for primitive in primitives:
+			if not write_nones:
+				primitive = {key: value for key, value in primitive.items() if value != None and value != "PARENT"}
+			update_db(kind, primitive)
+
+
+def fetch_info(subprocess=None, generation=None, suffix=None, kind="*", primary_keys=None, db_path=db_path_default, single=True):
+	# Arguments:
+	if not primary_keys:
+		primary_keys = {}
+		if subprocess:
+			primary_keys["subprocess"] = subprocess
+		if generation:
+			primary_keys["generation"] = generation
+		if suffix:
+			primary_keys["suffix"] = suffix
+	
+	# Open database:
+	conn = sqlite3.connect(db_path)
+	c = conn.cursor()
+	
+	# Prepare SQLite command:
+	cmd_where = "WHERE "
+	for key, value in primary_keys.items():
+		if value:
+			cmd_where += "{}='{}' AND ".format(key, value)
+	if cmd_where == "WHERE ":
+		cmd_where = ""
+	else:
+		cmd_where = cmd_where[:-5]
+	cmd = "SELECT * FROM {} {}".format(kind, cmd_where)
+#	print cmd
+	
+	# Query:
+	try:
+		c.execute(cmd)
+	except Exception as ex:
+		print ex
+	else:
+		if single:
+			raw = c.fetchone()
+			if raw:
+				d = {}
+				for i, key in enumerate(keys_db[kind].keys()):
+					d[key] = raw[i]
+				return d
+		else:
+			print "WARNING (dataset.fetch_info): single=False hasn't been implemented, yet."
+#			raws = c.fetchall()
+#			if raws:
+#			for raw in raws:
+#				info = {}
+#				for i, key in enumerate(keys_db["sample"].keys()):
+#					info[key] = raw[i]
+#				samples.append(samp(info, isolated=isolated))
+	return {}
+
+
+def fetch_sample(subprocess, db_path=db_path_default, isolated=False):
+	query = {
+		"subprocess": subprocess
+	}
+	return fetch_entry("sample", query, isolated=isolated)
+
+
+def fetch_samples(db_path=db_path_default, subprocess=None, process=None, category=None, isolated=False):
+	query = {}
+	if subprocess:
+		query["subprocess"] = subprocess
+	if process:
+		query["process"] = process
+	if category:
+		query["category"] = category
+	return fetch_entries("sample", query, isolated=isolated)
+
+
+def fetch_miniaod(subprocess, generation, db_path=db_path_default, isolated=False):
+	query = {
+		"subprocess": subprocess,
+		"generation": generation,
+	}
+	return fetch_entry("miniaod", query, isolated=isolated)
+
+
+def fetch_miniaods(subprocess, db_path=db_path_default, isolated=False):
+	# Open database:
+	conn = sqlite3.connect(db_path)
+	c = conn.cursor()
+	
+	# Prepare SQLite command:
+	cmd = "SELECT * FROM miniaod WHERE subprocess='{}'".format(subprocess)
+	
+	# Query:
+	c.execute(cmd)
+	raws = c.fetchall()
+	
+	# Parse:
+	if raws:
+		maods = []
+		for raw in raws:
+			d = {}
+			for i, key in enumerate(keys_db["miniaod"].keys()):
+				d[key] = raw[i]
+			maods.append(maod(d, isolated=isolated))
+		return maods
+	else:
+		return False
+
+
+def fetch_tuple(subprocess, generation, suffix, db_path=db_path_default, isolated=False):
+	query = {
+		"subprocess": subprocess,
+		"generation": generation,
+		"suffix": suffix,
+	}
+	return fetch_entry("tuple", query, isolated=isolated)
+
+
+def fetch_tuples(category=None, suffix=None, subprocess=None, generation=None, process=None, db_path=db_path_default, isolated=False):
+	query = {}
+	if category:
+		query["category"] = category
+	if process:
+		query["process"] = process
+	if subprocess:
+		query["subprocess"] = subprocess
+	if generation:
+		query["generation"] = generation
+	if suffix:
+		query["suffix"] = suffix
+	return fetch_entries("tuple", query, isolated=isolated)
+
+
+def prepare_fetch(kind, query):
+	# Check that "primary_keys" shares something with the keys of "kind":
+#	info = {key: value for key, value in query.items() if key in primary_keys_master[kind]}		# Take only primary keys that are primary keys of the kind.
+	info = query
+#	if not info:
+#		print "ERROR (dataset.prepare_fetch): The primary keys you supplied have no overlap with the primary keys of the kind you wanted (\"{}\"):".format(kind)
+#		print primary_keys
+#		return False
+#	else:
+	# Prepare SQLite command:
+	cmd_where = ""
+	ands = []
+	for key, value in info.items():
+		if value:
+			if not isinstance(value, list):
+				value = [value]
+			ors = []
+			for v in value:
+				ors.append("{}='{}'".format(key, v))
+			ands.append(" OR ".join(ors))
+	cmd_where += " AND ".join(ands)
+	if cmd_where:
+		cmd_where = "WHERE " + cmd_where
+	cmd = "SELECT * FROM {} {}".format(kind, cmd_where)
+#	print cmd
+	return cmd
+
+def fetch_entry(kind, query, db_path=db_path_default, isolated=True):
+		cmd = prepare_fetch(kind, query)
+		if cmd:
+			# Open database:
+			conn = sqlite3.connect(db_path)
+			c = conn.cursor()
+			
+			# Query:
+			c.execute(cmd)
+			raw = c.fetchone()
+		
+			# Parse:
+			if raw:
+				d = {}
+				for i, key in enumerate(keys_db[kind].keys()):
+					d[key] = raw[i]
+				return dataset(kind, info=d, isolated=isolated)
+		return None
+
+def fetch_entries(kind, query, db_path=db_path_default, isolated=True):
+		cmd = prepare_fetch(kind, query)
+		if cmd:
+			# Open database:
+			conn = sqlite3.connect(db_path)
+			c = conn.cursor()
+			
+			# Query:
+			try:
+				c.execute(cmd)
+			except Exception as ex:
+				print cmd
+				print ex
+			else:
+				raws = c.fetchall()
+				# Parse:
+				if raws:
+					results = []
+					for raw in raws:
+						d = {}
+						for i, key in enumerate(keys_db[kind].keys()):
+							d[key] = raw[i]
+#						print d
+						results.append(dataset(kind, info=d, isolated=isolated))
+					return results
+		return []
+
+
+def fetch_db(db_path=db_path_default, category=None, process=None, subprocess=None):
+	# Argument parsing:
+	if category and not isinstance(category, list):
+		category = [category]
+	if process and not isinstance(process, list):
+		process = [process]
+	if subprocess and not isinstance(subprocess, list):
+		subprocess = [subprocess]
+	
+	# Open database:
+	conn = sqlite3.connect(db_path)
+	c = conn.cursor()
+	
+	dss = []
+	if category:
+		cmd_where = ""
+		for cat in category:
+			cmd_where += "category='{}' OR ".format(cat)
+		cmd_where = cmd_where[:-4]
+		c.execute("SELECT * FROM dataset WHERE {}".format(cmd_where))
+	elif process:
+		cmd_where = ""
+		for p in process:
+			cmd_where += "process='{}' OR ".format(p)
+		cmd_where = cmd_where[:-4]
+		c.execute("SELECT * FROM dataset WHERE {}".format(cmd_where))
+	elif subprocess:
+		cmd_where = ""
+		for sp in subprocess:
+			cmd_where += "subprocess='{}' OR ".format(sp)
+		cmd_where = cmd_where[:-4]
+		c.execute("SELECT * FROM dataset WHERE {}".format(cmd_where))
+	else:
+		c.execute("SELECT * FROM dataset")
+	results_raw = c.fetchall()
+	for raw in results_raw:
+		d = {}
+		for i, key in enumerate(keys_db["dataset"].keys()):
+			d[key] = raw[i]
+		dss.append(dataset(info=d))
+	return dss
+
+
+def print_db(db_path=db_path_default):
+	conn = sqlite3.connect(db_path)
+	c = conn.cursor()
+	
+	for name in keys_db.keys():
+		c.execute("SELECT * FROM {}".format(name))
+		results = c.fetchall()
+		print name, results
+
+
+def insert_db(name, info, db_path=db_path_default):
+	if set([k for k, v in keys_db[name].items() if v[1]]) < set(info.keys()):
+		cmd = "INSERT INTO {} VALUES(".format(name)
+		
+		for key_db, key_info in keys_db[name].items():
+			dtype = key_info[0]
+			primary = key_info[1]
+			db_value = "NULL"
+			if key_db in info:
+				value = info[key_db]
+				if value != None:
+					db_value = "{}".format(value)
+					if dtype == "text":
+						db_value = "'{}'".format(value)
+					elif dtype == "integer":
+						db_value = "{}".format(int(value))
+				else:
+					db_value = "NULL"
+			
+			cmd += "{}, ".format(db_value)
+		
+		cmd = cmd[:-2] + ")"
+		
+		conn = sqlite3.connect(db_path)
+		c = conn.cursor()
+		try:
+			c.execute(cmd)
+		except Exception as ex:
+			print cmd
+			print ex
+			return False
+		else:
+			conn.commit()
+			return True
+	else:
+		print "ERROR (dataset.insert_db): The info was insufficient to insert a row. See below."
+		print info.keys()
+		return False
+
+
+def update_db(kind, info, db_path=db_path_default):
+	if "time" not in info:
+		info["time"] = time()
+	
+	print info
+	
+	values = []
+	wheres = []
+	
+	for key, value in info.items():
+		if key in database_info[kind]:
+			dtype = database_info[kind][key]["type"]
+			primary = database_info[kind][key]["primary"]
+			if primary:
+				if dtype == "text":
+					wheres.append("{}='{}'".format(key, value))
+				else:
+					wheres.append("{}={}".format(key, value))
+			else:
+				if dtype == "text":
+					values.append("{}='{}'".format(key, value))
+				else:
+					values.append("{}={}".format(key, value))
+		else:
+			print "WARNING (dataset.update_db): {} isn't a {} database variable. It was not updated.".format(key, kind)
+	
+	if values and wheres:
+		cmd = "UPDATE {} SET {} WHERE {}".format(kind, ", ".join(values), " AND ".join(wheres))
+		conn = sqlite3.connect(db_path)
+		c = conn.cursor()
+		try:
+			print cmd
+			c.execute(cmd)
+		except Exception as ex:
+			print cmd
+			print ex
+			return False
+		else:
+			conn.commit()
+			return True
+	else:
+		return False
+
+
+def listpath(path):
+	match = re.search("^/store/user/tote", path)
+	if match:		# If in EOS
+		return eos.listdir(path)
+	else:
+		return os.listdir(path)
+
+
+def check_db(thing):		# Check if thing is in the database.
+	kind = thing.kind
+	
+#	if hasattr(thing, "generation"):
+#		if hasattr(thing, "suffix"):
+##			fetch_entry(kind, query, db_path=db_path_default, isolated=True)
+#			thing_db = fetch_entry(kind, {"subprocess": thing.subprocess, "generation": thing.generation, "suffix": thing.suffix})
+#		else:
+#			thing_db = fetch_entry(kind, {"subprocess": thing.subprocess, "generation": thing.generation, "suffix": thing.suffix})
+#	else:
+	thing_db = fetch_entry(kind, thing.primary_keys)
+	
+	if thing_db:
+		# Compare "thing" with DB version:
+		compare = {}
+		for key in keys_db[kind].keys():
+			compare[key] = (bool(getattr(thing, key)), bool(getattr(thing_db, key)))
+	
+		replace = {}
+		update = {}
+		for key, values in compare.items():
+			if sum(values) == 2:
+				if getattr(thing, key) != getattr(thing_db, key):
+					print "The thing's value of {} is different from that in the DB:".format(key)
+					print "\t{} != {} (DB value)".format(getattr(thing, key), getattr(thing_db, key))
+					replace[key] = False
+					update[key] = True
+				else:
+					replace[key] = True
+					update[key] = False
+			elif values[1]:
+				replace[key] = True
+				update[key] = False
+			elif values[0]:
+				replace[key] = False
+				update[key] = True
+		return (replace, update)
+	else:
+		return False
+
+
+def sync_db(self):
+	check_result = check_db(self)
+	if check_result:
+		info = {}
+		(replace, update) = check_result
+		for key, value in update.items():
+			if value:
+				info[key] = getattr(self, key)
+		info["time"] = time()
+		self.update(info)
+		return True
+#		if sum(replace.values()) == len(replace.values()):
+##				return self.replace()
+#			return True
+#		else:
+#			return True
+	else:
+		print "Adding {} to the DB ...".format(self.Name)
+		return self.write()
+
+
+
+def set_files(thing, j=True, DAS=True):
+	files = []
+	if j:
+		if os.path.exists(thing.json_full):
+			with open(thing.json_full) as infile:
+				files = json.load(infile)["files"]
+	if not files:
+		if thing.path and not DAS:
+#			if os.path.exists(self.path):		# I CAN'T DO THIS BECAUSE OF EOS!
+			files = crab.find_files(thing.path)["files"]
+		if not files and DAS:		# Check DAS
+			print "Checking DAS for file list of {} ...".format(thing.Name)
+			result = das.get_info(thing.name, instance=thing.instance)
+			files = result["files"]
+	thing.files = files
+	return files
+
+
+def set_ns(thing, j=True, DAS=True):
+	ns = []
+	if j:
+		if os.path.exists(thing.json_full):
+			with open(thing.json_full) as infile:
+				ns = json.load(infile)["ns"]
+	if not ns:
+		if not ns and not DAS:
+#			if os.path.exists(self.path):		# I CAN'T DO THIS BECAUSE OF EOS!
+			print "Getting the ns from {} ...".format(thing.path)
+			ns = analysis.get_nevents(thing.files, tt_name=variables.tt_names[thing.kind], site="cmslpc")
+		elif not ns and DAS:		# Check DAS
+			print "Checking DAS for nevents list of {} ...".format(thing.Name)
+			result = das.get_info(thing.name, instance=thing.instance)
+			ns = result["ns"]
+	thing.ns = ns
+	return ns
+	
+
+def fetch_connections(primary_keys):
+	print set(primary_keys.keys())
+	kinds_children = [kind for kind, keys in primary_keys_master.items() if set(primary_keys.keys()) < set(keys)]
+	kinds_parents = [kind for kind, keys in primary_keys_master.items() if set(primary_keys.keys()) > set(keys)]
+	print "children:", kinds_children
+	print "parents:", kinds_parents
+	
+	sys.exit()
+	# Arguments:
+	if not primary_keys:
+		primary_keys = {}
+		if subprocess:
+			primary_keys["subprocess"] = subprocess
+		if generation:
+			primary_keys["generation"] = generation
+		if suffix:
+			primary_keys["suffix"] = suffix
+	
+	# Open database:
+	conn = sqlite3.connect(db_path)
+	c = conn.cursor()
+	
+	# Prepare SQLite command:
+	cmd_where = "WHERE "
+	for key, value in primary_keys.items():
+		cmd_where += "{}='{}' AND ".format(key, value)
+	if cmd_where == "WHERE ":
+		cmd_where = ""
+	else:
+		cmd_where = cmd_where[:-5]
+	cmd = "SELECT * FROM {} {}".format(kind, cmd_where)
+#	print cmd
+	
+	# Query:
+	c.execute(cmd)
+	raw = c.fetchone()
+	
+	# Parse:
+	if raw:
+		d = {}
+		for i, key in enumerate(keys_db[kind].keys()):
+			d[key] = raw[i]
+		
+		return d
+	else:
+		return {}
 # /FUNCTIONS
 
 # VARIABLES:
