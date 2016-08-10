@@ -54,23 +54,25 @@ class analyzer:
 			print "ERROR (analyzer): \"tuples\" should be a string, list, or dictionary."
 		
 		# Determine if tuples are raw (file locations) or dataset instances:
-		self.food = 1
-		print tuples
-		if isinstance(tuples.values()[0], dataset.dataset):
-			self.food = 2
-		
-		print "Initialization info:"
-		print "\t* food = {}".format(self.food)
 		
 		if v: print "Making TChain(s) ..."
 		self.tt_in = {}
+		self.tt_info = {}
 		self.tc = TCanvas("tc_{}".format(name), "tc_{}".format(name), 500, 500)
 		SetOwnership(self.tc, 0)
 		samples = tuples.keys()
 		for sample, tups in tuples.iteritems():
-			if self.food == 2:
+			ns = []
+			
+			# Handle different input schemes (either list of tuples or list of file names):
+			food = 2 if isinstance(tups[0], dataset.dataset) else 1
+			if food == 2:
 				# A bit KLUDGY:
-				tups = [f if "root://cmsxrootd.fnal.gov/" in f else "root://cmsxrootd.fnal.gov/" + f for f in tups.files]
+				fs = []
+				for tup in tups:
+					fs += [f if "root://cmsxrootd.fnal.gov/" in f else "root://cmsxrootd.fnal.gov/" + f for f in tup.files]
+					ns += tup.ns
+				tups = fs
 			if v: print "\tMaking TChain(s) for {} ...".format(sample)
 #			self.tt_in[sample] = []
 			for tt_name in tt_names:
@@ -90,6 +92,10 @@ class analyzer:
 					print "ERROR (analyzer.__init__): The tuples configuration is weird:\n{}".format(tuples)
 					sys.exit()
 				self.tt_in[key] = tt
+				info = {
+					"ns": ns
+				}
+				self.tt_info[key] = info
 #				self.tc[key] = TCanvas("tc_{}".format(key), "tc_{}".format(key), 500, 500)
 #				SetOwnership(self.tc[key], 0)
 		
@@ -129,10 +135,7 @@ class analyzer:
 		# Event loops
 		self.loops = {}
 		for key, tt in self.tt_in.iteritems():
-			if self.food == 1:
-				self.loops[key] = event_loop(self, key)
-			elif self.food == 2:
-				self.loops[key] = event_loop(self, key, tup=tuples[key])
+			self.loops[key] = event_loop(self, key)
 	
 	def define_branches(self,
 		variables,               # A dictionary keyed by the outputbranch names and valued by the dimension
@@ -167,19 +170,19 @@ class event_loop:
 	def __init__(self,
 		ana,                # The analyzer it's in
 		key,                # Key used to identify the loop
-		n_default=100,              # The default number of events to run over (use "-1" for "all")
+		n_default=-1,               # The default number of events to run over (use "-1" for "all") (see "run" to see why)
 		progress=True,              # Turn on progress bar.
-		tup=None,
 	):
 		self.ana = ana
 		self.key = key
 		self.n_default = n_default
-		self.n = n_default
+		self.ns = self.ana.tt_info[self.key]["ns"]
+		self.n = sum(self.ns)
+		self.n_run = 0		# The number of events to loop over in the current "run".
 #		self.rand = True               # True: select the events randomly, False: select events from the beginning
 #		self.v = True                  # Verbose mode
 		tt_in = ana.tt_in[key]
 		self.progress = progress
-		self.tup = tup
 		# Apply cuts:
 		if hasattr(self.ana, "cut"):
 			gROOT.cd()
@@ -204,21 +207,19 @@ class event_loop:
 		if v: print "Fetching the number of events in {} ...".format(self.key)
 #		self.n_total = self.tt_in.GetEntries()                      # The total number of events in the input dataset
 		if self.ana.count:
-			self.n_total_list = root.tc_nevents(self.tt_in)             # The total number of events in each file of the input TChain
-#			self.n_total = self.tt_in.GetEntries()                      # The total number of events in the input dataset
-		else:		# THIS IS COMPLETELY WRONG, I NEED TO USE "tuple_n". When n = -1, this works fine (although it displays the wrong numbers).
-#			tuples = dataset.fetch_tuples(process=self.key, generation="spring15", suffix="pt400")		# KLUDGE
-			if self.ana.food == 1:
-				samples = dataset.fetch_samples(process=self.key)
-				tuples = []
-				for sample in samples:
-					tuples.extend([tup for tup in sample.tuples if tup.generation == "spring15" and tup.suffix == "pt400"])
-				self.n_total_list = [N for tup in tuples for N in tup.ns]
-			elif self.ana.food == 2:
-				if self.tup:
-					self.n_total_list = [self.tup.n]
-		self.n_total = sum(self.n_total_list)
-		if v: print "\tThere are {} events.".format(self.n_total)
+			self.ns = root.tc_nevents(self.tt_in)             # The total number of events in each file of the input TChain
+			self.n = sum(self.ns)
+		else:
+			if not self.ns:
+				print "This isn't implemented, yet!"
+				print "I have to use the key to look in the DB for tuple nevents"
+				sys.exit()
+#				samples = dataset.fetch_samples(process=self.key)
+#				tuples = []
+#				for sample in samples:
+#					tuples.extend([tup for tup in sample.tuples if tup.generation == "spring15" and tup.suffix == "pt400"])
+#				self.n_total_list = [N for tup in tuples for N in tup.ns]
+		if v: print "\tThere are {} events.".format(self.n)
 	
 	def run(self,
 		n=None,                 # The number of events to run over ("-1" means "all")
@@ -233,17 +234,18 @@ class event_loop:
 		self.update(v=v)
 		
 		# Parse n:
-		if n is None:
+		if n == None:
 			n = self.n_default
-		elif n == -1:
-			n = self.n_total
-		self.n = n
-		n_events_tt = self.n_total
-		if v: print "Processing the {} event loop ...\n\tOf the {} total events, I'm processing {} ({:.1f} %).".format(self.key, n_events_tt, n, (100*float(n)/n_events_tt, 100)[self.n == self.n_total])
+		if n == -1:
+			n = self.n
+		self.n_run = n
+		
+		n_events_tt = self.n
+		if v: print "Processing the {} event loop ...\n\tOf the {} total events, I'm processing {} ({:.1f} %).".format(self.key, n_events_tt, n, (100*float(n)/n_events_tt, 100)[n == self.n])
 		
 		# Two loop designs: (1) fewer than all events with rand on, (2) all events or rand off:
-		# (1):
-		if self.n != self.n_total and rand:
+		# (1):		THIS IS BROKEN!
+		if n != self.n and rand:
 			# Pick events:
 			ns_event = sorted(random.sample(range(n_events_tt), n))		# Pick n random events, sort them for speed.
 			self.ns = ns_event

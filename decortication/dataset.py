@@ -93,15 +93,6 @@ class dataset:
 		## "Name":
 		self.Name = "_".join(self.primary_keys.values())
 		self.Name_safe = self.Name.replace("-", "")
-		## "time":
-		if not self.time:
-			self.time = 1		# This puts the default "update time" far in the past.
-		## "das":
-		if hasattr(self, "das"):		# KLUDGE: I really need to make a defaults YAML
-			if self.das == None:
-				self.das = True
-		if self.kind == "tuple":
-			self.das = False
 		## "dir":
 		if self.path and not self.dir:
 			self.dir = self.path.split("/")[-1]
@@ -114,10 +105,16 @@ class dataset:
 			if os.path.exists(self.json_full):
 				set_ns(self, j=True)
 				set_files(self, j=True)
-			else:
-				print "ERROR (dataset.init): {} doesn't exist. Do a scan of this {} to save the json file.".format(self.json_full, self.kind)
+#			else:
+#				print "ERROR (dataset.init): {} doesn't exist. Do a scan of this {} to save the json file.".format(self.json_full, self.kind)
 		if not self.n and hasattr(self, "ns"):
 			self.n = sum(self.ns)
+		if not self.weight and self.kind == "miniaod":
+			self.set_connections(down=False, up=True)
+			try:
+				self.weight = self.sample.luminosity*self.sample.sigma/self.n
+			except:
+				pass
 		## Connect to any children:
 		if not isolated:
 			self.set_connections(down=True, up=False)
@@ -134,12 +131,15 @@ class dataset:
 		for var in variables.identifiers.keys():
 			if hasattr(self, var):
 				print "\t\t* {}: {}".format(var, getattr(self, var))
+		if hasattr(self, "name"): print "\t* name = {}".format(self.name)
 		print "\t* Last updated on {}".format(utilities.time_to_string(self.time))
-		if self.kind == "sample":
-			print "\t* Path: {}".format(self.path)
+		# Path and files:
+		if hasattr(self, "das"):
+			print "\t* Path: {} (das = {}, instance = {})".format(self.path, self.das, self.instance)
 		else:
-			print "\t* Path: {} (das={})".format(self.path, self.das)
-			if hasattr(self, "files"): print "\t\t* {} files".format(len(self.files))
+			print "\t* Path: {}".format(self.path)
+		if hasattr(self, "files"): print "\t\t* {} files".format(len(self.files))
+		# Parameters:
 		print "\t* n = {}, weight = {}".format(self.n, self.weight)
 		if hasattr(self, "sigma"):
 			print "\t* sigma = {}".format(self.sigma)
@@ -175,8 +175,8 @@ class dataset:
 	
 	
 	def scan(self, isolated=False, j=False):
-		print "Scanning {} ...".format(self.Name)
-		if self.kind == "miniaod": print "\t{}".format(self.name)
+#		print "Scanning {} ...".format(self.Name)
+#		if self.kind == "miniaod": print "\t{}".format(self.name)
 		info = dict(self.primary_keys)
 		
 		# "path":
@@ -215,8 +215,11 @@ class dataset:
 		
 		# "files", "ns", "n":
 		if self.kind != "sample":
-			set_files(self, j=j, DAS=self.das)
-			set_ns(self, j=j, DAS=self.das)
+			in_das = False
+			if hasattr(self, "das"):
+				in_das = self.das
+			set_files(self, j=j, DAS=in_das)
+			set_ns(self, j=j, DAS=in_das)
 			if len(self.files) > 0 and len(self.ns) > 0:
 				self.save_json()
 			else:
@@ -285,6 +288,7 @@ class dataset:
 		if hasattr(self, "sample"):
 			p = self.sample.path
 		if p:
+			print p
 			tuple_dirs = [d for d in listpath(p) if "tuple" in d]
 			for d in tuple_dirs:
 				pieces = d.split("_")
@@ -637,6 +641,8 @@ def fetch_tuples(category=None, suffix=None, subprocess=None, generation=None, p
 def prepare_fetch(kind, query):
 	# Check that "primary_keys" shares something with the keys of "kind":
 #	info = {key: value for key, value in query.items() if key in primary_keys_master[kind]}		# Take only primary keys that are primary keys of the kind.
+	if query == None:
+		query = {}
 	info = query
 #	if not info:
 #		print "ERROR (dataset.prepare_fetch): The primary keys you supplied have no overlap with the primary keys of the kind you wanted (\"{}\"):".format(kind)
@@ -680,7 +686,7 @@ def fetch_entry(kind, query, db_path=db_path_default, isolated=True):
 				return dataset(kind, info=d, isolated=isolated)
 		return None
 
-def fetch_entries(kind, query, db_path=db_path_default, isolated=True):
+def fetch_entries(kind, query=None, db_path=db_path_default, isolated=True):
 		cmd = prepare_fetch(kind, query)
 		if cmd:
 			# Open database:
@@ -875,9 +881,18 @@ def check_db(thing):		# Check if thing is in the database.
 		update = {}
 		for key, values in compare.items():
 			if sum(values) == 2:
-				if getattr(thing, key) != getattr(thing_db, key):
+				thing_new = getattr(thing, key)
+				thing_old = getattr(thing_db, key)
+				
+				# Comparison of floats needs special treatment:
+				if isinstance(thing_new, (int, float)) and isinstance(thing_old, (int, float)):
+					compare = utilities.isclose(thing_new, thing_old)
+				else:
+					compare = thing_new == thing_old
+				
+				if not compare:
 					print "The thing's value of {} is different from that in the DB:".format(key)
-					print "\t{} != {} (DB value)".format(getattr(thing, key), getattr(thing_db, key))
+					print "\t{} != {} (DB value)".format(thing_new, thing_old)
 					replace[key] = False
 					update[key] = True
 				else:
@@ -929,6 +944,7 @@ def set_files(thing, j=True, DAS=True):
 		if not files and DAS:		# Check DAS
 			print "Checking DAS for file list of {} ...".format(thing.Name)
 			result = das.get_info(thing.name, instance=thing.instance)
+#			print result["raw"]
 			files = result["files"]
 	thing.files = files
 	return files
@@ -999,6 +1015,35 @@ def fetch_connections(primary_keys):
 		return d
 	else:
 		return {}
+
+def sort_datasets(dss, collapse=True):
+# Given a list of datasets, sort it into a dictionary keyed by primary key tuples.
+	results = {}
+	for ds in dss:
+		key = [ds.kind]
+		key += [getattr(ds, k) for k in ["process", "generation", "suffix"]]
+		key = tuple(key)
+		if key not in results:
+			results[key] = []
+		results[key].append(ds)
+		key_n = len(key)
+	
+	# Collapse keys:
+	if collapse:
+		if len(set([k[0] for k in results.keys()])) != 1:		# If all of the kinds are the same.
+			return results
+		results_collapsed = {}
+		for keys, value in results.items():
+			print keys, value
+			i_collapse = []		# Items to remove
+			for i, key in enumerate(keys):
+				count = len([k[i] for k in results.keys() if k[i] == key])
+				if count == len(results):
+					i_collapse.append(i)
+			i_collapse.remove(1)		# The "process" should always be there.
+			results_collapsed["_".join([key for i, key in enumerate(keys) if i not in i_collapse])] = value
+		return results_collapsed
+	
 # /FUNCTIONS
 
 # VARIABLES:

@@ -145,11 +145,22 @@ class arguments:
 			setattr(self, "input", getattr(self.args, "input").split(","))
 		else:
 			setattr(self, "input", [])
+		# Set an attribute that's useful for querying the DB:
+		self.get_query()
 	
 	def Print(self):
 		for var, var_d in identifiers.items():
 			print "{}: {}".format(var, getattr(self, var))
 			print "{}: {}".format(var_d["plural"], getattr(self, var_d["plural"]))
+	
+	def get_query(self):
+		self.query = {}
+		for var, var_d in identifiers.items():
+			if var not in ["kind"]:
+				value = getattr(self, var_d["plural"])
+				if value:
+					self.query[var] = value
+		return self.query
 # /CLASSES
 
 # FUNCTIONS:
