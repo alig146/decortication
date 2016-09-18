@@ -1,0 +1,143 @@
+sample:
+    category:
+        type: text
+        default: !!null
+    process:
+        type: text
+        default: !!null
+    subprocess:
+        type: text
+        primary: True
+        default: PROCESS
+    name:
+        type: text
+        default: !!null
+    signal:
+        type: integer
+        default: 0
+    path:
+        type: text
+        default: !!null
+    luminosity:
+        type: real
+        default: 2177
+    parameter1:
+        type: real
+        default: !!null
+    parameter2:
+        type: real
+        default: !!null
+    parameter3:
+        type: real
+        default: !!null
+    parameter4:
+        type: real
+        default: !!null
+    sigma:
+        type: real
+        default: !!null
+    json:
+        type: text
+        default: !!null
+    time:
+        type: real
+        default: 0
+
+miniaod:
+    category:
+        type: text
+        default: PARENT
+    process:
+        type: text
+        default: PARENT
+    subprocess:
+        type: text
+        primary: True
+        default: PARENT
+    generation:
+        type: text
+        primary: True
+        default: !!null
+    name:
+        type: text
+        default: !!null
+    instance:
+        type: text
+        default: global
+    das:
+        type: integer
+        default: 1
+    path:
+        type: text
+        default: !!null
+    cut:
+        type: text
+        default: "1"
+    n:
+        type: integer
+        default: !!null
+    preweight:
+        type: real
+        default: 1
+    weight:
+        type: real
+        default: !!null
+    ttree:
+        type: text
+        default: Events
+    json:
+        type: text
+        default: !!null
+    lhe_path:
+        type: text
+        default: !!null
+    lhe_cut:
+        type: text
+        default: !!null
+    lhe_n:
+        type: integer
+        default: N
+    time:
+        type: real
+        default: 0
+
+tuple:
+    category:
+        type: text
+        default: PARENT
+    process:
+        type: text
+        default: PARENT
+    subprocess:
+        type: text
+        primary: True
+        default: !!null
+    generation:
+        type: text
+        primary: True
+        default: spring15
+    suffix:
+        type: text
+        primary: True
+        default: "1"
+    path:
+        type: text
+        default: !!null
+    cut:
+        type: text
+        default: "1"
+    n:
+        type: integer
+        default: !!null
+    preweight:
+        type: real
+        default: 1
+    weight:
+        type: real
+        default: PARENT
+    json:
+        type: text
+        default: !!null
+    time:
+        type: real
+        default: 0
