@@ -73,6 +73,7 @@ class dataset:
 		for key in self.primary_key_list:
 			self.primary_keys[key] = info[key]
 		db_info = fetch_info(primary_keys=self.primary_keys, kind=self.kind)
+#		print self.primary_keys
 		
 		# Compare "info" with "db_info" to construct "info_final":
 		info_final = {}
@@ -89,35 +90,32 @@ class dataset:
 		for key, value in info_final.items():
 			setattr(self, key, value)
 		
-		# Fill calculable and empty attributes:
+		# Fill "calculable" attributes:
 		## "Name":
 		self.Name = "_".join(self.primary_keys.values())
 		self.Name_safe = self.Name.replace("-", "")
 		## "dir":
-		if self.path and not self.dir:
+		if self.path:
 			self.dir = self.path.split("/")[-1]
-		## "json":
+		## "json" and "json_full":
 		if not self.json:
 			self.json = "{}/{}.json".format(json_dir_default, self.Name)
 		self.json_full = os.path.join(decortication.__path__[0], "..", self.json)
 		## "ns", "files":
-		if self.kind != "sample":
-			if os.path.exists(self.json_full):
-				set_ns(self, j=True)
-				set_files(self, j=True)
-#			else:
-#				print "ERROR (dataset.init): {} doesn't exist. Do a scan of this {} to save the json file.".format(self.json_full, self.kind)
-		if not self.n and hasattr(self, "ns"):
-			self.n = sum(self.ns)
-		if not self.weight and self.kind == "miniaod":
-			self.set_connections(down=False, up=True)
-			try:
-				self.weight = self.sample.luminosity*self.sample.sigma/self.n
-			except:
-				pass
-		## Connect to any children:
-		if not isolated:
-			self.set_connections(down=True, up=False)
+		if self.kind != "sample" and os.path.exists(self.json_full):
+			set_ns(self, j=True)
+			set_files(self, j=True)
+#		## "n":
+#		if not self.n and hasattr(self, "ns"):
+#			self.n = sum(self.ns)
+		## "lhe_file":
+		if hasattr(self, "lhe_path"):
+			if self.lhe_path:
+				self.lhe_file = self.lhe_path.split("/")[-1]
+		
+#		# Connect to any children:
+#		if not isolated:
+#			self.set_connections(down=True, up=False)
 	# :init
 	
 	
@@ -126,24 +124,57 @@ class dataset:
 	
 	
 	def Print(self):
+		# Basic stuff:
 		print "{} object".format(self.kind.capitalize())
 		print "\t* Identifiers:"
 		for var in variables.identifiers.keys():
 			if hasattr(self, var):
 				print "\t\t* {}: {}".format(var, getattr(self, var))
 		if hasattr(self, "name"): print "\t* name = {}".format(self.name)
+		print "\t* data: {}".format(bool(self.data))
 		print "\t* Last updated on {}".format(utilities.time_to_string(self.time))
 		# Path and files:
 		if hasattr(self, "das"):
-			print "\t* Path: {} (das = {}, instance = {})".format(self.path, self.das, self.instance)
+			print "\t* path: {} (das = {}, instance = {})".format(self.path, self.das, self.instance)
 		else:
-			print "\t* Path: {}".format(self.path)
-		if hasattr(self, "files"): print "\t\t* {} files".format(len(self.files))
+			print "\t* path: {}".format(self.path)
+		if hasattr(self, "files"):
+			print "\t\t* {} files".format(len(self.files))
+			print "\t\t* example file: {}".format(self.files[0])
 		# Parameters:
-		print "\t* n = {}, weight = {}".format(self.n, self.weight)
 		if hasattr(self, "sigma"):
 			print "\t* sigma = {}".format(self.sigma)
+		if hasattr(self, "luminosity"):
+			print "\t* luminosity = {}".format(self.luminosity)
+		if hasattr(self, "n"):
+			print "\t* n = {}".format(self.n)
+			print "\t* preweight = {}".format(self.preweight)
+			print "\t* weight = {}".format(self.weight)
+		# LHE:
+		if (not self.data) and (self.kind == "miniaod"):
+			print "\t* LHE information:"
+			print "\t\t* File: {}".format(self.lhe_file)
+			print "\t\t* Cut: {}".format(self.lhe_cut)
+			print "\t\t* Events: {}".format(self.lhe_n)
 		print
+	
+	def get_sample(self):
+		return fetch_sample(self.subprocess)
+	
+	def get_parent(self):
+		kind = infrastructure.get_kind(self.kind)
+		parent_kind = kind.get_parent()
+		return fetch_entry(parent_kind.name, {key: getattr(self, key) for key in parent_kind.get_primary_keys()})
+	
+	def set_lhe_n(self):
+		if not self.kind == "miniaod":
+			return False
+		else:
+			lhe_n = lhe.get_info(self.lhe_path)["nevents"]
+			return lhe_n
+	
+	
+	
 	
 	
 	def set_connections(self, down=True, up=False):
@@ -174,25 +205,24 @@ class dataset:
 		return good
 	
 	
-	def scan(self, isolated=False, j=False):
+	def scan(self, j=False):
 #		print "Scanning {} ...".format(self.Name)
 #		if self.kind == "miniaod": print "\t{}".format(self.name)
 		info = dict(self.primary_keys)
+		sample = self.get_sample()
 		
 		# "path":
 		if not self.path:
 			if self.kind == "sample":
 				self.path = data_dir + "/" + self.name
 			elif self.kind == "miniaod":
-				if hasattr(self, "sample"):
-					if self.sample.path:
-						self.path = self.sample.path + "/" + self.sample.name
+				if hasattr(sample, "path"):
+					self.path = sample.path + "/" + sample.name
 			elif self.kind == "tuple":
-				if hasattr(self, "sample"):
-					if self.sample.path:
-						self.path = self.sample.path + "/tuple_{}".format(self.Name)
+				if hasattr(sample, "path"):
+					self.path = sample.path + "/tuple_{}".format(self.Name)
 			if self.path:
-				self.dir = self.path.split("/")[-1]
+				self.dir = self.path.split("/")[-1]		# This is to keep "dir" defined because "self" isn't reinitilized.
 				info["path"] = self.path
 		elif self.path[-1] == "/":		# Erase trailing "/" in path if it exists.
 			self.path = self.path[:-1]
@@ -202,16 +232,6 @@ class dataset:
 		# "name_full", "instance":
 		if hasattr(self, "name"):
 			self.name_full = self.name
-		
-		## I used to build it in the following way, but I changed things, so "name" is "name_full".
-#		if self.kind == "miniaod" and not self.name_full:
-#			if hasattr(self, "sample"):
-#				self.name_full = "/{}/{}".format(self.sample.name, self.name)
-#				info["name_full"] = self.name_full
-#			if self.name_full:
-#				if self.name_full.split("/")[-1] == "USER":
-#					self.instance = "phys03"
-#					info["instance"] = self.instance
 		
 		# "files", "ns", "n":
 		if self.kind != "sample":
@@ -230,29 +250,29 @@ class dataset:
 				self.n = sum(self.ns)
 				info["n"] = self.n
 		
+		# "lhe_path":
+		if self.kind == "miniaod":
+			if not self.lhe_path and self.lhe_cut:
+				self.lhe_path = "{}/{}_cut{}.lhe".format(lhe_dir, self.subprocess, self.lhe_cut)
+				info["lhe_path"] = self.lhe_path
+		
+		# "lhe_n":
+		if self.kind == "miniaod":
+			if self.lhe_path and not self.lhe_n:
+				print "Getting nevents from {} ...".format(self.lhe_path)
+				lhe_n = self.set_lhe_n()
+				if lhe_n:
+					info["lhe_n"] = lhe_n
+		
 		# "weight":
-		if self.kind == "sample" and self.n:
-			self.weight = self.sigma*self.luminosity/self.n
+		if hasattr(self, "weight"):
+			self.weight = 1
+			if (not self.data) and (self.n):
+				self.weight = self.preweight*sample.sigma*sample.luminosity/self.n
 			info["weight"] = self.weight
-		else:
-			if hasattr(self, "sample"):
-				if self.sample.weight:
-					self.weight = self.sample.weight
-				else:
-					self.weight = self.sample.sigma*self.sample.luminosity/self.n
-				info["weight"] = self.weight
 		
 		# Update DB:
 		update_result = update_db(self.kind, info)
-		
-#		# Scan connections:
-#		if not isolated:
-#			if hasattr(self, "miniaods"):
-#				for miniaod in self.miniaods:
-#					miniaod.scan(isolated=True)
-#			if hasattr(self, "tuples"):
-#				for tup in self.tuples:
-#					tup.scan(isolated=True)
 		
 		return update_result
 	
@@ -262,24 +282,29 @@ class dataset:
 		return update_db(self.kind, info, db_path=db_path_default)
 	
 	
-	def fix(self):
-		info = dict(self.primary_keys)
+	def fix(self):		# Horrible name ...
+	# Compare self.info to db_info.
+		update_info = {}
 		
-		# Set "n" and "weight" for samples that don't have it.
-		if self.n == None and self.kind == "sample":
-			self.n = max(miniaod.n for miniaod in self.miniaods)
-			info["n"] = self.n
-		
-		if self.n and self.kind == "sample":
-			self.weight = self.sigma*self.luminosity/self.n
-			info["weight"] = self.weight
-		elif self.kind != "sample" and not self.weight:
-			if hasattr(self, "sample"):
-				self.weight = self.sample.weight
-				info["weight"] = self.weight
-		
-		# Update DB:
-		update_result = update_db(self.kind, info)
+		db_info = infrastructure.get_db_info()
+#		print db_info[self.kind]
+		for key, info in db_info[self.kind].items():
+			if getattr(self, key) == None:
+				value = info["default"]
+				if value != None:
+					if (not value.isdigit()) and (value == value.upper() and value not in ["PARENT"]):
+						value = info[value.lower()]
+					if value in ["PARENT"]:
+						parent = self.get_parent()
+						value = getattr(parent, key)
+				if value != None:
+					update_info[key] = value
+		if update_info:
+			for key, value in update_info.items():
+				setattr(self, key, value)
+			return self.update(update_info)
+		else:
+			return True
 	
 	
 	def find_tuples(self):
@@ -288,7 +313,7 @@ class dataset:
 		if hasattr(self, "sample"):
 			p = self.sample.path
 		if p:
-			print p
+#			print p
 			tuple_dirs = [d for d in listpath(p) if "tuple" in d]
 			for d in tuple_dirs:
 				pieces = d.split("_")
@@ -355,7 +380,7 @@ def explore_dataset_dir(d):
 	return result
 
 
-def parse_yaml(path=info_path_default):
+def parse_db_yaml(path=info_path_default):
 	ds_info = infrastructure.get_ds_info()
 	
 	datasets = {}
@@ -369,7 +394,7 @@ def parse_yaml(path=info_path_default):
 
 def write_db():
 	create_tables()
-	datasets = parse_yaml()
+	datasets = parse_db_yaml()
 	for kind, dss in datasets.items():
 		for ds in dss:
 			ds.write()
@@ -563,11 +588,11 @@ def fetch_info(subprocess=None, generation=None, suffix=None, kind="*", primary_
 	return {}
 
 
-def fetch_sample(subprocess, db_path=db_path_default, isolated=False):
+def fetch_sample(subprocess, db_path=db_path_default):
 	query = {
 		"subprocess": subprocess
 	}
-	return fetch_entry("sample", query, isolated=isolated)
+	return fetch_entry("sample", query)
 
 
 def fetch_samples(db_path=db_path_default, subprocess=None, process=None, category=None, isolated=False):
@@ -581,12 +606,12 @@ def fetch_samples(db_path=db_path_default, subprocess=None, process=None, catego
 	return fetch_entries("sample", query, isolated=isolated)
 
 
-def fetch_miniaod(subprocess, generation, db_path=db_path_default, isolated=False):
+def fetch_miniaod(subprocess, generation, db_path=db_path_default):
 	query = {
 		"subprocess": subprocess,
 		"generation": generation,
 	}
-	return fetch_entry("miniaod", query, isolated=isolated)
+	return fetch_entry("miniaod", query)
 
 
 def fetch_miniaods(subprocess, db_path=db_path_default, isolated=False):
@@ -967,7 +992,7 @@ def set_ns(thing, j=True, DAS=True):
 			ns = result["ns"]
 	thing.ns = ns
 	return ns
-	
+
 
 def fetch_connections(primary_keys):
 	print set(primary_keys.keys())
@@ -1040,7 +1065,10 @@ def sort_datasets(dss, collapse=True):
 				count = len([k[i] for k in results.keys() if k[i] == key])
 				if count == len(results):
 					i_collapse.append(i)
-			i_collapse.remove(1)		# The "process" should always be there.
+			try:
+				i_collapse.remove(1)		# The "process" should always be there.
+			except:
+				pass
 			results_collapsed["_".join([key for i, key in enumerate(keys) if i not in i_collapse])] = value
 		return results_collapsed
 	

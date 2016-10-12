@@ -5,7 +5,7 @@
 ####################################################################
 
 # IMPORTS:
-import os
+import os, sys
 import decortication
 from truculence import analysis
 # /IMPORTS
@@ -18,7 +18,11 @@ from truculence import analysis
 
 # FUNCTIONS:
 def get_crab_config(
-	miniaod=None,                              # A miniaod object (optional)
+	sample=None,                               # A sample object
+	miniaod=None,                              # A miniaod object
+	generation="",
+	suffix="",
+	instance="",
 	cmssw_config="fatjetproducer_cfg.py",
 	cmssw_params={                              # The CMSSW configuration file parameters (these all get converted to strings)
 		"crab": True,
@@ -29,22 +33,28 @@ def get_crab_config(
 	mass=200,
 ):
 	# Parse arguments and set other variables:
+	dataset_name = ""
 	## Basic stuff:
-	miniaod.set_connections(down=False, up=True)
-	sample = miniaod.sample
+	if not sample and not miniaod:
+		print "ERROR: Right now, crab_create needs a sample or a miniaod."
+		sys.exit()
+	elif miniaod:
+		miniaod.set_connections(down=False, up=True)
+		sample = miniaod.sample
+		generation = miniaod.generation
+		instance = miniaod.instance
+		if units == -1:
+			units = miniaod.n
+		dataset_name = miniaod.name
 	process = sample.process
-	subprocess = miniaod.subprocess
-	generation = miniaod.generation
-	suffix = "pt{}".format(cut_pt_filter)
-	instance = miniaod.instance
+	subprocess = sample.subprocess
 	
-	## Units:
-	if units == -1:
-		units = miniaod.n
 	## CMSSW parameters:
 	cmssw_params["subprocess"] = subprocess
 	cmssw_params["generation"] = generation
-	cmssw_params["suffix"] = suffix
+	if kind == "tuple":
+		suffix = "pt{}".format(cut_pt_filter)
+		cmssw_params["suffix"] = suffix
 #	cmssw_params["dataset"] = dataset.name                    # See comment on line above.
 #	cmssw_params["cmssw"] = analysis.get_cmssw()              # I stopped using this. The version is found inside of the CMSSW config. (Not changed for jets.)
 	if "tuple" in kind:
@@ -66,7 +76,7 @@ def get_crab_config(
 	template = template.replace("%%SUBPROCESS%%", subprocess)
 	template = template.replace("%%GENERATION%%", generation)
 	template = template.replace("%%SUFFIX%%", suffix)
-	template = template.replace("%%DATASET%%", miniaod.name)
+	template = template.replace("%%DATASET%%", dataset_name)
 	template = template.replace("%%NAME%%", sample.name)
 	template = template.replace("%%CMSSWCONFIG%%", cmssw_config)
 	template = template.replace("%%LISTOFPARAMS%%", params_str)

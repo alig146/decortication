@@ -4,69 +4,104 @@ sqto4j:
           signal: True
           ms: [150, 110]
           sigma: 249.409
-          n: 1000000
-          lhe_cut: pt200
           miniaods:
               - generation: spring15
-                name: elhughes-Sq150To4J-a8bc5525fb601f2f2f57bdb9ea72969e/USER
+                name: /Sq150To4J/elhughes-Sq150To4J-a8bc5525fb601f2f2f57bdb9ea72969e/USER
                 das: False
+                lhe_cut: pt200
+                preweight: 0.094801
               - generation: spring15-cutht700
                 name: /Sq150To4J/elhughes-Sq400To4J_cutht700-a8bc5525fb601f2f2f57bdb9ea72969e/USER
                 instance: phys03
                 das: True
+                lhe_cut: ht700
+                preweight: 0.004135
+              - generation: "0706"
+                name: /Sq150To4J/elhughes-Sq150To4J-cf982d5067f9ff6013ec5c92fa302b00/USER
+                instance: phys03
+                das: True
+                lhe_cut: pt200
+                preweight: 0.094801
+                
     
     sq200to4j:
         - name: Sq200To4J
           signal: True
           ms: [200, 150]
           sigma: 64.5085
-          n: 1000000
-          lhe_cut: pt200
           miniaods:
               - generation: spring15
-                name: elhughes-Sq200To4J-a8bc5525fb601f2f2f57bdb9ea72969e/USER
+                name: /Sq200To4J/elhughes-Sq200To4J-a8bc5525fb601f2f2f57bdb9ea72969e/USER
                 das: False
+                lhe_cut: pt200
+                preweight: 0.131616
+              - generation: "0706"
+                name: /Sq200To4J/elhughes-Sq200To4J-cf982d5067f9ff6013ec5c92fa302b00/USER
+                instance: phys03
+                das: True
+                lhe_cut: pt200
+                preweight: 0.131616
     
     sq250to4j:
         - name: Sq250To4J
           signal: True
           ms: [250, 190]
           sigma: 21.5949
-          n: 1000000
-          lhe_cut: pt200
           miniaods:
               - generation: spring15
-                name: elhughes-Sq250To4J-a8bc5525fb601f2f2f57bdb9ea72969e/USER
+                name: /Sq250To4J/elhughes-Sq250To4J-a8bc5525fb601f2f2f57bdb9ea72969e/USER
                 das: False
+                lhe_cut: pt200
+                preweight: 0.207295
+              - generation: "0706"
+                name: /Sq250To4J/elhughes-Sq250To4J-cf982d5067f9ff6013ec5c92fa302b00/USER
+                instance: phys03
+                das: True
+                lhe_cut: pt200
+                preweight: 0.207295
     
     sq300to4j:
         - name: Sq300To4J
           signal: True
           ms: [300, 230]
           sigma: 8.51615
-          n: 1000000
-          lhe_cut: pt200
           miniaods:
               - generation: spring15
-                name: elhughes-SqToJJJJ_300-a8bc5525fb601f2f2f57bdb9ea72969e/USER
+                name: /Sq300To4J/elhughes-SqToJJJJ_300-a8bc5525fb601f2f2f57bdb9ea72969e/USER
                 das: False
+                lhe_cut: pt200
+                preweight: 0.293902
               - generation: spring15-inverted
                 name: /Sq300To4J/elhughes-Sq300To4J_Inverted-a8bc5525fb601f2f2f57bdb9ea72969e/USER
                 instance: phys03
                 das: True
+                lhe_cut: pti200
+                preweight: 0.706098
+              - generation: "0706"
+                name: /Sq300To4J/elhughes-Sq300To4J-cf982d5067f9ff6013ec5c92fa302b00/USER
+                instance: phys03
+                das: True
+                lhe_cut: pt200
+                preweight: 0.293902
     
     sq400to4j:
         - name: Sq400To4J
           signal: True
           ms: [400, 300]
           sigma: 1.83537
-          n: 1000000
-          lhe_cut: pt200
           miniaods:
               - generation: spring15
                 name: /Sq400To4J/elhughes-Sq400To4J-a8bc5525fb601f2f2f57bdb9ea72969e/USER
                 instance: phys03
                 das: True
+                lhe_cut: pt200
+                preweight: 0.458053
+              - generation: "0706"
+                name: /Sq400To4J/elhughes-Sq400To4J-cf982d5067f9ff6013ec5c92fa302b00/USER
+                instance: phys03
+                das: True
+                lhe_cut: pt200
+                preweight: 0.458053
     
     sq500to4j:
         - name: Sq500To4J
@@ -82,7 +117,7 @@ sqto2j:
           sigma: 1521.11
           miniaods:
               - generation: spring15
-                name: algomez-RunIISpring15DR74_MiniAOD_Asympt25ns-612faf0bd9dc3ce1d1b2e0252700e0a7/USER
+                name: /RPVStopStopToJets_UDD312_M-100-madgraph/algomez-RunIISpring15DR74_MiniAOD_Asympt25ns-612faf0bd9dc3ce1d1b2e0252700e0a7/USER
                 n: 10887
     
     sq200to2j:
@@ -92,7 +127,7 @@ sqto2j:
           sigma: 64.5085
           miniaods:
               - generation: spring15
-                name: algomez-RunIISpring15DR74_MiniAOD_Asympt25ns-612faf0bd9dc3ce1d1b2e0252700e0a7/USER
+                name: /RPVStopStopToJets_UDD312_M-200-madgraph/algomez-RunIISpring15DR74_MiniAOD_Asympt25ns-612faf0bd9dc3ce1d1b2e0252700e0a7/USER
                 n: 54174
     
     sq350to2j:
@@ -102,7 +137,7 @@ sqto2j:
           sigma: 3.78661
           miniaods:
               - generation: spring15
-                name: algomez-RunIISpring15DR74_MiniAOD_Asympt25ns-612faf0bd9dc3ce1d1b2e0252700e0a7/USER
+                name: /RPVStopStopToJets_UDD312_M-350-madgraph/algomez-RunIISpring15DR74_MiniAOD_Asympt25ns-612faf0bd9dc3ce1d1b2e0252700e0a7/USER
                 n: 11293
     
     sq800to2j:
@@ -112,7 +147,7 @@ sqto2j:
           sigma: 0.0283338
           miniaods:
               - generation: spring15
-                name: algomez-RunIISpring15DR74_MiniAOD_Asympt25ns-612faf0bd9dc3ce1d1b2e0252700e0a7/USER
+                name: /RPVStopStopToJets_UDD312_M-800-madgraph/algomez-RunIISpring15DR74_MiniAOD_Asympt25ns-612faf0bd9dc3ce1d1b2e0252700e0a7/USER
                 n: 4784
 qcd:
     qcdp:
@@ -122,7 +157,7 @@ qcd:
           sigma: 19204300.0
           miniaods:
               - generation: spring15
-                name: RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/MINIAODSIM
+                name: /QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/MINIAODSIM
                 n: 4978425
           analyze: False
         
@@ -132,7 +167,7 @@ qcd:
           sigma: 2762530.0
           miniaods:
               - generation: spring15
-                name: RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM
+                name: /QCD_Pt_80to120_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM
                 n: 3424782
           analyze: False
         
@@ -142,7 +177,7 @@ qcd:
           sigma: 471100.0
           miniaods:
               - generation: spring15
-                name: RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM
+                name: /QCD_Pt_120to170_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM
                 n: 3452896
           analyze: False
         
@@ -152,7 +187,7 @@ qcd:
           sigma: 117276.0
           miniaods:
               - generation: spring15
-                name: RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/MINIAODSIM
+                name: /QCD_Pt_170to300_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/MINIAODSIM
                 n: 3364368
           analyze: False
         
@@ -173,7 +208,7 @@ qcd:
           sigma: 648.2
           miniaods:
               - generation: spring15
-                name: RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/MINIAODSIM
+                name: /QCD_Pt_470to600_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/MINIAODSIM
               - generation: fall15
                 name: /QCD_Pt_470to600_TuneCUETP8M1_13TeV_pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM
         
@@ -183,7 +218,7 @@ qcd:
           sigma: 186.9
           miniaods:
               - generation: spring15
-                name: RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v3/MINIAODSIM
+                name: /QCD_Pt_600to800_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v3/MINIAODSIM
                 n: 1964128
               - generation: fall15
                 name: /QCD_Pt_600to800_TuneCUETP8M1_13TeV_pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM
@@ -194,7 +229,7 @@ qcd:
           sigma: 32.293
           miniaods:
               - generation: spring15
-                name: RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/MINIAODSIM
+                name: /QCD_Pt_800to1000_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/MINIAODSIM
                 n: 1937216
               - generation: fall15
                 name: /QCD_Pt_800to1000_TuneCUETP8M1_13TeV_pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM
@@ -205,7 +240,7 @@ qcd:
           sigma: 9.4183
           miniaods:
               - generation: spring15
-                name: RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM
+                name: /QCD_Pt_1000to1400_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM
                 n: 1487136
               - generation: fall15
                 name: /QCD_Pt_1000to1400_TuneCUETP8M1_13TeV_pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM
@@ -216,7 +251,7 @@ qcd:
           sigma: 0.84265
           miniaods:
               - generation: spring15
-                name: RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM
+                name: /QCD_Pt_1400to1800_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM
                 n: 197959
               - generation: fall15
                 name: /QCD_Pt_1400to1800_TuneCUETP8M1_13TeV_pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM
@@ -257,7 +292,7 @@ qcd:
           sigma: 27540000.0
           miniaods:
               - generation: spring15
-                name: RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/MINIAODSIM
+                name: /QCD_HT100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/MINIAODSIM
                 n: 80093092
           analyze: False
         
@@ -267,7 +302,7 @@ qcd:
           sigma: 1717000.0
           miniaods:
               - generation: spring15
-                name: RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/MINIAODSIM
+                name: /QCD_HT200to300_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/MINIAODSIM
                 n: 18717349
           analyze: False
         
@@ -277,7 +312,7 @@ qcd:
           sigma: 351300.0
           miniaods:
               - generation: spring15
-                name: RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/MINIAODSIM
+                name: /QCD_HT300to500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/MINIAODSIM
                 n: 20086103
           analyze: False
         
@@ -287,7 +322,7 @@ qcd:
           sigma: 31630.0
           miniaods:
               - generation: spring15
-                name: RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM
+                name: /QCD_HT500to700_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM
                 n: 19542847
               - generation: fall15
                 name: /QCD_HT500to700_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM
@@ -298,7 +333,7 @@ qcd:
           sigma: 6802.0
           miniaods:
               - generation: spring15
-                name: RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM
+                name: /QCD_HT700to1000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM
                 n: 15011016
               - generation: fall15
                 name: /QCD_HT700to1000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM
@@ -309,7 +344,7 @@ qcd:
           sigma: 1206.0
           miniaods:
               - generation: spring15
-                name: RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/MINIAODSIM
+                name: /QCD_HT1000to1500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/MINIAODSIM
                 n: 4963895
               - generation: fall15
                 name: /QCD_HT1000to1500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM
@@ -320,7 +355,7 @@ qcd:
           sigma: 120.4
           miniaods:
               - generation: spring15
-                name: RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM
+                name: /QCD_HT1500to2000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM
                 n: 3848411
               - generation: fall15
                 name: /QCD_HT1500to2000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM
@@ -331,7 +366,7 @@ qcd:
           sigma: 25.25
           miniaods:
               - generation: spring15
-                name: RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM
+                name: /QCD_HT2000toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM
                 n: 1961774
               - generation: fall15
                 name: /QCD_HT2000toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM
@@ -345,7 +380,7 @@ ttbar:
           n: 42730273
           miniaods:
               - generation: spring15
-                name: RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM
+                name: /TTJets_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM
                 n: 42730273
               - generation: fall15
                 name: /TTJets_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM
@@ -354,13 +389,13 @@ data:
     jetht:
         - name: JetHT
           subprocess: jethtd
-          sigma: 1
+          data: 1
           miniaods:
               - generation: "0706"
                 name: /JetHT/Run2015D-16Dec2015-v1/MINIAOD
         - name: JetHT
           subprocess: jethtc
-          sigma: 1
+          data: 1
           miniaods:
               - generation: "0706"
                 name: /JetHT/Run2015C_25ns-16Dec2015-v1/MINIAOD

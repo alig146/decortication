@@ -3,6 +3,7 @@ import numpy
 #import samples
 import argparse       # For commandline options
 from collections import OrderedDict
+from decortication import infrastructure
 # /IMPORTS
 
 # VARIABLES:
@@ -17,6 +18,7 @@ tt_names = {		# Should I store this in the DB?
 	"tuple": "analyzer/events",
 	"miniaod": "Events",
 }
+all_kinds = infrastructure.get_db_info().keys()
 # :VARIABLES
 
 # CLASSES:
@@ -71,7 +73,7 @@ class arguments:
 			"-k", "--kind", dest="kind",
 			type=str,
 			default=None,
-			help="The sample kind",
+			help="The kind of dataset",
 			metavar="STR"
 		)
 		parser.add_argument(

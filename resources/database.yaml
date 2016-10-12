@@ -12,6 +12,9 @@ sample:
     name:
         type: text
         default: !!null
+    data:
+        type: integer
+        default: 0
     signal:
         type: integer
         default: 0
@@ -61,6 +64,9 @@ miniaod:
     name:
         type: text
         default: !!null
+    data:
+        type: integer
+        default: PARENT
     instance:
         type: text
         default: global
@@ -81,7 +87,7 @@ miniaod:
         default: 1
     weight:
         type: real
-        default: !!null
+        default: 1
     ttree:
         type: text
         default: Events
@@ -120,6 +126,9 @@ tuple:
         type: text
         primary: True
         default: "1"
+    data:
+        type: integer
+        default: PARENT
     path:
         type: text
         default: !!null
