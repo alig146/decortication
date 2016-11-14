@@ -39,8 +39,7 @@ def get_crab_config(
 		print "ERROR: Right now, crab_create needs a sample or a miniaod."
 		sys.exit()
 	elif miniaod:
-		miniaod.set_connections(down=False, up=True)
-		sample = miniaod.sample
+		sample = miniaod.get_sample()
 		generation = miniaod.generation
 		instance = miniaod.instance
 		if units == -1:
@@ -59,7 +58,7 @@ def get_crab_config(
 #	cmssw_params["cmssw"] = analysis.get_cmssw()              # I stopped using this. The version is found inside of the CMSSW config. (Not changed for jets.)
 	if "tuple" in kind:
 		cmssw_params["cutPtFilter"] = cut_pt_filter
-		cmssw_params["cutPtFilter"] = cut_pt_filter
+		cmssw_params["data"] = sample.data
 	params_str = "[\n"
 	for key, value in cmssw_params.iteritems():
 		params_str += "\t'{}={}',\n".format(key, value)
@@ -80,9 +79,12 @@ def get_crab_config(
 	template = template.replace("%%NAME%%", sample.name)
 	template = template.replace("%%CMSSWCONFIG%%", cmssw_config)
 	template = template.replace("%%LISTOFPARAMS%%", params_str)
-	template = template.replace("%%UNITS%%", str(units))
+#	template = template.replace("%%UNITS%%", str(units))
 #	template = template.replace("%%CMSSW%%", analysis.get_cmssw())
 	template = template.replace("%%INSTANCE%%", instance)
+	if sample.mask: template = template.replace("%%MASK%%", "configure.Data.lumiMask = '{}'".format(sample.mask))
+	else: template = template.replace("%%MASK%%", "")
+	
 	
 	return template
 # /FUNCTIONS

@@ -9,7 +9,6 @@ import os, yaml, json, re, sys
 from collections import OrderedDict
 from time import time
 import sqlite3
-from time import time
 from subprocess import Popen, PIPE
 from truculence import analysis, das, crab, lhe, utilities
 import decortication
@@ -51,6 +50,7 @@ class dataset:
 	def __init__(self, kind, info=None, category=None, process=None, subprocess=None, generation=None, suffix=None, isolated=False):
 		if not info:
 			info = {}
+		self.info = info
 		# "kind", "primary_key_list":
 		self.kind = kind
 		if kind in keys_db:
@@ -151,7 +151,7 @@ class dataset:
 			print "\t* preweight = {}".format(self.preweight)
 			print "\t* weight = {}".format(self.weight)
 		# LHE:
-		if (not self.data) and (self.kind == "miniaod"):
+		if hasattr(self, "lhe_file"):
 			print "\t* LHE information:"
 			print "\t\t* File: {}".format(self.lhe_file)
 			print "\t\t* Cut: {}".format(self.lhe_cut)
@@ -265,10 +265,15 @@ class dataset:
 					info["lhe_n"] = lhe_n
 		
 		# "weight":
-		if hasattr(self, "weight"):
-			self.weight = 1
-			if (not self.data) and (self.n):
-				self.weight = self.preweight*sample.sigma*sample.luminosity/self.n
+		if self.kind == "miniaod":
+			if self.data:
+				self.weight = 1
+			else:
+				if self.n:
+					self.weight = self.preweight*sample.sigma*sample.luminosity/self.n
+				else:
+					print "WARNING (dataset.py): Trying to set the weight when the necessary variables aren't defined."
+					self.weight == None
 			info["weight"] = self.weight
 		
 		# Update DB:
@@ -287,18 +292,23 @@ class dataset:
 		update_info = {}
 		
 		db_info = infrastructure.get_db_info()
-#		print db_info[self.kind]
 		for key, info in db_info[self.kind].items():
-			if getattr(self, key) == None:
-				value = info["default"]
-				if value != None:
-					if (not value.isdigit()) and (value == value.upper() and value not in ["PARENT"]):
-						value = info[value.lower()]
-					if value in ["PARENT"]:
-						parent = self.get_parent()
-						value = getattr(parent, key)
-				if value != None:
-					update_info[key] = value
+#			print key, info
+			value_new = None
+			value_default = info["default"]
+			if isinstance(value_default, str):
+				if (not value_default.isdigit()) and value_default == value_default.upper() and value_default not in ["PARENT"]:
+					if value_default.lower() in update_info:
+						value_new = info[value_default.lower()]
+					else:
+						value_new = getattr(self, value_default.lower())
+				if value_default in ["PARENT"]:
+					parent = self.get_parent()
+					value_new = getattr(parent, key)
+			elif getattr(self, key) == None:
+				value_new = value_default
+			if value_new != None:
+				update_info[key] = value_new
 		if update_info:
 			for key, value in update_info.items():
 				setattr(self, key, value)
@@ -380,20 +390,24 @@ def explore_dataset_dir(d):
 	return result
 
 
-def parse_db_yaml(path=info_path_default):
-	ds_info = infrastructure.get_ds_info()
+def parse_db_yaml(path=info_path_default, completed=True):
+	ds_info = infrastructure.get_ds_info(completed=completed)
 	
 	datasets = {}
-	for kind, info_list in ds_info.iteritems():
-		datasets[kind] = []
+	for k, info_list in ds_info.iteritems():
+		# Kind information:
+		kind = infrastructure.get_kind(k)
+#		primary_keys = kind.get_primary_keys()
+		
+		datasets[kind.name] = []
 		for info in info_list:
-			datasets[kind].append(dataset(kind, info=info, isolated=True))
+			datasets[kind.name].append(dataset(kind.name, info=info, isolated=True))
 	
 	return datasets
 
 
 def write_db():
-	create_tables()
+	infrastructure.create_tables()
 	datasets = parse_db_yaml()
 	for kind, dss in datasets.items():
 		for ds in dss:
@@ -488,43 +502,6 @@ def get_subprocess(path=info_path_default, name=None):
 		subprocesses = [ds["subprocess"] for ds in dss]
 	
 	return subprocesses
-
-
-def create_table(keys, name, db_path=db_path_default, v=True):
-	conn = sqlite3.connect(db_path)
-	c = conn.cursor()
-	
-	cmd = "CREATE TABLE {} (".format(name)
-	cmd_primary = "PRIMARY KEY("
-	for key, values in keys.items():
-		dtype = values[0]
-		primary = values[1]
-		cmd += "{} {}, ".format(key, dtype.upper())
-		if primary:
-			cmd_primary += "{}, ".format(key)
-	cmd_primary = cmd_primary[:-2] + ")"
-	cmd = cmd + cmd_primary + ")"
-	
-	if v: print cmd
-	
-	try:
-		c.execute(cmd)
-	except Exception as ex:
-		print ex
-		return False
-	else:
-		conn.commit()
-		return True
-
-
-def create_tables(v=False):
-	good = True
-	
-	for name in keys_db.keys():
-		good *= create_table(keys_db[name], name, v=v)
-		if not good: print "WARNING (dataset.create_tables): '{}' table not created.".format(name)
-	
-	return good
 
 
 def sync_yaml(write_nones=False):
@@ -713,6 +690,7 @@ def fetch_entry(kind, query, db_path=db_path_default, isolated=True):
 
 def fetch_entries(kind, query=None, db_path=db_path_default, isolated=True):
 		cmd = prepare_fetch(kind, query)
+		
 		if cmd:
 			# Open database:
 			conn = sqlite3.connect(db_path)
@@ -730,10 +708,10 @@ def fetch_entries(kind, query=None, db_path=db_path_default, isolated=True):
 				if raws:
 					results = []
 					for raw in raws:
+#						print raw
 						d = {}
 						for i, key in enumerate(keys_db[kind].keys()):
 							d[key] = raw[i]
-#						print d
 						results.append(dataset(kind, info=d, isolated=isolated))
 					return results
 		return []
@@ -1059,7 +1037,7 @@ def sort_datasets(dss, collapse=True):
 			return results
 		results_collapsed = {}
 		for keys, value in results.items():
-			print keys, value
+#			print keys, value
 			i_collapse = []		# Items to remove
 			for i, key in enumerate(keys):
 				count = len([k[i] for k in results.keys() if k[i] == key])

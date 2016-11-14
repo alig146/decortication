@@ -1,9 +1,11 @@
 sample:
     category:
         type: text
+        primary: True
         default: !!null
     process:
         type: text
+        primary: True
         default: !!null
     subprocess:
         type: text
@@ -42,6 +44,9 @@ sample:
     json:
         type: text
         default: !!null
+    mask:
+        type: text
+        default: !!null
     time:
         type: real
         default: 0
@@ -49,9 +54,11 @@ sample:
 miniaod:
     category:
         type: text
+        primary: True
         default: PARENT
     process:
         type: text
+        primary: True
         default: PARENT
     subprocess:
         type: text
@@ -110,9 +117,11 @@ miniaod:
 tuple:
     category:
         type: text
+        primary: True
         default: PARENT
     process:
         type: text
+        primary: True
         default: PARENT
     subprocess:
         type: text

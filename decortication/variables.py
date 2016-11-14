@@ -132,6 +132,11 @@ class arguments:
 			help="Verbose level ('0' is lowest)",
 			metavar="INT"
 		)
+		parser.add_argument(
+			"-j", "--json", dest="json",
+			action='store_true',
+			help="A JSON switch",
+		)
 		
 		self.args = parser.parse_args()
 		# Parse identifiers:

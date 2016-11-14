@@ -7,8 +7,8 @@ process = "%%PROCESS%%"           # "qcdp", "sq150to4j", etc.
 subprocess = "%%SUBPROCESS%%"     # "qcdp50", "sq150to4j", etc. This is used in the output name.
 generation = "%%GENERATION%%"
 suffix = "%%SUFFIX%%"
-n = 10000                         # Number of events per job.
-units = %%UNITS%%                 # The number of events to run over
+n = 200000                         # Number of events per job.
+#units = %%UNITS%%                 # The number of events to run over (only necessary when generating!)
 # /Variables
 
 configure.General.requestName = '{0}_{1}_{2}_{3}'.format(kind, subprocess, generation, suffix)
@@ -24,10 +24,11 @@ configure.Data.inputDBS = '%%INSTANCE%%'             # "global" (official), "phy
 
 configure.Data.splitting = 'EventAwareLumiBased'
 configure.Data.unitsPerJob = n
-configure.Data.totalUnits = units
+#configure.Data.totalUnits = units
 configure.Data.outLFNDirBase = '/store/user/elhughes'         # Only other option: "/store/group/<groupname>/<subdir>"
 configure.Data.publication = False
 configure.Data.outputDatasetTag = '{0}_{1}_{2}_{3}'.format(kind, subprocess, generation, suffix)
+%%MASK%%
 
 configure.JobType.maxMemoryMB = 5000
 

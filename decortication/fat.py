@@ -49,6 +49,16 @@ def get_pair(event, cut_pt=400, cut_m=50, cut_eta=2.5, alg="ca12", pf=True, v=Fa
 	jecs = getattr(event, "{0}_jec".format(prefix))
 	jmcs = getattr(event, "{0}_jmc".format(prefix))
 	
+	# JetID variables:
+	neef = getattr(event, "{0}_neef".format(prefix))    # Neutral EM energy fraction
+	ceef = getattr(event, "{0}_ceef".format(prefix))    # Charged EM energy fraction
+	nhef = getattr(event, "{0}_nhef".format(prefix))    # Neutral hadron energy fraction
+	chef = getattr(event, "{0}_chef".format(prefix))    # Charged hadron energy fraction
+	mef = getattr(event, "{0}_mef".format(prefix))      # Muon energy fraction
+	nm = getattr(event, "{0}_nm".format(prefix))        # Neutral multiplicity
+	cm = getattr(event, "{0}_cm".format(prefix))        # Charged multiplicity
+	n = getattr(event, "{0}_n".format(prefix))          # Number of constituents
+	
 	# Make jet objects for the event:
 	jets = []
 	for i, pt in enumerate(pts):
@@ -58,13 +68,25 @@ def get_pair(event, cut_pt=400, cut_m=50, cut_eta=2.5, alg="ca12", pf=True, v=Fa
 #		eta = etas[i]
 #		phi = phis[i]
 ##		theta = thetas[i]
-		jet_temp = physics.jet(pxs[i], pys[i], pzs[i], es[i], tau=(tau1s[i], tau2s[i], tau3s[i], tau4s[i]), jec=jecs[i])
+		jet_temp = physics.jet(pxs[i], pys[i], pzs[i], es[i], tau=(tau1s[i], tau2s[i], tau3s[i], tau4s[i]), jec=jecs[i], index=i)
 #		if pt != jet_temp.pt:		# This fails with JECs
 #			print "ERROR:", i, pt, jet_temp.pt
 		jet_temp.m_t = mts[i]*jmcs[i]
 		jet_temp.m_p = mps[i]*jmcs[i]
 		jet_temp.m_s = mss[i]*jmcs[i]
 		jet_temp.m_f = mfs[i]*jmcs[i]
+		
+		# Assign a JetID variable:
+		jet_temp.jetid = False		# True means "passed".
+		if (nhef[i] < 0.99 and neef[i] < 0.99 and n[i] > 1):		# Loose
+#		if (nhef[i] < 0.90 and neef[i] < 0.90 and n[i] > 1):		# Tight
+			if abs(jet_temp.eta) <= 2.4:
+#				jet_temp.jetid = True
+				if (ceef[i] < 0.99 and chef[i] > 0 and cm[i] > 0):		# Loose and tight are the same here.
+					jet_temp.jetid = True
+			else:
+				jet_temp.jetid = True
+		
 		jets.append(jet_temp)
 #		print i, eta, jet_temp.eta
 #		print i, phi, jet_temp.phi, " ({}, {}, {})".format(pxs[i], pys[i], pzs[i])
@@ -72,9 +94,12 @@ def get_pair(event, cut_pt=400, cut_m=50, cut_eta=2.5, alg="ca12", pf=True, v=Fa
 	pair = False
 	
 	if leading:
-		jets = [j for j in jets if (j.pt >= cut_pt) and (abs(j.eta) <= cut_eta)]		# This results in a bug
-		if len(jets) >= 2:
-			pair = (jets[0], jets[1])
+		jet_candidates = []
+		for j in jets:
+			if (j.pt >= cut_pt) and (abs(j.eta) <= cut_eta) and (j.jetid):
+				jet_candidates.append(j)
+		if len(jet_candidates) >= 2:
+			pair = (jet_candidates[0], jet_candidates[1])
 	else:
 		# Apply cuts:
 		jets = [j for j in jets if (j.pt >= cut_pt) and (abs(j.eta) <= cut_eta)]

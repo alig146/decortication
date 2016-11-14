@@ -1,4 +1,18 @@
 sqto4j:
+    sq100to4j:
+        - name: Sq100To4J
+          signal: True
+          ms: [100, 75]
+          sigma: 1521.11
+          miniaods:
+              - generation: "0706"
+                name: /Sq100To4J/elhughes-sq100to4j-miniaod-928d46295c808b28c2560dd199b08897/USER
+                instance: phys03
+                das: True
+                lhe_cut: ht700
+                lhe_n: 100000
+                preweight: 0.0031
+    
     sq150to4j:
         - name: Sq150To4J
           signal: True
@@ -11,18 +25,24 @@ sqto4j:
                 lhe_cut: pt200
                 preweight: 0.094801
               - generation: spring15-cutht700
-                name: /Sq150To4J/elhughes-Sq400To4J_cutht700-a8bc5525fb601f2f2f57bdb9ea72969e/USER
+                name: /Sq150To4J/elhughes-Sq400To4J_cutht700-a8bc5525fb601f2f2f57bdb9ea72969e/USER      # Yes, the "400" was a dumb mistake.
                 instance: phys03
                 das: True
                 lhe_cut: ht700
                 preweight: 0.004135
               - generation: "0706"
-                name: /Sq150To4J/elhughes-Sq150To4J-cf982d5067f9ff6013ec5c92fa302b00/USER
+                name: /Sq150To4J/elhughes-sq150to4j-miniaod-928d46295c808b28c2560dd199b08897/USER       # 200k events? I'm confused how I made this.
+#                name: /Sq150To4J/elhughes-Sq150To4J-aff3800c3b8b61b9936a7804dfb4c651/USER
                 instance: phys03
                 das: True
-                lhe_cut: pt200
-                preweight: 0.094801
-                
+                lhe_cut: ht700
+                preweight: 0.04135
+#              - generation: "0706"       # 161026: Commented out.
+#                name: /Sq150To4J/elhughes-Sq150To4J-cf982d5067f9ff6013ec5c92fa302b00/USER
+#                instance: phys03
+#                das: True
+#                lhe_cut: pt200
+#                preweight: 0.094801
     
     sq200to4j:
         - name: Sq200To4J
@@ -107,7 +127,15 @@ sqto4j:
         - name: Sq500To4J
           signal: True
           ms: [500, 375]
-          sigma: 1.83537
+          sigma: 0.51848
+          miniaods:
+              - generation: "0706"
+                name: /Sq500To4J/elhughes-sq500to4j-miniaod-928d46295c808b28c2560dd199b08897/USER
+                instance: phys03
+                das: True
+                lhe_cut: ht700
+                lhe_n: 100000
+                preweight: 1.0
     
 sqto2j:
     sq100to2j:
@@ -388,14 +416,65 @@ ttbar:
 data:
     jetht:
         - name: JetHT
-          subprocess: jethtd
+          subprocess: jetht16b
           data: 1
+          mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/Cert_271036-280385_13TeV_PromptReco_Collisions16_JSON.txt
+          miniaods:
+              - generation: "0800"
+                name: /JetHT/Run2016B-PromptReco-v2/MINIAOD
+        - name: JetHT
+          subprocess: jetht15c
+          data: 1
+          mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/Cert_246908-260627_13TeV_PromptReco_Collisions15_25ns_JSON_v2.txt
+          miniaods:
+              - generation: "0706"
+                name: /JetHT/Run2015C_25ns-16Dec2015-v1/MINIAOD
+        - name: JetHT
+          subprocess: jetht16c
+          data: 1
+          mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/Cert_271036-280385_13TeV_PromptReco_Collisions16_JSON.txt
+          miniaods:
+              - generation: "0800"
+                name: /JetHT/Run2016C-PromptReco-v2/MINIAOD
+        - name: JetHT
+          subprocess: jetht15d
+          data: 1
+          mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/Cert_246908-260627_13TeV_PromptReco_Collisions15_25ns_JSON_v2.txt
           miniaods:
               - generation: "0706"
                 name: /JetHT/Run2015D-16Dec2015-v1/MINIAOD
         - name: JetHT
-          subprocess: jethtc
+          subprocess: jetht16d
           data: 1
+          mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/Cert_271036-280385_13TeV_PromptReco_Collisions16_JSON.txt
           miniaods:
-              - generation: "0706"
-                name: /JetHT/Run2015C_25ns-16Dec2015-v1/MINIAOD
+              - generation: "0800"
+                name: /JetHT/Run2016D-PromptReco-v2/MINIAOD
+        - name: JetHT
+          subprocess: jetht16e
+          data: 1
+          mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/Cert_271036-280385_13TeV_PromptReco_Collisions16_JSON.txt
+          miniaods:
+              - generation: "0800"
+                name: /JetHT/Run2016E-PromptReco-v2/MINIAOD
+        - name: JetHT
+          subprocess: jetht16f
+          data: 1
+          mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/Cert_271036-280385_13TeV_PromptReco_Collisions16_JSON.txt
+          miniaods:
+              - generation: "0800"
+                name: /JetHT/Run2016F-PromptReco-v1/MINIAOD
+        - name: JetHT
+          subprocess: jetht16g
+          data: 1
+          mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/Cert_271036-280385_13TeV_PromptReco_Collisions16_JSON.txt
+          miniaods:
+              - generation: "0800"
+                name: /JetHT/Run2016G-PromptReco-v1/MINIAOD
+        - name: JetHT
+          subprocess: jetht16h
+          data: 1
+          mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/Cert_271036-280385_13TeV_PromptReco_Collisions16_JSON.txt
+          miniaods:
+              - generation: "0800"
+                name: /JetHT/Run2016H-PromptReco-v2/MINIAOD

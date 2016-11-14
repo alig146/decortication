@@ -144,9 +144,9 @@ class analyzer:
 		for sample in self.tt_out.keys():
 			branches[sample] = {}
 			for var, dim in variables.iteritems():
-				branches[sample][var] = array('f', [-1]*dim)
+				branches[sample][var] = array('d', [-1]*dim)		# If you change the "d" here, you need to change it two lines below!
 				tt = self.tt_out[sample]
-				tt.Branch(var, branches[sample][var], '{}[{}]/F'.format(var, dim))
+				tt.Branch(var, branches[sample][var], '{}[{}]/D'.format(var, dim))
 			
 		self.branches = branches
 		return branches

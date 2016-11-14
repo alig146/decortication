@@ -6,6 +6,7 @@
 
 # IMPORTS:
 import sys, os, yaml
+import sqlite3
 import decortication
 from truculence import utilities
 # :IMPORTS
@@ -13,6 +14,7 @@ from truculence import utilities
 # VARIABLES:
 ds_info_default = os.path.join(decortication.__path__[0], "..", "resources/samples.yaml")
 db_info_default = os.path.join(decortication.__path__[0], "..", "resources/database.yaml")
+db_path_default = os.path.join(decortication.__path__[0], "..", "resources/samples.db")
 parents = {		# KLUDGE
 	"sample": None,
 	"miniaod": "sample",
@@ -94,8 +96,11 @@ def get_kind(kind_name, path=db_info_default):
 		if kind.name == kind_name:
 			return kind
 
+#def get_primary_keys(subprocess=""):
+	
+
 # Dataset information things:
-def complete(dataset_info, db_info):
+def complete(dataset_info, db_info, only_primary=False):
 	
 	to_return = {}
 	
@@ -106,6 +111,8 @@ def complete(dataset_info, db_info):
 		for i, dict_incomplete in enumerate(dicts_incomplete):
 			dict_complete = {k: v for k, v in dict_incomplete.items()}		# Copy.
 			for key, meta in db_info[kind.name].items():
+				if only_primary and not meta["primary"]:
+					continue
 				if key not in dict_incomplete:
 					dict_complete[key] = meta["default"]		# Maybe I should type things at this point.
 				value = dict_complete[key]
@@ -177,7 +184,7 @@ def complete(dataset_info, db_info):
 
 
 
-def get_ds_info(path_samples=ds_info_default, path_meta=db_info_default):
+def get_ds_info(path_samples=ds_info_default, path_meta=db_info_default, completed=True):
 	# Makes a list of dictionaries keyed by kind: [{"sample": sample1_dict, "miniaods": [miniaod1_dict, miniaod2_dict]}, ...]
 	# Returns a dictionary for each kind, valued by lists of info dicts.
 	
@@ -214,7 +221,7 @@ def get_ds_info(path_samples=ds_info_default, path_meta=db_info_default):
 				## Organize into temporary structure for completing:
 				dataset_info["samples"] = [sample]
 				
-				# Hand other kinds:
+				# Handle other kinds:
 				for kind in [k for k in kinds if k.name != "sample"]:
 					dataset_info[kind.plural] = []
 					if kind.plural in ds:
@@ -224,15 +231,59 @@ def get_ds_info(path_samples=ds_info_default, path_meta=db_info_default):
 				dataset_infos.append(dataset_info)
 	
 	# Complete the info in each dataset_info:
-	dataset_infos_complete = [complete(dataset_info, db_info) for dataset_info in dataset_infos]
+	## Completing means filling out every variable, so that ones not manually supplied are filled with defaults.
+	if completed:
+		dataset_infos = [complete(dataset_info, db_info, only_primary=False) for dataset_info in dataset_infos]
+	else:
+		dataset_infos = [complete(dataset_info, db_info, only_primary=True) for dataset_info in dataset_infos]
 #	return dataset_infos_complete
 	# Format returned structure:
 	to_return = {}
-	for dataset_info in dataset_infos_complete:
+	for dataset_info in dataset_infos:
 #		print dataset_info
 		for kind in kinds:
 			if kind.name not in to_return:		# I revert from kind plural to singular here.
 				to_return[kind.name] = []
 			to_return[kind.name].extend(dataset_info[kind.plural])
 	return to_return
+
+
+# Making the SQLite database:
+def create_tables(v=False):
+	good = True
+	
+	# Get column information:
+	keys_db = get_db_info()
+	
+	# Make the columns:
+	for name, info in keys_db.items():
+		good *= create_table(info, name, v=v)
+		if not good: print "WARNING (dataset.create_tables): '{}' table not created.".format(name)
+	
+	return good
+
+
+def create_table(keys, name, db_path=db_path_default, v=True):
+	conn = sqlite3.connect(db_path)
+	c = conn.cursor()
+	
+	cmd = "CREATE TABLE {} (".format(name)
+	cmd_primary = "PRIMARY KEY("
+	for key, values in keys.items():
+		cmd += "{} {}, ".format(key, values["type"].upper())
+		if values["primary"]:
+			cmd_primary += "{}, ".format(key)
+	cmd_primary = cmd_primary[:-2] + ")"
+	cmd = cmd + cmd_primary + ")"
+	
+	if v: print cmd
+	
+	try:
+		c.execute(cmd)
+	except Exception as ex:
+		print ex
+		return False
+	else:
+		conn.commit()
+		return True
 # :FUNCTIONS
