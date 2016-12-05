@@ -91,6 +91,13 @@ class arguments:
 			metavar="INT"
 		)
 		parser.add_argument(
+			"-d", "--dir", dest="dir",
+			type=str,
+			default=None,
+			help="Input directory",
+			metavar="STR"
+		)
+		parser.add_argument(
 			"-f", "--input", dest="input",
 			type=str,
 			default=None,

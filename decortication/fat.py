@@ -18,7 +18,7 @@ from re import search
 # /CLASSES
 
 # FUNCTIONS:
-def get_pair(event, cut_pt=400, cut_m=50, cut_eta=2.5, alg="ca12", pf=True, v=False, leading=True):
+def get_pair(event, cut_pt=0, cut_m=0, cut_eta=100, alg="ca12", pf=True, v=False, leading=True):
 	# Parse:
 	match = search("(\w+)(\d+)", alg)
 	if match:
@@ -35,11 +35,7 @@ def get_pair(event, cut_pt=400, cut_m=50, cut_eta=2.5, alg="ca12", pf=True, v=Fa
 	pzs = getattr(event, "{0}_pz".format(prefix))
 	es = getattr(event, "{0}_e".format(prefix))
 	pts = getattr(event, "{0}_pt".format(prefix))
-	Ms = getattr(event, "{0}_M".format(prefix))
-	mts = getattr(event, "{0}_m_t".format(prefix))
-	mps = getattr(event, "{0}_m_p".format(prefix))
-	mss = getattr(event, "{0}_m_s".format(prefix))
-	mfs = getattr(event, "{0}_m_f".format(prefix))
+	ms = getattr(event, "{0}_m".format(prefix))
 	etas = getattr(event, "{0}_eta".format(prefix))
 	phis = getattr(event, "{0}_phi".format(prefix))
 	tau1s = getattr(event, "{0}_tau1".format(prefix))
@@ -68,13 +64,7 @@ def get_pair(event, cut_pt=400, cut_m=50, cut_eta=2.5, alg="ca12", pf=True, v=Fa
 #		eta = etas[i]
 #		phi = phis[i]
 ##		theta = thetas[i]
-		jet_temp = physics.jet(pxs[i], pys[i], pzs[i], es[i], tau=(tau1s[i], tau2s[i], tau3s[i], tau4s[i]), jec=jecs[i], index=i)
-#		if pt != jet_temp.pt:		# This fails with JECs
-#			print "ERROR:", i, pt, jet_temp.pt
-		jet_temp.m_t = mts[i]*jmcs[i]
-		jet_temp.m_p = mps[i]*jmcs[i]
-		jet_temp.m_s = mss[i]*jmcs[i]
-		jet_temp.m_f = mfs[i]*jmcs[i]
+		jet_temp = physics.jet(pxs[i], pys[i], pzs[i], es[i], tau=(tau1s[i], tau2s[i], tau3s[i], tau4s[i]), jec=jecs[i], jmc=jmcs[i], index=i)
 		
 		# Assign a JetID variable:
 		jet_temp.jetid = False		# True means "passed".
@@ -111,5 +101,25 @@ def get_pair(event, cut_pt=400, cut_m=50, cut_eta=2.5, alg="ca12", pf=True, v=Fa
 		if pairs:
 			pair = pairs[0]
 	
+	
+	# Add groomed variables to pair:
+	if pf and pair:
+		for groomer in ["f", "p", "s", "t"]:
+			prefix = "{}_pf{}".format(alg, groomer)
+			for j in pair:
+				setattr(j, "px_" + groomer, getattr(event, prefix + "_px")[j.i]*j.jec)
+				setattr(j, "py_" + groomer, getattr(event, prefix + "_py")[j.i]*j.jec)
+				setattr(j, "pz_" + groomer, getattr(event, prefix + "_pz")[j.i]*j.jec)
+				setattr(j, "pt_" + groomer, getattr(event, prefix + "_pt")[j.i]*j.jec)
+				setattr(j, "e_" + groomer, getattr(event, prefix + "_e")[j.i]*j.jec)
+				setattr(j, "m_" + groomer, getattr(event, prefix + "_m")[j.i]*j.jmc)
+				setattr(j, "eta_" + groomer, getattr(event, prefix + "_eta")[j.i])
+				setattr(j, "phi_" + groomer, getattr(event, prefix + "_phi")[j.i])
+				setattr(j, "tau1_" + groomer, getattr(event, prefix + "_tau1")[j.i])
+				setattr(j, "tau2_" + groomer, getattr(event, prefix + "_tau2")[j.i])
+				setattr(j, "tau3_" + groomer, getattr(event, prefix + "_tau3")[j.i])
+				setattr(j, "tau4_" + groomer, getattr(event, prefix + "_tau4")[j.i])
+	
+	# Return:
 	return pair
 # /FUNCTIONS

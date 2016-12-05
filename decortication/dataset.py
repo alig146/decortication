@@ -122,6 +122,9 @@ class dataset:
 	def __str__(self):
 		return "<{} instance named {}>".format(self.kind, self.Name)
 	
+	def __repr__(self):
+		return "<{} instance named {}>".format(self.kind, self.Name)
+	
 	
 	def Print(self):
 		# Basic stuff:
@@ -132,7 +135,8 @@ class dataset:
 				print "\t\t* {}: {}".format(var, getattr(self, var))
 		if hasattr(self, "name"): print "\t* name = {}".format(self.name)
 		print "\t* data: {}".format(bool(self.data))
-		print "\t* Last updated on {}".format(utilities.time_to_string(self.time))
+		if self.time: print "\t* Last updated on {}".format(utilities.time_to_string(self.time))
+		else: print "\t* UNSCANNED"
 		# Path and files:
 		if hasattr(self, "das"):
 			print "\t* path: {} (das = {}, instance = {})".format(self.path, self.das, self.instance)
@@ -411,6 +415,7 @@ def write_db():
 	datasets = parse_db_yaml()
 	for kind, dss in datasets.items():
 		for ds in dss:
+#			print ds
 			ds.write()
 	return True
 
@@ -661,7 +666,7 @@ def prepare_fetch(kind, query):
 			ors = []
 			for v in value:
 				ors.append("{}='{}'".format(key, v))
-			ands.append(" OR ".join(ors))
+			ands.append("(" + " OR ".join(ors) + ")")
 	cmd_where += " AND ".join(ands)
 	if cmd_where:
 		cmd_where = "WHERE " + cmd_where

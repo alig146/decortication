@@ -19,30 +19,23 @@ sqto4j:
           ms: [150, 110]
           sigma: 249.409
           miniaods:
-              - generation: spring15
-                name: /Sq150To4J/elhughes-Sq150To4J-a8bc5525fb601f2f2f57bdb9ea72969e/USER
-                das: False
-                lhe_cut: pt200
-                preweight: 0.094801
-              - generation: spring15-cutht700
-                name: /Sq150To4J/elhughes-Sq400To4J_cutht700-a8bc5525fb601f2f2f57bdb9ea72969e/USER      # Yes, the "400" was a dumb mistake.
-                instance: phys03
-                das: True
-                lhe_cut: ht700
-                preweight: 0.004135
+#              - generation: spring15
+#                name: /Sq150To4J/elhughes-Sq150To4J-a8bc5525fb601f2f2f57bdb9ea72969e/USER
+#                das: False
+#                lhe_cut: pt200
+#                preweight: 0.094801
+#              - generation: spring15-cutht700
+#                name: /Sq150To4J/elhughes-Sq400To4J_cutht700-a8bc5525fb601f2f2f57bdb9ea72969e/USER      # Yes, the "400" was a dumb mistake.
+#                instance: phys03
+#                das: True
+#                lhe_cut: ht700
+#                preweight: 0.004135
               - generation: "0706"
-                name: /Sq150To4J/elhughes-sq150to4j-miniaod-928d46295c808b28c2560dd199b08897/USER       # 200k events? I'm confused how I made this.
-#                name: /Sq150To4J/elhughes-Sq150To4J-aff3800c3b8b61b9936a7804dfb4c651/USER
+                name: /Sq150To4J/elhughes-sq150to4j-miniaod-928d46295c808b28c2560dd199b08897/USER
                 instance: phys03
                 das: True
                 lhe_cut: ht700
                 preweight: 0.04135
-#              - generation: "0706"       # 161026: Commented out.
-#                name: /Sq150To4J/elhughes-Sq150To4J-cf982d5067f9ff6013ec5c92fa302b00/USER
-#                instance: phys03
-#                das: True
-#                lhe_cut: pt200
-#                preweight: 0.094801
     
     sq200to4j:
         - name: Sq200To4J
@@ -50,17 +43,17 @@ sqto4j:
           ms: [200, 150]
           sigma: 64.5085
           miniaods:
-              - generation: spring15
-                name: /Sq200To4J/elhughes-Sq200To4J-a8bc5525fb601f2f2f57bdb9ea72969e/USER
-                das: False
-                lhe_cut: pt200
-                preweight: 0.131616
+#              - generation: spring15
+#                name: /Sq200To4J/elhughes-Sq200To4J-a8bc5525fb601f2f2f57bdb9ea72969e/USER
+#                das: False
+#                lhe_cut: pt200
+#                preweight: 0.131616
               - generation: "0706"
-                name: /Sq200To4J/elhughes-Sq200To4J-cf982d5067f9ff6013ec5c92fa302b00/USER
+                name: /Sq200To4J/elhughes-sq200to4j-miniaod-928d46295c808b28c2560dd199b08897/USER
                 instance: phys03
                 das: True
-                lhe_cut: pt200
-                preweight: 0.131616
+                lhe_cut: ht700
+                preweight: 0.0481
     
     sq250to4j:
         - name: Sq250To4J
@@ -68,17 +61,17 @@ sqto4j:
           ms: [250, 190]
           sigma: 21.5949
           miniaods:
-              - generation: spring15
-                name: /Sq250To4J/elhughes-Sq250To4J-a8bc5525fb601f2f2f57bdb9ea72969e/USER
-                das: False
-                lhe_cut: pt200
-                preweight: 0.207295
+#              - generation: spring15
+#                name: /Sq250To4J/elhughes-Sq250To4J-a8bc5525fb601f2f2f57bdb9ea72969e/USER
+#                das: False
+#                lhe_cut: pt200
+#                preweight: 0.207295
               - generation: "0706"
-                name: /Sq250To4J/elhughes-Sq250To4J-cf982d5067f9ff6013ec5c92fa302b00/USER
+                name: /Sq250To4J/elhughes-sq250to4j-miniaod-928d46295c808b28c2560dd199b08897/USER
                 instance: phys03
                 das: True
-                lhe_cut: pt200
-                preweight: 0.207295
+                lhe_cut: ht700
+                preweight: 0.0673
     
     sq300to4j:
         - name: Sq300To4J
@@ -86,23 +79,23 @@ sqto4j:
           ms: [300, 230]
           sigma: 8.51615
           miniaods:
-              - generation: spring15
-                name: /Sq300To4J/elhughes-SqToJJJJ_300-a8bc5525fb601f2f2f57bdb9ea72969e/USER
-                das: False
-                lhe_cut: pt200
-                preweight: 0.293902
-              - generation: spring15-inverted
-                name: /Sq300To4J/elhughes-Sq300To4J_Inverted-a8bc5525fb601f2f2f57bdb9ea72969e/USER
-                instance: phys03
-                das: True
-                lhe_cut: pti200
-                preweight: 0.706098
+#              - generation: spring15
+#                name: /Sq300To4J/elhughes-SqToJJJJ_300-a8bc5525fb601f2f2f57bdb9ea72969e/USER
+#                das: False
+#                lhe_cut: pt200
+#                preweight: 0.293902
+#              - generation: spring15-inverted
+#                name: /Sq300To4J/elhughes-Sq300To4J_Inverted-a8bc5525fb601f2f2f57bdb9ea72969e/USER
+#                instance: phys03
+#                das: True
+#                lhe_cut: pti200
+#                preweight: 0.706098
               - generation: "0706"
-                name: /Sq300To4J/elhughes-Sq300To4J-cf982d5067f9ff6013ec5c92fa302b00/USER
+                name: /Sq300To4J/elhughes-sq300to4j-miniaod-928d46295c808b28c2560dd199b08897/USER
                 instance: phys03
                 das: True
-                lhe_cut: pt200
-                preweight: 0.293902
+                lhe_cut: ht700
+                preweight: 0.1664
     
     sq400to4j:
         - name: Sq400To4J
@@ -110,18 +103,18 @@ sqto4j:
           ms: [400, 300]
           sigma: 1.83537
           miniaods:
-              - generation: spring15
-                name: /Sq400To4J/elhughes-Sq400To4J-a8bc5525fb601f2f2f57bdb9ea72969e/USER
-                instance: phys03
-                das: True
-                lhe_cut: pt200
-                preweight: 0.458053
+#              - generation: spring15
+#                name: /Sq400To4J/elhughes-Sq400To4J-a8bc5525fb601f2f2f57bdb9ea72969e/USER
+#                instance: phys03
+#                das: True
+#                lhe_cut: pt200
+#                preweight: 0.458053
               - generation: "0706"
-                name: /Sq400To4J/elhughes-Sq400To4J-cf982d5067f9ff6013ec5c92fa302b00/USER
+                name: /Sq400To4J/elhughes-sq400to4j-miniaod-928d46295c808b28c2560dd199b08897/USER
                 instance: phys03
                 das: True
-                lhe_cut: pt200
-                preweight: 0.458053
+                lhe_cut: ht700
+                preweight: 0.6709
     
     sq500to4j:
         - name: Sq500To4J
@@ -135,7 +128,7 @@ sqto4j:
                 das: True
                 lhe_cut: ht700
                 lhe_n: 100000
-                preweight: 1.0
+                preweight: 0.9556 
     
 sqto2j:
     sq100to2j:
@@ -413,8 +406,8 @@ ttbar:
               - generation: fall15
                 name: /TTJets_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM
 
-data:
-    jetht:
+jetht:
+    jetht16:
         - name: JetHT
           subprocess: jetht16b
           data: 1
@@ -423,26 +416,12 @@ data:
               - generation: "0800"
                 name: /JetHT/Run2016B-PromptReco-v2/MINIAOD
         - name: JetHT
-          subprocess: jetht15c
-          data: 1
-          mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/Cert_246908-260627_13TeV_PromptReco_Collisions15_25ns_JSON_v2.txt
-          miniaods:
-              - generation: "0706"
-                name: /JetHT/Run2015C_25ns-16Dec2015-v1/MINIAOD
-        - name: JetHT
           subprocess: jetht16c
           data: 1
           mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/Cert_271036-280385_13TeV_PromptReco_Collisions16_JSON.txt
           miniaods:
               - generation: "0800"
                 name: /JetHT/Run2016C-PromptReco-v2/MINIAOD
-        - name: JetHT
-          subprocess: jetht15d
-          data: 1
-          mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/Cert_246908-260627_13TeV_PromptReco_Collisions15_25ns_JSON_v2.txt
-          miniaods:
-              - generation: "0706"
-                name: /JetHT/Run2015D-16Dec2015-v1/MINIAOD
         - name: JetHT
           subprocess: jetht16d
           data: 1
@@ -478,3 +457,19 @@ data:
           miniaods:
               - generation: "0800"
                 name: /JetHT/Run2016H-PromptReco-v2/MINIAOD
+    
+    jetht15:
+        - name: JetHT
+          subprocess: jetht15c
+          data: 1
+          mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/Cert_246908-260627_13TeV_PromptReco_Collisions15_25ns_JSON_v2.txt
+          miniaods:
+              - generation: "0706"
+                name: /JetHT/Run2015C_25ns-16Dec2015-v1/MINIAOD
+        - name: JetHT
+          subprocess: jetht15d
+          data: 1
+          mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/Cert_246908-260627_13TeV_PromptReco_Collisions15_25ns_JSON_v2.txt
+          miniaods:
+              - generation: "0706"
+                name: /JetHT/Run2015D-16Dec2015-v1/MINIAOD
