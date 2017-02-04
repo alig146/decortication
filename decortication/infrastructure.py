@@ -35,6 +35,11 @@ class dataset_kind:
 	def __str__(self):
 		return self.name
 	
+	def get_keys(self, path=None):
+		if path == None:
+			path = self.path
+		db_info = get_db_info(path=path)[self.name]
+		return [key for key, info in db_info.items()]
 	
 	def get_primary_keys(self, path=None):
 		if path == None:

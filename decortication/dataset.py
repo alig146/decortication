@@ -85,7 +85,7 @@ class dataset:
 				info_final[key] = db_info[key]
 			else:
 				info_final[key] = None
-		
+#		print info_final
 		# Set attributes from "info_final":
 		for key, value in info_final.items():
 			setattr(self, key, value)
@@ -116,6 +116,9 @@ class dataset:
 #		# Connect to any children:
 #		if not isolated:
 #			self.set_connections(down=True, up=False)
+		
+		# Aliases:
+		self.sp = self.subprocess
 	# :init
 	
 	
@@ -287,6 +290,8 @@ class dataset:
 	
 	
 	def update(self, info):
+		for key, value in info.items():
+			setattr(self, key, value)
 		info.update(self.primary_keys)
 		return update_db(self.kind, info, db_path=db_path_default)
 	
@@ -394,18 +399,26 @@ def explore_dataset_dir(d):
 	return result
 
 
-def parse_db_yaml(path=info_path_default, completed=True):
+def parse_db_yaml(path=info_path_default, kind=None, subprocess=None, generation=None, completed=True):
+	# Arguments:
+	kinds = variables.parse_kind(kind)
+	
 	ds_info = infrastructure.get_ds_info(completed=completed)
 	
 	datasets = {}
 	for k, info_list in ds_info.iteritems():
 		# Kind information:
-		kind = infrastructure.get_kind(k)
+		Kind = infrastructure.get_kind(k)
 #		primary_keys = kind.get_primary_keys()
 		
-		datasets[kind.name] = []
+		datasets[Kind.name] = []
 		for info in info_list:
-			datasets[kind.name].append(dataset(kind.name, info=info, isolated=True))
+			datasets[Kind.name].append(dataset(Kind.name, info=info, isolated=True))
+	
+	# Apply filters:
+	datasets = {key: value for key, value in datasets.items() if key in [k.name for k in kinds]}
+	if subprocess: datasets = {key: [v for v in value if v.subprocess == subprocess] for key, value in datasets.items()}
+	if generation: datasets = {key: [v for v in value if v.generation == generation] for key, value in datasets.items()}
 	
 	return datasets
 
@@ -645,17 +658,14 @@ def fetch_tuples(category=None, suffix=None, subprocess=None, generation=None, p
 	return fetch_entries("tuple", query, isolated=isolated)
 
 
-def prepare_fetch(kind, query):
+def prepare_fetch(k, query):
+	kind = infrastructure.get_kind(k)
 	# Check that "primary_keys" shares something with the keys of "kind":
 #	info = {key: value for key, value in query.items() if key in primary_keys_master[kind]}		# Take only primary keys that are primary keys of the kind.
-	if query == None:
-		query = {}
+	if query == None: query = {}
 	info = query
-#	if not info:
-#		print "ERROR (dataset.prepare_fetch): The primary keys you supplied have no overlap with the primary keys of the kind you wanted (\"{}\"):".format(kind)
-#		print primary_keys
-#		return False
-#	else:
+	info = {k: v for k, v in info.items() if k in kind.get_keys()}
+
 	# Prepare SQLite command:
 	cmd_where = ""
 	ands = []
@@ -670,7 +680,7 @@ def prepare_fetch(kind, query):
 	cmd_where += " AND ".join(ands)
 	if cmd_where:
 		cmd_where = "WHERE " + cmd_where
-	cmd = "SELECT * FROM {} {}".format(kind, cmd_where)
+	cmd = "SELECT * FROM {} {}".format(kind.name, cmd_where)
 #	print cmd
 	return cmd
 
@@ -695,6 +705,7 @@ def fetch_entry(kind, query, db_path=db_path_default, isolated=True):
 
 def fetch_entries(kind, query=None, db_path=db_path_default, isolated=True):
 		cmd = prepare_fetch(kind, query)
+#		print cmd
 		
 		if cmd:
 			# Open database:
@@ -868,53 +879,77 @@ def listpath(path):
 
 
 def check_db(thing):		# Check if thing is in the database.
+	# There are three things to compare: the "thing", the DB version of the thing, and the completed YAML version.
 	kind = thing.kind
-	
-#	if hasattr(thing, "generation"):
-#		if hasattr(thing, "suffix"):
-##			fetch_entry(kind, query, db_path=db_path_default, isolated=True)
-#			thing_db = fetch_entry(kind, {"subprocess": thing.subprocess, "generation": thing.generation, "suffix": thing.suffix})
-#		else:
-#			thing_db = fetch_entry(kind, {"subprocess": thing.subprocess, "generation": thing.generation, "suffix": thing.suffix})
-#	else:
 	thing_db = fetch_entry(kind, thing.primary_keys)
-	
-	if thing_db:
-		# Compare "thing" with DB version:
-		compare = {}
-		for key in keys_db[kind].keys():
-			compare[key] = (bool(getattr(thing, key)), bool(getattr(thing_db, key)))
-	
-		replace = {}
-		update = {}
-		for key, values in compare.items():
-			if sum(values) == 2:
-				thing_new = getattr(thing, key)
-				thing_old = getattr(thing_db, key)
-				
-				# Comparison of floats needs special treatment:
-				if isinstance(thing_new, (int, float)) and isinstance(thing_old, (int, float)):
-					compare = utilities.isclose(thing_new, thing_old)
-				else:
-					compare = thing_new == thing_old
-				
-				if not compare:
-					print "The thing's value of {} is different from that in the DB:".format(key)
-					print "\t{} != {} (DB value)".format(thing_new, thing_old)
-					replace[key] = False
-					update[key] = True
-				else:
-					replace[key] = True
-					update[key] = False
-			elif values[1]:
-				replace[key] = True
-				update[key] = False
-			elif values[0]:
-				replace[key] = False
-				update[key] = True
-		return (replace, update)
-	else:
+	thing_yaml = parse_db_yaml(completed=False, kind=kind, subprocess=thing.subprocess, generation=None if not thing.kind == "miniaod" else thing.generation)[kind]
+	if len(thing_yaml) > 1:
+		print "AAAAAAAA (check_db)"
 		return False
+	thing_yaml = thing_yaml[0]
+	
+	results = {}
+	if thing_db:
+		for key in keys_db[kind].keys():
+			v = getattr(thing, key)
+			v_db = getattr(thing_db, key)
+			v_yaml_has = hasattr(thing_yaml, key)
+			v_yaml = False
+			if v_yaml_has: v_yaml = getattr(thing_yaml, key)
+			results[key] = {}
+			results[key]["new"] = v
+			results[key]["old"] = v
+			results[key]["change"] = False
+		
+			# If v and v_db differ, take on the value of v
+			if not utilities.isclose(v, v_db):
+				results[key]["new"] = v
+				results[key]["old"] = v_db
+				results[key]["change"] = True
+#				print "DB", results[key]
+		
+			# If v and v_yaml 
+			if v_yaml_has and not utilities.isclose(v, v_yaml):
+				results[key]["new"] = v_yaml
+				results[key]["old"] = v
+				results[key]["change"] = True
+#				print "YAML", results[key]
+	return results
+
+
+def check_db_against_yaml(thing_db):
+	kind = thing_db.kind
+	thing_yaml = parse_db_yaml(completed=False, kind=kind, subprocess=thing_db.subprocess, generation=None if not thing_db.kind == "miniaod" else thing_db.generation)[kind]
+	if len(thing_yaml) > 1:
+		print "AAAAAAAA (check_db)"
+		return False
+	thing_yaml = thing_yaml[0]
+	
+	results = {}
+	for key in keys_db[kind].keys():
+		v_db = getattr(thing_db, key)
+		v_yaml_has = hasattr(thing_yaml, key)
+		v_yaml = False
+		if v_yaml_has: v_yaml = getattr(thing_yaml, key)
+		results[key] = {}
+		results[key]["new"] = v_db
+		results[key]["old"] = v_db
+		results[key]["change"] = False
+	
+		# If v_db and v_yaml:
+		if v_yaml_has and not utilities.isclose(v_db, v_yaml):
+			results[key]["new"] = v_yaml
+			results[key]["old"] = v_db
+			results[key]["change"] = True
+	return results
+
+
+def check_yaml_against_db(thing_yaml):		# Check if thing is in the database.
+	kind = thing_yaml.kind
+	thing_db = fetch_entry(kind, thing_yaml.primary_keys)
+	
+	if thing_db: return True
+	else: return False
 
 
 def sync_db(self):

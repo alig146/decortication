@@ -201,6 +201,14 @@ def get_variable(name="", collection="", event=None):
 			return False
 		else:
 			return result
+
+def parse_kind(kind=None):
+	if kind:
+		if isinstance(kind, str): kind = [kind]
+		return [infrastructure.get_kind(k) for k in kind]
+	else:
+		return infrastructure.get_kinds()
+	
 # /FUNCTIONS
 
 # VARIABLES:

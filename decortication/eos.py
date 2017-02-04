@@ -39,4 +39,14 @@ def getsize(f):
 		if raw_output[1]:
 			print raw_output[1]
 		return False
+
+def rm(f):
+	raw_output = Popen(['eos root://cmseos.fnal.gov rm {}'.format(f)], shell=True, stdout=PIPE, stderr=PIPE).communicate()
+#	print raw_output
+	return True
+
+def rmr(d):
+	raw_output = Popen(['eos root://cmseos.fnal.gov rm -r {}'.format(d)], shell=True, stdout=PIPE, stderr=PIPE).communicate()
+#	print raw_output
+	return True
 # /FUNCTIONS

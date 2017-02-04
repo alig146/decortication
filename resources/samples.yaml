@@ -139,7 +139,8 @@ sqto2j:
           miniaods:
               - generation: spring15
                 name: /RPVStopStopToJets_UDD312_M-100-madgraph/algomez-RunIISpring15DR74_MiniAOD_Asympt25ns-612faf0bd9dc3ce1d1b2e0252700e0a7/USER
-                n: 10887
+                instance: phys03
+                das: True
     
     sq200to2j:
         - name: RPVStopStopToJets_UDD312_M-200-madgraph
@@ -149,7 +150,8 @@ sqto2j:
           miniaods:
               - generation: spring15
                 name: /RPVStopStopToJets_UDD312_M-200-madgraph/algomez-RunIISpring15DR74_MiniAOD_Asympt25ns-612faf0bd9dc3ce1d1b2e0252700e0a7/USER
-                n: 54174
+                instance: phys03
+                das: True
     
     sq350to2j:
         - name: RPVStopStopToJets_UDD312_M-350-madgraph
@@ -159,7 +161,8 @@ sqto2j:
           miniaods:
               - generation: spring15
                 name: /RPVStopStopToJets_UDD312_M-350-madgraph/algomez-RunIISpring15DR74_MiniAOD_Asympt25ns-612faf0bd9dc3ce1d1b2e0252700e0a7/USER
-                n: 11293
+                instance: phys03
+                das: True
     
     sq800to2j:
         - name: RPVStopStopToJets_UDD312_M-800-madgraph
@@ -169,7 +172,8 @@ sqto2j:
           miniaods:
               - generation: spring15
                 name: /RPVStopStopToJets_UDD312_M-800-madgraph/algomez-RunIISpring15DR74_MiniAOD_Asympt25ns-612faf0bd9dc3ce1d1b2e0252700e0a7/USER
-                n: 4784
+                instance: phys03
+                das: True
 qcd:
     qcdp:
         - name: QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8
@@ -424,49 +428,49 @@ jetht:
         - name: JetHT
           subprocess: jetht16b
           data: 1
-          mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/Cert_271036-280385_13TeV_PromptReco_Collisions16_JSON.txt
+          mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/Cert_271036-282092_13TeV_PromptReco_Collisions16_JSON.txt
           miniaods:
               - generation: "0800"
                 name: /JetHT/Run2016B-PromptReco-v2/MINIAOD
         - name: JetHT
           subprocess: jetht16c
           data: 1
-          mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/Cert_271036-280385_13TeV_PromptReco_Collisions16_JSON.txt
+          mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/Cert_271036-282092_13TeV_PromptReco_Collisions16_JSON.txt
           miniaods:
               - generation: "0800"
                 name: /JetHT/Run2016C-PromptReco-v2/MINIAOD
         - name: JetHT
           subprocess: jetht16d
           data: 1
-          mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/Cert_271036-280385_13TeV_PromptReco_Collisions16_JSON.txt
+          mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/Cert_271036-282092_13TeV_PromptReco_Collisions16_JSON.txt
           miniaods:
               - generation: "0800"
                 name: /JetHT/Run2016D-PromptReco-v2/MINIAOD
         - name: JetHT
           subprocess: jetht16e
           data: 1
-          mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/Cert_271036-280385_13TeV_PromptReco_Collisions16_JSON.txt
+          mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/Cert_271036-282092_13TeV_PromptReco_Collisions16_JSON.txt
           miniaods:
               - generation: "0800"
                 name: /JetHT/Run2016E-PromptReco-v2/MINIAOD
         - name: JetHT
           subprocess: jetht16f
           data: 1
-          mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/Cert_271036-280385_13TeV_PromptReco_Collisions16_JSON.txt
+          mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/Cert_271036-282092_13TeV_PromptReco_Collisions16_JSON.txt
           miniaods:
               - generation: "0800"
                 name: /JetHT/Run2016F-PromptReco-v1/MINIAOD
         - name: JetHT
           subprocess: jetht16g
           data: 1
-          mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/Cert_271036-280385_13TeV_PromptReco_Collisions16_JSON.txt
+          mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/Cert_271036-282092_13TeV_PromptReco_Collisions16_JSON.txt
           miniaods:
               - generation: "0800"
                 name: /JetHT/Run2016G-PromptReco-v1/MINIAOD
         - name: JetHT
           subprocess: jetht16h
           data: 1
-          mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/Cert_271036-280385_13TeV_PromptReco_Collisions16_JSON.txt
+          mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/Cert_271036-282092_13TeV_PromptReco_Collisions16_JSON.txt
           miniaods:
               - generation: "0800"
                 name: /JetHT/Run2016H-PromptReco-v2/MINIAOD

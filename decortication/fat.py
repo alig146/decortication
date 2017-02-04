@@ -55,6 +55,16 @@ def get_pair(event, cut_pt=0, cut_m=0, cut_eta=100, alg="ca12", pf=True, v=False
 	cm = getattr(event, "{0}_cm".format(prefix))        # Charged multiplicity
 	n = getattr(event, "{0}_n".format(prefix))          # Number of constituents
 	
+	# Subjet variables:
+#	spx0 = getattr(event, "{0}_spx0".format(prefix))    # pxs of the leading subjets
+#	spy0 = getattr(event, "{0}_spy0".format(prefix))
+#	spz0 = getattr(event, "{0}_spz0".format(prefix))
+#	se0 = getattr(event, "{0}_se0".format(prefix))
+#	spt0 = getattr(event, "{0}_spt0".format(prefix))
+#	sm0 = getattr(event, "{0}_sm0".format(prefix))
+#	seta0 = getattr(event, "{0}_seta0".format(prefix))
+#	sphi0 = getattr(event, "{0}_sphi0".format(prefix))
+	
 	# Make jet objects for the event:
 	jets = []
 	for i, pt in enumerate(pts):

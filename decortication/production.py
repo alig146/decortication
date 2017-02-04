@@ -29,8 +29,8 @@ def get_crab_config(
 	},
 	units=-1,                                   # The number of events to run over ("-1" means "all")
 	cut_pt_filter=300,
+	cut_eta_filter=2.5,
 	kind="tuple",
-	mass=200,
 ):
 	# Parse arguments and set other variables:
 	dataset_name = ""
@@ -52,12 +52,13 @@ def get_crab_config(
 	cmssw_params["subprocess"] = subprocess
 	cmssw_params["generation"] = generation
 	if kind == "tuple":
-		suffix = "pt{}".format(cut_pt_filter)
+		suffix = "cutpt{}eta{}".format(cut_pt_filter, int(cut_eta_filter*10))
 		cmssw_params["suffix"] = suffix
 #	cmssw_params["dataset"] = dataset.name                    # See comment on line above.
 #	cmssw_params["cmssw"] = analysis.get_cmssw()              # I stopped using this. The version is found inside of the CMSSW config. (Not changed for jets.)
 	if "tuple" in kind:
 		cmssw_params["cutPtFilter"] = cut_pt_filter
+		cmssw_params["cutEtaFilter"] = cut_eta_filter
 		cmssw_params["data"] = sample.data
 	params_str = "[\n"
 	for key, value in cmssw_params.iteritems():
