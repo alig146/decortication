@@ -33,7 +33,7 @@ def discover_tuples():
 		for tup in tuples:
 #			if tup.generation in ["spring15-inverted", "spring15-cutht700"]:
 #				tuples_new.append(tup)
-			if not tup.check():
+			if not dataset.check_yaml_against_db(tup):
 				tuples_new_temp.append(tup)
 		if tuples_new_temp:
 			print "\t\tFound new tuples: {}".format(tuples_new_temp)
@@ -76,19 +76,20 @@ def main():
 	for kind in a.kinds:
 		dss += dataset.fetch_entries(kind, a.query)
 	
-	print "\t[..] Checking samples.yaml against the DB."
+	print "\t[..] Checking samples.yaml against the DB (excluding tuples)."
 	n_updated = 0
 	for ds in dss:
-		print "\t{} ({})".format(ds.Name, ds.kind)
-		check_result = dataset.check_db_against_yaml(ds)
-		# Update entries in the DB that need updating (e.g., if you recently edited "samples.yaml"):
-		keys_update = [key for key, value in check_result.items() if value["change"] and key != "time"]
-		if keys_update:
-			n_updated += 1
-			info = {key: check_result[key]["new"] for key in keys_update}
-			print "\tUpdating the following values for {} ...".format(ds.Name)
-			print "\t{}".format(info)
-			ds.update(info)
+		if ds.kind != "tuple":
+			print "\t{} ({})".format(ds.Name, ds.kind)
+			check_result = dataset.check_db_against_yaml(ds)
+			# Update entries in the DB that need updating (e.g., if you recently edited "samples.yaml"):
+			keys_update = [key for key, value in check_result.items() if value["change"] and key != "time"]
+			if keys_update:
+				n_updated += 1
+				info = {key: check_result[key]["new"] for key in keys_update}
+				print "\tUpdating the following values for {} ...".format(ds.Name)
+				print "\t{}".format(info)
+				ds.update(info)
 	
 	## Print a summary:
 	print "Step 1 summary:"
@@ -106,8 +107,6 @@ def main():
 		print "Adding {} to the DB ...".format(tup.Name)
 		tup.write()
 		n_added += 1
-	
-	sys.exit()
 	
 	## Print a summary:
 	print "Step 2 summary:"

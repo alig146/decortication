@@ -290,6 +290,7 @@ qcd:
                 name: /QCD_Pt_1800to2400_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM
               - generation: fall15
                 name: /QCD_Pt_1800to2400_TuneCUETP8M1_13TeV_pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM
+        
         - name: QCD_Pt_2400to3200_TuneCUETP8M1_13TeV_pythia8
           subprocess: qcdp2400
           pts: [2400, 3200]
@@ -490,3 +491,13 @@ jetht:
           miniaods:
               - generation: "0706"
                 name: /JetHT/Run2015D-16Dec2015-v1/MINIAOD
+
+smu:
+    smu16:
+        - name: SingleMuon
+          subprocess: smu16b
+          data: 1
+          mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/Cert_271036-282092_13TeV_PromptReco_Collisions16_JSON.txt
+          miniaods:
+              - generation: "0800"
+                name: /SingleMuon/Run2016B-PromptReco-v2/MINIAOD

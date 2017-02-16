@@ -30,7 +30,7 @@ class analyzer:
 		out_file=None,                  # The name of the output file (including ".root")
 		save=True,
 		v=False,
-		tt_names=["analyzer/events"],   # The names of the input TTrees
+		tt_names=["tuplizer/events"],   # The names of the input TTrees
 		count=True,
 	):
 		# Arguments and variables:
@@ -138,17 +138,20 @@ class analyzer:
 			self.loops[key] = event_loop(self, key)
 	
 	def define_branches(self,
-		variables,               # A dictionary keyed by the outputbranch names and valued by the dimension
+		variables,               # A list of variable dictionaries
 	):
 		branches = {}
 		for sample in self.tt_out.keys():
 			branches[sample] = {}
-			for var, dim in variables.iteritems():
-				branches[sample][var] = array('d', [-1]*dim)		# If you change the "d" here, you need to change it two lines below!
+			for var in variables:
+				name = var["name"]
+				dim = var["dimension"]
+				branches[sample][name] = array('d', [-1]*dim)		# If you change the "d" here, you need to change it two lines below!
 				tt = self.tt_out[sample]
-				tt.Branch(var, branches[sample][var], '{}[{}]/D'.format(var, dim))
+				tt.Branch(name, branches[sample][name], '{}[{}]/D'.format(name, dim))
 			
 		self.branches = branches
+		self.variables = variables
 		return branches
 	
 	def write(self, Print=False):
@@ -219,6 +222,9 @@ class event_loop:
 #				for sample in samples:
 #					tuples.extend([tup for tup in sample.tuples if tup.generation == "spring15" and tup.suffix == "pt400"])
 #				self.n_total_list = [N for tup in tuples for N in tup.ns]
+		if not self.n:
+			print "[!!] The TChain you want to run over has no events."
+			sys.exit()
 		if v: print "\tThere are {} events.".format(self.n)
 	
 	def run(self,

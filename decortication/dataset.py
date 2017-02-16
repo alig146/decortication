@@ -219,7 +219,7 @@ class dataset:
 		sample = self.get_sample()
 		
 		# "path":
-		if not self.path:
+		if not self.path or self.path == "None":
 			if self.kind == "sample":
 				self.path = data_dir + "/" + self.name
 			elif self.kind == "miniaod":
@@ -331,8 +331,7 @@ class dataset:
 		p = self.path
 		if hasattr(self, "sample"):
 			p = self.sample.path
-		if p:
-#			print p
+		if p and p != "None":
 			tuple_dirs = [d for d in listpath(p) if "tuple" in d]
 			for d in tuple_dirs:
 				pieces = d.split("_")
