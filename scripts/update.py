@@ -130,9 +130,15 @@ def main():
 #			print entry.das
 #			print dataset.set_files(entry, j=j, DAS=entry.das)
 			print "\tFixing {} ...".format(entry.Name)
-			entry.fix()
+			try: entry.fix()
+			except Exception as ex:
+				print "[!!] Fixing failed:"
+				print ex
 			print "\tScanning {} ...".format(entry.Name)
-			entry.scan(j=j)
+			try: entry.scan(j=j)
+			except Exception as ex:
+				print "[!!] Scanning failed:"
+				print ex
 	return True
 # /FUNCTIONS
 

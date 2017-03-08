@@ -6,13 +6,14 @@
 
 # IMPORTS:
 import os, sys
-from ROOT import *
+from ROOT import gROOT, gStyle, TCanvas, TFile, TChain, TTree, SetOwnership
+#from ROOT import *
 from array import array		# Necessary for creating branches
 from time import time
 import random
 import numpy
 import inspect
-from truculence import utilities, root
+from truculence import utilities, root, cmssw
 from decortication import dataset
 #from truculence import *
 # /IMPORTS
@@ -31,37 +32,57 @@ class analyzer:
 		save=True,
 		v=False,
 		tt_names=["tuplizer/events"],   # The names of the input TTrees
-		count=True,
+		count=None,
+		use_condor=False,
 	):
+		# Basic configuration:
+		gROOT.SetBatch()                # Prevent ROOT canvas windows from opening
+		
 		# Arguments and variables:
 		self.name = inspect.stack()[1][1][:-3] if name == None else name		# This makes the name attribute be the script name if it's not already called something.
 		self.time_string = utilities.time_string()[:-4]		# A time string indicating when the analyzer was created
 		self.save = save
 		self.count = count
+		self.condor = use_condor
+		self.out_file = out_file
+		self.out_dir = out_dir
+		self.tuples_in = tuples        # This is useful debugging.
+		self.tuples = {}
 		
 		# Organize input:
-		if isinstance(tuples, dict):
-			self.tuples_in = tuples		# This is for potential debugging.
-		elif isinstance(tuples, str) or isinstance(tuples, list):
-			if isinstance(tuples, str):
-				tuples = [tuples]
-			if isinstance(tuples, list):
-				if isinstance(tuples[0], str):
-					tuples = {self.name: tuples}
-				else:
-					tuples = {self.Name: tuples}
+		if isinstance(tuples, str):
+			tuples = [tuples]
+		if isinstance(tuples, list):
+			if all(isinstance(tup, str) for tup in tuples):
+				self.tuples = {self.name: tuples}
+			elif all(isinstance(tup, dataset.dataset) for tup in tuples):
+				for tup in tuples:
+					if tup.process not in self.tuples: self.tuples[tup.process] = []
+					self.tuples[tup.process].append(tup)
+			else:
+				print "ERROR (analyzer): unrecognized input:"
+				print self.tuples_in
+				sys.exit()
+		elif isinstance(tuples, dict):
+			self.tuples = tuples
 		else:
 			print "ERROR (analyzer): \"tuples\" should be a string, list, or dictionary."
+			print "tuples = {}".format(tuples)
+			sys.exit()
 		
-		# Determine if tuples are raw (file locations) or dataset instances:
+		# Calculate event number if necessary:
+		if self.count == None:
+			if any([isinstance(tup, str) for tup in utilities.flatten_list([thing for thing in self.tuples.values()])]): self.count = True
+			else: self.count = False
 		
+		## Create TChains:
 		if v: print "Making TChain(s) ..."
 		self.tt_in = {}
 		self.tt_info = {}
 		self.tc = TCanvas("tc_{}".format(name), "tc_{}".format(name), 500, 500)
 		SetOwnership(self.tc, 0)
-		samples = tuples.keys()
-		for sample, tups in tuples.iteritems():
+		samples = self.tuples.keys()
+		for sample, tups in self.tuples.items():
 			ns = []
 			
 			# Handle different input schemes (either list of tuples or list of file names):
@@ -89,7 +110,7 @@ class analyzer:
 				elif len(tt_names) == 1:
 					key = sample
 				else:
-					print "ERROR (analyzer.__init__): The tuples configuration is weird:\n{}".format(tuples)
+					print "ERROR (analyzer.__init__): The tuples configuration is weird:\n{}".format(self.tuples)
 					sys.exit()
 				self.tt_in[key] = tt
 				info = {
@@ -104,20 +125,19 @@ class analyzer:
 		gROOT.SetStyle("Plain")
 		gStyle.SetTitleBorderSize(0)
 		gStyle.SetPalette(1)
-		gROOT.SetBatch()                 # Prevent canvas windows from opening
 #		SetOwnership(gROOT, 0)
 		
 		# Organize output:
 		if save:
 			# Set attributes to defaults if they aren't set:
 			## Output directory:
-			if not out_dir:
-				self.out_dir = "results/{}_{}".format(self.name, self.time_string)
-			if not os.path.exists(self.out_dir):
-				os.makedirs(self.out_dir)
+			if not out_dir and not self.condor: self.out_dir = "results/{}_{}".format(self.name, self.time_string)
+			elif self.condor: self.out_dir = "."
+			
+			if not os.path.exists(self.out_dir): os.makedirs(self.out_dir)
 			## Output file:
-			if not out_file:
-				self.out_file = "{}_{}.root".format(self.name, self.time_string)
+			if not out_file and not self.condor: self.out_file = "{}_{}.root".format(self.name, self.time_string)
+			if self.condor: self.out_file = "job_{}.root".format(self.condor)
 			
 			# Define new attributes:
 			self.out_path = self.out_dir + "/" + self.out_file
@@ -168,6 +188,131 @@ class analyzer:
 				self.out.WriteTObject(tt)
 #				print tt.GetName(), len(tt.GetListOfBranches())
 			self.out.Close()
+	
+	def Print(self):
+	# Print useful information about the analyzer.
+		print "\nAnalyzer information:"
+		print "{} (decortication/analyzer)".format(self.name)
+		print "input (original):"
+		print "\t{}".format(self.tuples_in)
+		print "input (formatted):"
+		print "\t{}".format(self.tuples)
+		print "\n"
+	
+	def get_files(self, info=False):
+		files = []
+		for key, tuples in self.tuples.items():
+			for tup in tuples:
+				if info:
+					if isinstance(tup, dataset.dataset): files.extend([{"file": f, "process": key} for f in tup.files])
+					elif isinstance(tup, str): files.append({"file": tup, "process": key})
+				else:
+					if isinstance(tup, dataset.dataset): files.extend(tup.files)
+					elif isinstance(tup, str): files.append(tup)
+		return files
+	
+	def create_jobs(self, cmd="", memory=2000, input_files=None):
+	# Create condor jobs for each input file.
+#		if not cmd:
+#			print "ERROR (analyzer.create_jobs): You need to specify a cmd to run for each job."
+#			return False
+		
+		# Define variables:
+		cmssw_version = cmssw.get_version(parsed=False)
+		if not cmd: cmd = "python {}.py -f %%FILE%% -o job_%%N%%.root".format(self.name)
+		tstring = utilities.time_string()[:-4]
+		path = "condor_jobs/{}/{}".format(self.name, tstring)
+		log_path = path + "/logs"
+		out_path = path + "/results"
+		eos_path = "/store/user/tote/analyzer_jobs/{}".format(tstring)		# Output path.
+		files_for_condor = ["{}/{}.py".format(os.getcwd(), self.name), "{}.tar.gz".format(cmssw_version)]
+		if isinstance(input_files, str): input_files = [input_files]
+		if input_files: input_files = [os.getcwd() + "/" + f for f in input_files if "/" not in f]
+		if input_files: files_for_condor.extend(input_files)
+		
+		# Make directories
+		for p in [path, log_path, out_path]:
+			if not os.path.exists(p): os.makedirs(p)
+		
+		# Make job files:
+		files = self.get_files(info=True)
+		## Make job scripts:
+		for i, f_dict in enumerate(files):
+			f = f_dict["file"]
+			if f[:12] == "/store/user/": f = "root://cmseos.fnal.gov/" + f
+			out_file = "{}_{}".format(tstring, i + 1)
+			job_name = "analyzer_{}".format(out_file)
+			job_script = "#!/bin/bash\n"
+			job_script += "\n"
+			job_script += "# Untar CMSSW area:\n"
+			job_script += "tar -xzf {}.tar.gz &&\n".format(cmssw_version)
+			for input_file in input_files:
+				input_file = input_file.split("/")[-1]
+				if "CMSSW_" not in f: job_script += "cp {} {}/src/Analyzers/FatjetAnalyzer/test\n".format(input_file, cmssw_version)
+			job_script += "cd {}/src/Analyzers/FatjetAnalyzer/test\n".format(cmssw_version)
+			job_script += "\n"
+			job_script += "# Setup CMSSW:\n"
+			job_script += "source /cvmfs/cms.cern.ch/cmsset_default.sh\n"
+			job_script += "scramv1 b ProjectRename\n"
+			job_script += "eval `scramv1 runtime -sh`		#cmsenv\n"
+			job_script += "\n"
+			job_script += cmd.replace("%%FILE%%", f).replace("%%PROCESS%%", f_dict["process"]).replace("%%N%%", str(i + 1)) + "\n"
+#			job_script += "cp job_{}.root {}/{}".format(i+1, os.getcwd(), out_path)
+			job_script += "xrdcp -f job_{}.root root://cmseos.fnal.gov/{}\n".format(i+1, eos_path)
+			with open("{}/{}.sh".format(path, job_name), "w") as out:
+				out.write(job_script)
+	
+		## Make condor configs:
+		for i in range(len(files)):
+			job_name = "analyzer_{}_{}".format(tstring, i + 1)
+			job_config = "universe = vanilla\n"
+			job_config += "Executable = {}.sh\n".format(job_name)
+			job_config += "Should_Transfer_Files = YES\n"
+			job_config += "WhenToTransferOutput = ON_EXIT\n"
+			job_config += "Transfer_Input_Files = {}\n".format(",".join(files_for_condor))
+#			job_config += "Output_Destination = results\n"
+#			job_config += "Transfer_Output_Files = job_{}.root\n".format(i+1)
+			job_config += "Transfer_Output_Files = \"\"\n"
+			job_config += "Output = logs/{}.stdout\n".format(job_name)
+			job_config += "Error = logs/{}.stderr\n".format(job_name)
+			job_config += "Log = logs/{}.log\n".format(job_name)
+			job_config += "notify_user = ${LOGNAME}@FNAL.GOV\n"
+			job_config += "x509userproxy = $ENV(X509_USER_PROXY)\n"
+			job_config += "request_memory = {}\n".format(memory)
+			job_config += "Queue 1\n"
+		
+			with open("{}/{}.jdl".format(path, job_name), "w") as out:
+				out.write(job_config)
+	
+		## Make run script:
+		run_script = "# Update cache info:\n"
+		run_script += "bash $HOME/condor/cache.sh\n"
+		run_script += "\n"
+		run_script += "# Grid proxy existence & expiration check:\n"
+		run_script += "PCHECK=`voms-proxy-info -timeleft`\n"
+		run_script += "if [[ ($? -ne 0) || (\"$PCHECK\" -eq 0) ]]; then\n"
+		run_script += "\tvoms-proxy-init -voms cms --valid 168:00\n"
+		run_script += "fi\n"
+		run_script += "\n"
+		run_script += "# Make tarball:\n"
+		run_script += "echo 'Making a tarball of the CMSSW area ...'\n"
+		run_script += "tar --exclude-caches-all -zcf ${CMSSW_VERSION}.tar.gz -C ${CMSSW_BASE}/.. ${CMSSW_VERSION}\n"
+		run_script += "\n"
+		run_script += "# Prepare EOS:\n"
+		run_script += "eos root://cmseos.fnal.gov mkdir -p {}\n".format(eos_path)
+		run_script += "\n"
+		run_script += "# Submit condor jobs:\n"
+		for i in range(len(files)):
+			job_name = "analyzer_{}_{}".format(tstring, i + 1)
+			run_script += "condor_submit {}.jdl\n".format(job_name)
+		
+		with open("{}/run.sh".format(path), "w") as out:
+			out.write(run_script)
+	
+		print "The jobs are in {}".format(path)
+		
+		return path
+
 
 class event_loop:
 	def __init__(self,

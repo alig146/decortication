@@ -144,6 +144,20 @@ class arguments:
 			action='store_true',
 			help="A JSON switch",
 		)
+		parser.add_argument(
+			"-ds", "--dataset", dest="Name",
+			type=str,
+			default=None,
+			help="dataset Name",
+			metavar="STR"
+		)
+		parser.add_argument(
+			"-condor", "--condor", dest="condor",
+			type=int,
+			default=0,
+			help="Condor job number (0 means no Condor)",
+			metavar="INT"
+		)
 		
 		self.args = parser.parse_args()
 		# Parse identifiers:

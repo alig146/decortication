@@ -354,6 +354,7 @@ class dataset:
 						tuples.append(tup)
 				else:
 					print "WARNING (dataset.find_tuples): Something is wrong with the naming of {}/{}.".format(p, d)
+		else: print "[!!] Sample object {} has a path value of {}.".format(sample.Name, sample.path)
 		return tuples
 	
 	

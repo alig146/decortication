@@ -9,6 +9,9 @@ from subprocess import Popen, PIPE
 # /IMPORTS
 
 # VARIABLES:
+access_domains = {
+	"cmslpc": ("cmseos.fnal.gov", "cmsxrootd.fnal.gov"),
+}
 # /VARIABLES
 
 # CLASSES:
@@ -22,10 +25,12 @@ def cp(original, copy, to=True):
 		raw_output = Popen(['xrdcp root://cmseos.fnal.gov/{} {}'.format(original, copy)], shell=True, stdout=PIPE, stderr=PIPE).communicate()
 	return True
 
-def listdir(d):
+def listdir(d, root=False, interactive=False, location="cmslpc"):
 	cmd = 'eos root://cmseos.fnal.gov ls {}'.format(d)
 	raw_output = Popen([cmd], shell=True, stdout=PIPE, stderr=PIPE).communicate()
-	return [thing for thing in raw_output[0].split("\n") if thing]
+	files = [thing for thing in raw_output[0].split("\n") if thing]
+	if not root: return files
+	else: return ["root://{}/{}/{}".format(access_domains[location][interactive], d, f) for f in files]
 
 def mkdir(d):
 	raw_output = Popen(['eos root://cmseos.fnal.gov mkdir -p {}'.format(d)], shell=True, stdout=PIPE, stderr=PIPE).communicate()
