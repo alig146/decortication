@@ -11,3 +11,11 @@ map<TString, TString> name_proper {
 	{"ttbar", "t#bar{t}"},
 	{"wjets", "W #rightarrow jets"},
 };
+
+map<TString, TString> groom_names {
+	{"f", "filtered"},
+	{"p", "pruned"},
+	{"s", "soft-dropped"},
+	{"t", "trimmed"},
+	{"u", "ungroomed"},
+};
