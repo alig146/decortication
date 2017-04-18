@@ -62,7 +62,7 @@ TH1* make_template(TH2* h, TString ds, TString cut_name="sig", double masy_cut=0
 	return temp;
 }
 
-TH1* make_template(TH3* h, TString ds, TString cut_name="sig", double masy_cut=0.1, double deta_cut=1.0) {
+TH1* make_template(TH3* h, TString ds, TString cut_name, TString dir="", double masy_cut=0.1, double deta_cut=1.0) {
 	TString name = h->GetName() + TString("_temp");
 	int xbins = h->GetNbinsX();		// m
 	int ybins = h->GetNbinsY();		// eta
@@ -73,6 +73,8 @@ TH1* make_template(TH3* h, TString ds, TString cut_name="sig", double masy_cut=0
 	// Do the convolutions:
 	for (int zbin = 1; zbin <= zbins; zbin++) {
 		double ht = h->GetZaxis()->GetBinCenter(zbin);
+		double weight_factor = correction_function_new(900, ds, cut_name, dir)/correction_function_new(ht, ds, cut_name, dir);
+		cout << zbin << endl;
 		for (int x0bin = 1; x0bin <= xbins; x0bin++) {
 			for (int x1bin = x0bin; x1bin <= xbins; x1bin++) {
 				for (int y0bin = 1; y0bin <= ybins; y0bin++) {
@@ -86,7 +88,6 @@ TH1* make_template(TH3* h, TString ds, TString cut_name="sig", double masy_cut=0
 						double deta = abs(eta0 - eta1);
 						double n0 = h->GetBinContent(x0bin, y0bin, zbin);
 						double n1 = h->GetBinContent(x1bin, y1bin, zbin);
-						double weight_factor = correction_function(900, ds, cut_name)/correction_function(ht, ds, cut_name);
 						double weight = n0*n1*weight_factor;
 						if (cut_name == "sb2"){
 							if (masy < masy_cut && deta < deta_cut) temp->Fill(mavg, weight);		// update this some day
@@ -100,6 +101,17 @@ TH1* make_template(TH3* h, TString ds, TString cut_name="sig", double masy_cut=0
 		}
 	}
 	
+	return temp;
+}
+
+TH1* fetch_template(TString ds, TString cut, TString dir="") {
+	TString name = "temp_" + ds + "_" + cut + "_p";
+	if (dir != "") name = name + "_" + dir;
+	
+	TFile* tf_in = TFile::Open("/home/tote/decortication/macros/background_tools/template_plots.root");
+	TH1* temp = (TH1*) tf_in->Get(name);
+//	tf_in->Close();
+	cout << name << endl;
 	return temp;
 }
 

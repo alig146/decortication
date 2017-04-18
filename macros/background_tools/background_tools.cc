@@ -33,7 +33,7 @@ TH1 *make_self_convolution(TH1 *h, TString name="", double masy_cut=0.1) {
 
 
 
-TH1 *make_cdf(TH1 *h, TString name="") {
+TH1* make_cdf(TH1 *h, TString name="") {
 	if (!name[0]) name = h->GetName() + TString("_cdf");
 	TH1 *cdf = (TH1*) h->Clone(name);
 	

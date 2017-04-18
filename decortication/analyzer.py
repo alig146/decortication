@@ -48,6 +48,7 @@ class analyzer:
 		self.out_dir = out_dir
 		self.tuples_in = tuples        # This is useful debugging.
 		self.tuples = {}
+		self.tt_names = tt_names
 		
 		# Organize input:
 		if isinstance(tuples, str):
@@ -96,6 +97,7 @@ class analyzer:
 				tups = fs
 			if v: print "\tMaking TChain(s) for {} ...".format(sample)
 #			self.tt_in[sample] = []
+			if not self.tt_names: tt_names = [sample]
 			for tt_name in tt_names:
 				if v: print "\t\tTChain named {}:".format(tt_name)
 				tt = TChain(tt_name)
@@ -209,7 +211,7 @@ class analyzer:
 				else:
 					if isinstance(tup, dataset.dataset): files.extend(tup.files)
 					elif isinstance(tup, str): files.append(tup)
-		return files
+		return list(set(files))
 	
 	def create_jobs(self, cmd="", memory=2000, input_files=None):
 	# Create condor jobs for each input file.
@@ -375,7 +377,7 @@ class event_loop:
 	def run(self,
 		n=None,                 # The number of events to run over ("-1" means "all")
 		arguments=None,
-		rand=True, v=True,
+		rand=False, v=True,
 		variables=[
 			"ak4_pf_pt", "ak4_pf_sigma", "ak4_pf_nevents", "ak4_gn_pt_hat",
 			"ca12_pf_px", "ca12_pf_py", "ca12_pf_pz", "ca12_pf_e", "ca12_pf_pt", "ca12_pf_M", "ca12_pf_m", "ca12_pf_eta", "ca12_pf_phi","ca12_pf_tau1", "ca12_pf_tau2","ca12_pf_tau3", "ca12_pf_tau4", "ca12_pf_ht", "ak8_pf_ht"

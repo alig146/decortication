@@ -19,3 +19,7 @@ map<TString, TString> groom_names {
 	{"t", "trimmed"},
 	{"u", "ungroomed"},
 };
+
+Double_t get_weight() {
+	return (29.128 + 2.183)/2.183;
+}

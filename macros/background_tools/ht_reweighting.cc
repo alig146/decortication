@@ -9,10 +9,10 @@ double correction_function(double x, TString ds, TString cut) {
 		else if (ds == "qcdp") return 1.3e18*pow(x, -5.5);
 		else if (ds == "jetht" || ds == "jetht16") return 1.1e16*pow(x, -4.7);
 	}
-	else if (cut == "sb" || cut == "sbp" || cut == "sbb") {
+	else if (cut == "sb" || cut == "sbs" || cut == "sbp" || cut == "sbb" || cut == "sbbs" || cut == "sbbsl") {
 //		if (ds == "qcdmg") return 4.2e18*pow(x, -5.5);		// 2015
 		if (ds == "qcdmg") return 6.3e19*pow(x, -5.5);		// 2016
-//		else if (ds == "qcdp") return 1.3e19*pow(x, -5.7);		// 2015
+		else if (ds == "qcdp") return 1.3e19*pow(x, -5.7);		// 2015
 		else if (ds == "jetht" || ds == "jetht16") return 1.1e19*pow(x, -5.3);		// 2016
 	}
 	else if (cut == "sbl" || cut == "sblb") {
@@ -44,4 +44,17 @@ double correction_function(double x, TString ds, TString cut) {
 	}
 	cout << "[!!] Correction function error: " << ds << ", " << cut << endl;
 	return 0;
+}
+double correction_function_new(double x, TString ds, TString cut, TString dir="") {
+	if (ds == "jetht") ds = "qcdmg";		// Use qcdmg corrections for data.
+	if (cut == "sbb") cut = "sb";
+	if (cut == "sbtb") cut = "sbt";
+	if (cut == "sbsb") cut = "sbs";
+	TFile* tf_in = TFile::Open("/home/tote/decortication/macros/background_tools/reweight_functions.root");
+	TString name = "f1_";
+	if (dir != "") name = name + dir + "_";
+	name = name + ds + "_" + cut;
+	TF1* f1 = (TF1*) tf_in->Get(name);
+	tf_in->Close();
+	return f1->Eval(x);
 }
