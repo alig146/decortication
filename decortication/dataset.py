@@ -10,7 +10,7 @@ from collections import OrderedDict
 from time import time
 import sqlite3
 from subprocess import Popen, PIPE
-from truculence import analysis, das, crab, lhe, utilities
+from truculence import das, crab, lhe, utilities
 import decortication
 from decortication import eos, variables, infrastructure
 # /IMPORTS
@@ -725,6 +725,7 @@ def fetch_entries(kind, query=None, db_path=db_path_default, isolated=True):
 					results = []
 					for raw in raws:
 #						print raw
+#						print 
 						d = {}
 						for i, key in enumerate(keys_db[kind].keys()):
 							d[key] = raw[i]
@@ -1003,6 +1004,7 @@ def set_ns(thing, j=True, DAS=True):
 		if not ns and not DAS:
 #			if os.path.exists(self.path):		# I CAN'T DO THIS BECAUSE OF EOS!
 			print "Getting the ns from {} ...".format(thing.path)
+			from truculence import analysis		# I don't import analysis at the top because it imports ROOT, which breaks cmsRun. Since this function shouldn't get called during cmsRun, we're okay. Yes, this is kludgy.
 			ns = analysis.get_nevents(thing.files, tt_name=variables.tt_names[thing.kind], site="cmslpc")
 		elif not ns and DAS:		# Check DAS
 			print "Checking DAS for nevents list of {} ...".format(thing.Name)
