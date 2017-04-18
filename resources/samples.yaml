@@ -183,7 +183,8 @@ qcd:
           miniaods:
               - generation: spring15
                 name: /QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/MINIAODSIM
-                n: 4978425
+              - generation: fall15
+                name: /QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM
           analyze: False
         
         - name: QCD_Pt_80to120_TuneCUETP8M1_13TeV_pythia8
@@ -193,7 +194,8 @@ qcd:
           miniaods:
               - generation: spring15
                 name: /QCD_Pt_80to120_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM
-                n: 3424782
+              - generation: fall15
+                name: /QCD_Pt_80to120_TuneCUETP8M1_13TeV_pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM
           analyze: False
         
         - name: QCD_Pt_120to170_TuneCUETP8M1_13TeV_pythia8
@@ -203,7 +205,8 @@ qcd:
           miniaods:
               - generation: spring15
                 name: /QCD_Pt_120to170_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM
-                n: 3452896
+              - generation: fall15
+                name: /QCD_Pt_120to170_TuneCUETP8M1_13TeV_pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM
           analyze: False
         
         - name: QCD_Pt_170to300_TuneCUETP8M1_13TeV_pythia8
@@ -213,7 +216,8 @@ qcd:
           miniaods:
               - generation: spring15
                 name: /QCD_Pt_170to300_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/MINIAODSIM
-                n: 3364368
+              - generation: fall15
+                name: /QCD_Pt_170to300_TuneCUETP8M1_13TeV_pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM
           analyze: False
         
         - name: QCD_Pt_300to470_TuneCUETP8M1_13TeV_pythia8
@@ -223,7 +227,6 @@ qcd:
           miniaods:
               - generation: spring15
                 name: /QCD_Pt_300to470_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM
-                n: 2933611
               - generation: fall15
                 name: /QCD_Pt_300to470_TuneCUETP8M1_13TeV_pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM
         
@@ -244,7 +247,6 @@ qcd:
           miniaods:
               - generation: spring15
                 name: /QCD_Pt_600to800_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v3/MINIAODSIM
-                n: 1964128
               - generation: fall15
                 name: /QCD_Pt_600to800_TuneCUETP8M1_13TeV_pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM
         
@@ -255,7 +257,6 @@ qcd:
           miniaods:
               - generation: spring15
                 name: /QCD_Pt_800to1000_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/MINIAODSIM
-                n: 1937216
               - generation: fall15
                 name: /QCD_Pt_800to1000_TuneCUETP8M1_13TeV_pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM
         
@@ -266,7 +267,6 @@ qcd:
           miniaods:
               - generation: spring15
                 name: /QCD_Pt_1000to1400_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM
-                n: 1487136
               - generation: fall15
                 name: /QCD_Pt_1000to1400_TuneCUETP8M1_13TeV_pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM
         
@@ -319,7 +319,8 @@ qcd:
           miniaods:
               - generation: spring15
                 name: /QCD_HT100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/MINIAODSIM
-                n: 80093092
+              - generation: fall15
+                name: /QCD_HT100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM
           analyze: False
         
         - name: QCD_HT200to300_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
@@ -329,7 +330,8 @@ qcd:
           miniaods:
               - generation: spring15
                 name: /QCD_HT200to300_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/MINIAODSIM
-                n: 18717349
+              - generation: fall15
+                name: /QCD_HT200to300_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM
           analyze: False
         
         - name: QCD_HT300to500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
@@ -339,7 +341,8 @@ qcd:
           miniaods:
               - generation: spring15
                 name: /QCD_HT300to500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/MINIAODSIM
-                n: 20086103
+              - generation: fall15
+                name: /QCD_HT300to500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM
           analyze: False
         
         - name: QCD_HT500to700_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
@@ -349,7 +352,6 @@ qcd:
           miniaods:
               - generation: spring15
                 name: /QCD_HT500to700_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM
-                n: 19542847
               - generation: fall15
                 name: /QCD_HT500to700_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM
         
