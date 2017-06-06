@@ -211,7 +211,9 @@ class analyzer:
 				else:
 					if isinstance(tup, dataset.dataset): files.extend(tup.files)
 					elif isinstance(tup, str): files.append(tup)
-		return list(set(files))
+		
+#		return list(set(files))		# You can't do this with a list of dicts.
+		return files
 	
 	def create_jobs(self, cmd="", memory=2000, input_files=None):
 	# Create condor jobs for each input file.

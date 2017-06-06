@@ -44,9 +44,6 @@ sample:
     json:
         type: text
         default: !!null
-    mask:
-        type: text
-        default: !!null
     time:
         type: real
         default: 0
@@ -110,6 +107,9 @@ miniaod:
     lhe_n:
         type: integer
         default: N
+    mask:
+        type: text
+        default: !!null
     time:
         type: real
         default: 0

@@ -413,6 +413,18 @@ ttbar:
                 name: /TTJets_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM
                 n: 42730273
 
+zjets:
+    zjets:
+        - name: ZJetsToQQ_HT600toInf_13TeV-madgraph
+          subprocess: zjets
+          hts: [600, 3000]
+          sigma: 5.67
+          miniaods:
+              - generation: summer16
+                name: /ZJetsToQQ_HT600toInf_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
+                aod: /ZJetsToQQ_HT600toInf_13TeV-madgraph/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM
+                gen: /ZJetsToQQ_HT600toInf_13TeV-madgraph/RunIISummer15GS-MCRUN2_71_V1-v1/GEN-SIM
+
 wjets:
     wjets:
         - name: WJetsToQQ_HT-600ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
@@ -426,80 +438,319 @@ wjets:
               - generation: fall15
                 name: /WJetsToQQ_HT-600ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM
 
+zzto4q:
+    zzto4q:
+        - name: ZZTo4Q_13TeV_amcatnloFXFX_madspin_pythia8
+          subprocess: zzto4q
+          sigma: 6.842
+          miniaods:
+              - generation: summer16
+                name: /ZZTo4Q_13TeV_amcatnloFXFX_madspin_pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
+                aod: /ZZTo4Q_13TeV_amcatnloFXFX_madspin_pythia8/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM
+                gen: /ZZTo4Q_13TeV_amcatnloFXFX_madspin_pythia8/RunIISummer15GS-MCRUN2_71_V1-v1/GEN-SIM
+
+zzto2l2q:
+    zzto2l2q:
+        - name: ZZTo2L2Q_13TeV_powheg_pythia8
+          subprocess: zzto2l2q
+          sigma: 1.999
+          miniaods:
+              - generation: summer16
+                name: /ZZTo2L2Q_13TeV_powheg_pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
+                aod: /ZZTo2L2Q_13TeV_powheg_pythia8/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM
+                gen: /ZZTo2L2Q_13TeV_powheg_pythia8/RunIISummer15wmLHEGS-MCRUN2_71_V1-v1/GEN-SIM
+
+zzto4l:
+    zzto4l:
+        - name: ZZTo4L_13TeV-amcatnloFXFX-pythia8
+          subprocess: zzto4l
+          sigma: 1.191
+          miniaods:
+              - generation: summer16
+                name: /ZZTo4L_13TeV-amcatnloFXFX-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM
+                aod: /ZZTo4L_13TeV-amcatnloFXFX-pythia8/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/AODSIM
+                gen: /ZZTo4L_13TeV-amcatnloFXFX-pythia8/RunIISummer15wmLHEGS-MCRUN2_71_V1_ext1-v2/GEN-SIM
+
+wwto4q:
+    wwto4q:
+        - name: WWTo4Q_13TeV-powheg
+          subprocess: wwto4q
+          sigma: 51.1
+          miniaods:
+              - generation: summer16
+                name: /WWTo4Q_13TeV-powheg/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
+                aod: /WWTo4Q_13TeV-powheg/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM
+                gen: /WWTo4Q_13TeV-powheg/RunIISummer15GS-MCRUN2_71_V1-v1/GEN-SIM
+
+wwto2l2q:
+    wwto2l2q:
+        - name: WWToLNuQQ_13TeV-powheg
+          subprocess: wwto2l2q
+          sigma: 1.0
+          miniaods:
+              - generation: summer16
+                name: /WWToLNuQQ_13TeV-powheg/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
+                aod: /WWToLNuQQ_13TeV-powheg/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM
+                gen: /WWToLNuQQ_13TeV-powheg/RunIISummer15GS-MCRUN2_71_V1-v1/GEN-SIM
+
+wz:
+    wz:
+        - name: WZ_TuneCUETP8M1_13TeV-pythia8
+          subprocess: wz
+          sigma: 22.82
+          miniaods:
+              - generation: spring15
+                name: /WZ_TuneCUETP8M1_13TeV-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM
+                aod: /WZ_TuneCUETP8M1_13TeV-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/AODSIM
+                gen: /WZ_TuneCUETP8M1_13TeV-pythia8/RunIIWinter15GS-MCRUN2_71_V1-v1/GEN-SIM
+
+zto2m:
+    zto2m:
+        - name: ZToMuMu_NNPDF30_13TeV-powheg_M_50_120
+          subprocess: zto2m50
+          sigma: 1975.00
+          miniaods:
+              - generation: summer16
+                name: /ZToMuMu_NNPDF30_13TeV-powheg_M_50_120/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
+                aod: /ZToMuMu_NNPDF30_13TeV-powheg_M_50_120/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM
+                gen: /ZToMuMu_NNPDF30_13TeV-powheg_M_50_120/RunIISummer15GS-MCRUN2_71_V1-v1/GEN-SIM
+        
+        - name: ZToMuMu_NNPDF30_13TeV-powheg_M_120_200
+          subprocess: zto2m120
+          sigma: 19.32
+          miniaods:
+              - generation: summer16
+                name: /ZToMuMu_NNPDF30_13TeV-powheg_M_120_200/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
+                aod: /ZToMuMu_NNPDF30_13TeV-powheg_M_120_200/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM
+                gen: /ZToMuMu_NNPDF30_13TeV-powheg_M_120_200/RunIISummer15GS-MCRUN2_71_V1-v1/GEN-SIM
+        
+        - name: ZToMuMu_NNPDF30_13TeV-powheg_M_200_400
+          subprocess: zto2m200
+          sigma: 2.73
+          miniaods:
+              - generation: summer16
+                name: /ZToMuMu_NNPDF30_13TeV-powheg_M_200_400/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
+                aod: /ZToMuMu_NNPDF30_13TeV-powheg_M_200_400/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM
+                gen: /ZToMuMu_NNPDF30_13TeV-powheg_M_200_400/RunIISummer15GS-MCRUN2_71_V1-v1/GEN-SIM
+        
+        - name: ZToMuMu_NNPDF30_13TeV-powheg_M_400_800
+          subprocess: zto2m400
+          sigma: 0.24
+          miniaods:
+              - generation: summer16
+                name: /ZToMuMu_NNPDF30_13TeV-powheg_M_400_800/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
+                aod: /ZToMuMu_NNPDF30_13TeV-powheg_M_400_800/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM
+                gen: /ZToMuMu_NNPDF30_13TeV-powheg_M_400_800/RunIISummer15GS-MCRUN2_71_V1-v1/GEN-SIM
+        
+        - name: ZToMuMu_NNPDF30_13TeV-powheg_M_800_1400
+          subprocess: zto2m800
+          sigma: 0.01678
+          miniaods:
+              - generation: summer16
+                name: /ZToMuMu_NNPDF30_13TeV-powheg_M_800_1400/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
+                aod: /ZToMuMu_NNPDF30_13TeV-powheg_M_800_1400/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM
+                gen: /ZToMuMu_NNPDF30_13TeV-powheg_M_800_1400/RunIISummer15GS-MCRUN2_71_V1-v1/GEN-SIM
+        
+        - name: ZToMuMu_NNPDF30_13TeV-powheg_M_1400_2300
+          subprocess: zto2m1400
+          sigma: 0.00139
+          miniaods:
+              - generation: summer16
+                name: /ZToMuMu_NNPDF30_13TeV-powheg_M_1400_2300/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
+                aod: /ZToMuMu_NNPDF30_13TeV-powheg_M_1400_2300/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM
+                gen: /ZToMuMu_NNPDF30_13TeV-powheg_M_1400_2300/RunIISummer15GS-MCRUN2_71_V1-v1/GEN-SIM
+        
+        - name: ZToMuMu_NNPDF30_13TeV-powheg_M_2300_3500
+          subprocess: zto2m2300
+          sigma: 0.00008948
+          miniaods:
+              - generation: summer16
+                name: /ZToMuMu_NNPDF30_13TeV-powheg_M_2300_3500/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
+                aod: /ZToMuMu_NNPDF30_13TeV-powheg_M_2300_3500/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM
+                gen: /ZToMuMu_NNPDF30_13TeV-powheg_M_2300_3500/RunIISummer15GS-MCRUN2_71_V1-v1/GEN-SIM
+        
+        - name: ZToMuMu_NNPDF30_13TeV-powheg_M_3500_4500
+          subprocess: zto2m3500
+          sigma: 0.000004135
+          miniaods:
+              - generation: summer16
+                name: /ZToMuMu_NNPDF30_13TeV-powheg_M_3500_4500/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
+                aod: /ZToMuMu_NNPDF30_13TeV-powheg_M_3500_4500/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM
+                gen: /ZToMuMu_NNPDF30_13TeV-powheg_M_3500_4500/RunIISummer15GS-MCRUN2_71_V1-v1/GEN-SIM
+        
+        - name: ZToMuMu_NNPDF30_13TeV-powheg_M_4500_6000
+          subprocess: zto2m4500
+          sigma: 0.000000456
+          miniaods:
+              - generation: summer16
+                name: /ZToMuMu_NNPDF30_13TeV-powheg_M_4500_6000/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
+                aod: /ZToMuMu_NNPDF30_13TeV-powheg_M_4500_6000/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM
+                gen: /ZToMuMu_NNPDF30_13TeV-powheg_M_4500_6000/RunIISummer15GS-MCRUN2_71_V1-v1/GEN-SIM
+        
+        - name: ZToMuMu_NNPDF30_13TeV-powheg_M_6000_Inf
+          subprocess: zto2m6000
+          sigma: 0.00000002066
+          miniaods:
+              - generation: summer16
+                name: /ZToMuMu_NNPDF30_13TeV-powheg_M_6000_Inf/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
+                aod: /ZToMuMu_NNPDF30_13TeV-powheg_M_6000_Inf/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM
+                gen: /ZToMuMu_NNPDF30_13TeV-powheg_M_6000_Inf/RunIISummer15GS-MCRUN2_71_V1-v1/GEN-SIM
+
 jetht:
     jetht16:
         - name: JetHT
           subprocess: jetht16b
           data: 1
-          mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/Cert_271036-282092_13TeV_PromptReco_Collisions16_JSON.txt
           miniaods:
               - generation: "0800"
                 name: /JetHT/Run2016B-PromptReco-v2/MINIAOD
+                mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/Final/Cert_271036-284044_13TeV_PromptReco_Collisions16_JSON.txt
+              - generation: "feb17"
+                name: /JetHT/Run2016B-03Feb2017_ver2-v2/MINIAOD
+                mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/ReReco/Final/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt
+                mask: 
         - name: JetHT
           subprocess: jetht16c
           data: 1
-          mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/Cert_271036-282092_13TeV_PromptReco_Collisions16_JSON.txt
           miniaods:
               - generation: "0800"
                 name: /JetHT/Run2016C-PromptReco-v2/MINIAOD
+                mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/Final/Cert_271036-284044_13TeV_PromptReco_Collisions16_JSON.txt
+              - generation: "feb17"
+                name: /JetHT/Run2016C-03Feb2017-v1/MINIAOD
+                mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/ReReco/Final/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt
         - name: JetHT
           subprocess: jetht16d
           data: 1
-          mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/Cert_271036-282092_13TeV_PromptReco_Collisions16_JSON.txt
           miniaods:
               - generation: "0800"
                 name: /JetHT/Run2016D-PromptReco-v2/MINIAOD
+                mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/Final/Cert_271036-284044_13TeV_PromptReco_Collisions16_JSON.txt
+              - generation: "feb17"
+                name: /JetHT/Run2016D-03Feb2017-v1/MINIAOD
+                mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/ReReco/Final/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt
         - name: JetHT
           subprocess: jetht16e
           data: 1
-          mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/Cert_271036-282092_13TeV_PromptReco_Collisions16_JSON.txt
           miniaods:
               - generation: "0800"
                 name: /JetHT/Run2016E-PromptReco-v2/MINIAOD
+                mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/Final/Cert_271036-284044_13TeV_PromptReco_Collisions16_JSON.txt
+              - generation: "feb17"
+                name: /JetHT/Run2016E-03Feb2017-v1/MINIAOD
+                mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/ReReco/Final/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt
         - name: JetHT
           subprocess: jetht16f
           data: 1
-          mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/Cert_271036-282092_13TeV_PromptReco_Collisions16_JSON.txt
           miniaods:
               - generation: "0800"
                 name: /JetHT/Run2016F-PromptReco-v1/MINIAOD
+                mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/Final/Cert_271036-284044_13TeV_PromptReco_Collisions16_JSON.txt
+              - generation: "feb17"
+                name: /JetHT/Run2016F-03Feb2017-v1/MINIAOD
+                mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/ReReco/Final/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt
         - name: JetHT
           subprocess: jetht16g
           data: 1
-          mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/Cert_271036-282092_13TeV_PromptReco_Collisions16_JSON.txt
           miniaods:
               - generation: "0800"
                 name: /JetHT/Run2016G-PromptReco-v1/MINIAOD
+                mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/Final/Cert_271036-284044_13TeV_PromptReco_Collisions16_JSON.txt
+              - generation: "feb17"
+                name: /JetHT/Run2016G-03Feb2017-v1/MINIAOD
+                mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/ReReco/Final/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt
         - name: JetHT
-          subprocess: jetht16h
+          subprocess: jetht16ha
           data: 1
-          mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/Cert_271036-282092_13TeV_PromptReco_Collisions16_JSON.txt
           miniaods:
               - generation: "0800"
                 name: /JetHT/Run2016H-PromptReco-v2/MINIAOD
+                mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/Final/Cert_271036-284044_13TeV_PromptReco_Collisions16_JSON.txt
+              - generation: "feb17"
+                name: /JetHT/Run2016H-03Feb2017_ver2-v1/MINIAOD
+                mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/ReReco/Final/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt
+        - name: JetHT
+          subprocess: jetht16hb
+          data: 1
+          miniaods:
+              - generation: "feb17"
+                name: /JetHT/Run2016H-03Feb2017_ver3-v1/MINIAOD
+                mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/ReReco/Final/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt
     
     jetht15:
         - name: JetHT
           subprocess: jetht15c
           data: 1
-          mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/Cert_246908-260627_13TeV_PromptReco_Collisions15_25ns_JSON_v2.txt
           miniaods:
               - generation: "0706"
                 name: /JetHT/Run2015C_25ns-16Dec2015-v1/MINIAOD
+                mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/Reprocessing/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON.txt
         - name: JetHT
           subprocess: jetht15d
           data: 1
-          mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/Cert_246908-260627_13TeV_PromptReco_Collisions15_25ns_JSON_v2.txt
           miniaods:
               - generation: "0706"
                 name: /JetHT/Run2015D-16Dec2015-v1/MINIAOD
+                mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/Reprocessing/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON.txt
 
 smu:
     smu16:
         - name: SingleMuon
           subprocess: smu16b
           data: 1
-          mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/Cert_271036-282092_13TeV_PromptReco_Collisions16_JSON.txt
           miniaods:
               - generation: "0800"
                 name: /SingleMuon/Run2016B-PromptReco-v2/MINIAOD
+                mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/Final/Cert_271036-284044_13TeV_PromptReco_Collisions16_JSON.txt
+              - generation: "feb17"
+                name: /SingleMuon/Run2016B-03Feb2017_ver2-v2/MINIAOD
+                mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/ReReco/Final/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt
+        - name: SingleMuon
+          subprocess: smu16c
+          data: 1
+          miniaods:
+              - generation: "feb17"
+                name: /SingleMuon/Run2016C-03Feb2017-v1/MINIAOD
+                mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/ReReco/Final/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt
+        - name: SingleMuon
+          subprocess: smu16d
+          data: 1
+          miniaods:
+              - generation: "feb17"
+                name: /SingleMuon/Run2016D-03Feb2017-v1/MINIAOD
+                mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/ReReco/Final/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt
+        - name: SingleMuon
+          subprocess: smu16e
+          data: 1
+          miniaods:
+              - generation: "feb17"
+                name: /SingleMuon/Run2016E-03Feb2017-v1/MINIAOD
+                mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/ReReco/Final/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt
+        - name: SingleMuon
+          subprocess: smu16f
+          data: 1
+          miniaods:
+              - generation: "feb17"
+                name: /SingleMuon/Run2016F-03Feb2017-v1/MINIAOD
+                mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/ReReco/Final/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt
+        - name: SingleMuon
+          subprocess: smu16g
+          data: 1
+          miniaods:
+              - generation: "feb17"
+                name: /SingleMuon/Run2016G-03Feb2017-v1/MINIAOD
+                mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/ReReco/Final/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt
+        - name: SingleMuon
+          subprocess: smu16ha
+          data: 1
+          miniaods:
+              - generation: "feb17"
+                name: /SingleMuon/Run2016H-03Feb2017_ver2-v1/MINIAOD
+                mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/ReReco/Final/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt
+        - name: SingleMuon
+          subprocess: smu16hb
+          data: 1
+          miniaods:
+              - generation: "feb17"
+                name: /SingleMuon/Run2016H-03Feb2017_ver3-v1/MINIAOD
+                mask: https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/ReReco/Final/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt

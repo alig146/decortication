@@ -148,6 +148,8 @@ class dataset:
 		if hasattr(self, "files"):
 			print "\t\t* {} files".format(len(self.files))
 			print "\t\t* example file: {}".format(self.files[0])
+		if hasattr(self, "mask"):
+			print "\t* mask: {}".format(self.mask)
 		# Parameters:
 		if hasattr(self, "sigma"):
 			print "\t* sigma = {}".format(self.sigma)
@@ -354,7 +356,7 @@ class dataset:
 						tuples.append(tup)
 				else:
 					print "WARNING (dataset.find_tuples): Something is wrong with the naming of {}/{}.".format(p, d)
-		else: print "[!!] Sample object {} has a path value of {}.".format(sample.Name, sample.path)
+		else: print "[!!] Dataset object {} has a path value of {}.".format(self.Name, self.path)
 		return tuples
 	
 	
