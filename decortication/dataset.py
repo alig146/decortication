@@ -5,17 +5,20 @@
 ####################################################################
 
 # IMPORTS:
-import os, yaml, json, re, sys
+import os, yaml, json, re, sys, copy
 from collections import OrderedDict
 from time import time
 import sqlite3
 from subprocess import Popen, PIPE
 from truculence import das, crab, lhe, utilities
 import decortication
-from decortication import eos, variables, infrastructure
+from decortication import eos, variables, infrastructure, site
 # /IMPORTS
 
 # VARIABLES
+Site = site.get_site()
+dir_data = Site.get_dir("data")
+
 username = "tote"
 data_dir = "/store/user/" + username
 lhe_dir = "/uscms_data/d3/{}/lhe".format(username)
@@ -95,8 +98,8 @@ class dataset:
 		self.Name = "_".join(self.primary_keys.values())
 		self.Name_safe = self.Name.replace("-", "")
 		## "dir":
-		if self.path:
-			self.dir = self.path.split("/")[-1]
+#		if self.path:
+#			self.dir = self.path.split("/")[-1]
 		## "json" and "json_full":
 		if not self.json:
 			self.json = "{}/{}.json".format(json_dir_default, self.Name)
@@ -113,6 +116,11 @@ class dataset:
 			if self.lhe_path:
 				self.lhe_file = self.lhe_path.split("/")[-1]
 		
+		self.site = Site
+#		self.dir = site.directory({"path": self.path, "eos": self.site.get_dir("data").eos})
+		if self.path:
+			self.dir = copy.copy(self.site.get_dir("data"))
+			self.dir.cd(self.path)
 #		# Connect to any children:
 #		if not isolated:
 #			self.set_connections(down=True, up=False)
@@ -142,7 +150,7 @@ class dataset:
 		else: print "\t* UNSCANNED"
 		# Path and files:
 		if hasattr(self, "das"):
-			print "\t* path: {} (das = {}, instance = {})".format(self.path, self.das, self.instance)
+			print "\t* path: {} (das = {}, instance = {})".format(self.dir.path, self.das, self.instance)
 		else:
 			print "\t* path: {}".format(self.path)
 		if hasattr(self, "files"):
@@ -213,6 +221,41 @@ class dataset:
 					good = False
 		return good
 	
+	def set_files(self, j=True):
+		files = []
+		if j:
+			if os.path.exists(self.json_full):
+				with open(self.json_full) as infile: files = json.load(infile)["files"]
+		if not files:
+			if self.path and not self.das:
+	#			if os.path.exists(self.path):		# I CAN'T DO THIS BECAUSE OF EOS!
+				files = self.dir.ls()
+			if not files and self.das:		# Check DAS
+				print "Checking DAS for file list of {} ...".format(self.Name)
+				result = das.get_info(self.name, instance=self.instance)
+	#			print result["raw"]
+				files = result["files"]
+		self.files = files
+		return files
+		
+	def set_ns(self, j=True):
+		ns = []
+		if j:
+			if os.path.exists(self.json_full):
+				with open(self.json_full) as infile: ns = json.load(infile)["ns"]
+		if not ns:
+			if not ns and not self.das:
+	#			if os.path.exists(self.path):		# I CAN'T DO THIS BECAUSE OF EOS!
+				print "Getting the ns from {} ...".format(self.path)
+				from truculence import analysis		# I don't import analysis at the top because it imports ROOT, which breaks cmsRun. Since this function shouldn't get called during cmsRun, we're okay. Yes, this is kludgy.
+				ns = analysis.get_nevents(self.dir, self.files, tt_name=variables.tt_names[self.kind])
+			elif not ns and self.das:		# Check DAS
+				print "Checking DAS for nevents list of {} ...".format(self.Name)
+				result = das.get_info(self.name, instance=self.instance)
+				ns = result["ns"]
+		self.ns = ns
+		return ns
+	
 	
 	def scan(self, j=False):
 #		print "Scanning {} ...".format(self.Name)
@@ -223,7 +266,7 @@ class dataset:
 		# "path":
 		if not self.path or self.path == "None":
 			if self.kind == "sample":
-				self.path = data_dir + "/" + self.name
+				self.path = dir_data.path + "/" + self.name
 			elif self.kind == "miniaod":
 				if hasattr(sample, "path"):
 					self.path = sample.path + "/" + sample.name
@@ -231,11 +274,11 @@ class dataset:
 				if hasattr(sample, "path"):
 					self.path = sample.path + "/tuple_{}".format(self.Name)
 			if self.path:
-				self.dir = self.path.split("/")[-1]		# This is to keep "dir" defined because "self" isn't reinitilized.
+#				self.dir = self.path.split("/")[-1]		# This is to keep "dir" defined because "self" isn't reinitilized.
 				info["path"] = self.path
 		elif self.path[-1] == "/":		# Erase trailing "/" in path if it exists.
 			self.path = self.path[:-1]
-			self.dir = self.path.split("/")[-1]
+#			self.dir = self.path.split("/")[-1]
 			info["path"] = self.path
 		
 		# "name_full", "instance":
@@ -247,14 +290,18 @@ class dataset:
 			in_das = False
 			if hasattr(self, "das"):
 				in_das = self.das
-			set_files(self, j=j, DAS=in_das)
-			set_ns(self, j=j, DAS=in_das)
-			if len(self.files) > 0 and len(self.ns) > 0:
-				self.save_json()
+#			set_files(self, j=j, DAS=in_das)
+#			print self.path
+			self.set_files(j=j)
+			self.set_ns(j=j)
+			if len(self.files) > 0:
+				if len(self.ns) > 0:
+					self.save_json()
+				else:
+					print "ERROR (dataset.scan): the ns list is empty."
 			else:
-				print "ERROR (dataset.scan): the file list or n list are empty:"
-				print self.files
-				print self.ns
+				print "ERROR (dataset.scan): the file list is empty."
+#				print self.files
 			if self.ns:
 				self.n = sum(self.ns)
 				info["n"] = self.n
@@ -279,6 +326,7 @@ class dataset:
 				self.weight = 1
 			else:
 				if self.n:
+#					print sample.sigma, sample.luminosity
 					self.weight = self.preweight*sample.sigma*sample.luminosity/self.n
 				else:
 					print "WARNING (dataset.py): Trying to set the weight when the necessary variables aren't defined."
@@ -878,7 +926,8 @@ def listpath(path):
 	if match:		# If in EOS
 		return eos.listdir(path)
 	else:
-		return os.listdir(path)
+		if os.path.exists(path): return os.listdir(path)
+		else: return []
 
 
 def check_db(thing):		# Check if thing is in the database.
@@ -976,7 +1025,6 @@ def sync_db(self):
 		return self.write()
 
 
-
 def set_files(thing, j=True, DAS=True):
 	files = []
 	if j:
@@ -1007,7 +1055,7 @@ def set_ns(thing, j=True, DAS=True):
 #			if os.path.exists(self.path):		# I CAN'T DO THIS BECAUSE OF EOS!
 			print "Getting the ns from {} ...".format(thing.path)
 			from truculence import analysis		# I don't import analysis at the top because it imports ROOT, which breaks cmsRun. Since this function shouldn't get called during cmsRun, we're okay. Yes, this is kludgy.
-			ns = analysis.get_nevents(thing.files, tt_name=variables.tt_names[thing.kind], site="cmslpc")
+			ns = analysis.get_nevents(thing.dir, thing.files, tt_name=variables.tt_names[thing.kind])
 		elif not ns and DAS:		# Check DAS
 			print "Checking DAS for nevents list of {} ...".format(thing.Name)
 			result = das.get_info(thing.name, instance=thing.instance)

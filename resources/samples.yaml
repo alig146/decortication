@@ -128,7 +128,27 @@ sqto4j:
                 das: True
                 lhe_cut: ht700
                 lhe_n: 100000
-                preweight: 0.9556 
+                preweight: 0.9556
+    
+sgto3j:
+    sg100to3j:
+        - name: Sg100To3J
+          signal: True
+          m: 100
+          sigma: 1.0
+          miniaods:
+              - generation: ian
+                das: False
+                path: /cms/threejet/graham/store/miniAODv2/gluinoMC/MiniAODv2/100GeV
+    sg150to3j:
+        - name: Sg150To3J
+          signal: True
+          m: 150
+          sigma: 1.0
+          miniaods:
+              - generation: ian
+                das: False
+                path: /cms/threejet/graham/store/miniAODv2/gluinoMC/MiniAODv2/150GeV
     
 sqto2j:
     sq100to2j:
