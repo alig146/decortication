@@ -135,7 +135,7 @@ sgto3j:
         - name: Sg100To3J
           signal: True
           m: 100
-          sigma: 1.0
+          sigma: 15000.0
           miniaods:
               - generation: ian
                 das: False
@@ -144,7 +144,7 @@ sgto3j:
         - name: Sg150To3J
           signal: True
           m: 150
-          sigma: 1.0
+          sigma: 9000.0
           miniaods:
               - generation: ian
                 das: False
