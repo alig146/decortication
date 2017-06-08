@@ -1,11 +1,11 @@
 //#include "/home/tote/decortication/macros/common.cc"
 
 double correction_function(double x, TString ds, TString cut, TString dir="fix", int f=0) {
-	if (ds == "jetht") ds = "qcdmg";		// Use qcdmg corrections for data.
+//	if (ds == "jetht") ds = "qcdmg";		// Use qcdmg corrections for data.
 //	if (cut == "sbb") cut = "sb";
-	if (cut == "sbtb") cut = "sbt";
-	if (cut == "sbsb") cut = "sbs";
-	if (cut == "sbideb") cut = "sbide";
+//	if (cut == "sbtb") cut = "sbt";
+//	if (cut == "sbsb") cut = "sbs";
+//	if (cut == "sbideb") cut = "sbide";
 	TFile* tf_in = TFile::Open("/home/tote/decortication/macros/background_tools/reweight_functions.root");
 	TString name = "f_" + ds + "_" + cut + "_f" + to_string(f);
 	if (cut == "sig15") name = "f_" + ds + "_sig" + "_f" + to_string(f);
