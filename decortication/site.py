@@ -16,7 +16,6 @@ site_names = {
 	"lxplus": ["lxplus"],
 }
 path_config_default = infrastructure.get_res_path("sites.yaml")
-print path_config_default
 # :VARIABLES
 
 # CLASSES:
