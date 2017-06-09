@@ -6,12 +6,17 @@
 
 # IMPORTS:
 import os
-import decortication
+from decortication import infrastructure
 # :IMPORTS
 
 # VARIABLES:
-site_names = ["hexcms", "cmslpc", "lxplus"]
-path_config_default = os.path.join(decortication.__path__[0], "..", "resources/sites.yaml")
+site_names = {
+	"hexcms": ["hexcms", "hexfarm"], 
+	"cmslpc": ["cmslpc"],
+	"lxplus": ["lxplus"],
+}
+path_config_default = infrastructure.get_res_path("sites.yaml")
+print path_config_default
 # :VARIABLES
 
 # CLASSES:
@@ -56,15 +61,18 @@ class site:
 # FUNCTIONS:
 def get_site():
 	sites = parse_configuration()
-	return [s for s in sites if s.name == get_site_name()][0]
+	site_name = get_site_name()
+	if site_name: return [s for s in sites if s.name == get_site_name()][0]
+	return False
 
 def get_site_name():
 	# [Get the "site name" of the machine you're using.]
 	
 	import socket
 	hostname = socket.gethostname()
-	for site_name in site_names:
-		if site_name in hostname: return site_name
+	for site_name, alts in site_names.items():
+		for alt in alts:
+			if alt in hostname: return site_name
 	return False
 
 def parse_configuration(path=path_config_default):

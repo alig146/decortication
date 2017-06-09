@@ -6,7 +6,7 @@
 
 # IMPORTS:
 import os, sys
-import decortication
+from decortication import infrastructure
 from truculence import analysis
 # /IMPORTS
 
@@ -68,7 +68,7 @@ def get_crab_config(
 #	params_str = str(["{0}={1}".format(key, value) for key, value in cmssw_params.iteritems()])
 	# Prepare the template:
 	## Get the template:
-	template_path = os.path.join(decortication.__path__[0], "..", "resources/crab_config_templates/{}_production.py".format(kind))
+	template_path = get_res_path("crab_config_templates/{}_production.py".format(kind))
 	with open(template_path, 'r') as f:
 		template = f.read()
 	## Replace fields:

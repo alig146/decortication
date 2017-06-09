@@ -17,7 +17,7 @@ from decortication import dataset, infrastructure
 # /VARIABLES
 
 # FUNCTIONS:
-def delete_db(db_path=os.path.join(decortication.__path__[0], "..", "resources/samples.db")):
+def delete_db(db_path=infrastructure.get_res_path("samples.db")):
 	try:
 		os.remove(db_path)
 		return True

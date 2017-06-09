@@ -24,9 +24,10 @@ data_dir = "/store/user/" + username
 lhe_dir = "/uscms_data/d3/{}/lhe".format(username)
 tuple_dir = data_dir + "/data/fat"
 signal_processes = ["sqto4j", "sqto2j"]
-info_path_default = os.path.join(decortication.__path__[0], "..", "resources/samples.yaml")
-db_keys_path_default = os.path.join(decortication.__path__[0], "..", "resources/database.yaml")
-db_path_default = os.path.join(decortication.__path__[0], "..", "resources/samples.db")
+info_path_default = infrastructure.get_res_path("samples.yaml")
+# os.path.join(os.path.realpath(decortication.__path__[0]), "..", "resources/samples.yaml")
+db_keys_path_default = infrastructure.get_res_path("database.yaml")
+db_path_default = infrastructure.get_res_path("samples.db")
 json_dir_default = "resources/json"
 luminosity_default = 10000
 

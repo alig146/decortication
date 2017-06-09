@@ -11,10 +11,18 @@ import decortication
 from truculence import utilities
 # :IMPORTS
 
+# Pre-functions:
+def get_dec_path():
+	return os.path.realpath(decortication.__path__[0])
+
+def get_res_path(f):
+	return os.path.join(get_dec_path(), "..", "resources", f)
+# :Pre-functions
+
 # VARIABLES:
-ds_info_default = os.path.join(decortication.__path__[0], "..", "resources/samples.yaml")
-db_info_default = os.path.join(decortication.__path__[0], "..", "resources/database.yaml")
-db_path_default = os.path.join(decortication.__path__[0], "..", "resources/samples.db")
+ds_info_default = get_res_path("samples.yaml")
+db_info_default = get_res_path("database.yaml")
+db_path_default = get_res_path("samples.db")
 parents = {		# KLUDGE
 	"sample": None,
 	"miniaod": "sample",
@@ -72,6 +80,7 @@ class dataset_kind:
 # :CLASSES
 
 # FUNCTIONS:
+
 # Database information things:
 def get_db_info(path=db_info_default):
 	# Returns dictionary of meta information, keyed by kind.
