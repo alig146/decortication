@@ -23,15 +23,14 @@ map<TString, TString> groom_names {
 	{"u", "ungroomed"},
 };
 map<TString, TString> lum_string {
-	{"15", "2.2"},
-	{"16", "35.5"},
-	{"all", "37.7"},
+	{"15", "2.3"},		// 2.258 /fb
+	{"16", "35.9"},		// 35.922 /fb
+	{"all", "38.2"},		// 38.180 /fb
 };
 
 Double_t get_weight(TString ds="") {
 	if (ds == "jetht" || ds == "15") return 1;
-	else return (35.545 + 2.183)/2.183;
-//	else return (29.128 + 2.183)/2.183;
+	else return (38.180)/2.183;
 }
 
 

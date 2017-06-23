@@ -25,7 +25,7 @@ sample:
         default: !!null
     luminosity:
         type: real
-        default: 2177
+        default: 38180
     parameter1:
         type: real
         default: !!null
