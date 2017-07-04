@@ -35,7 +35,7 @@ Double_t get_weight(TString ds="") {
 
 
 TFile* get_ana(TString cut="pre") {
-	return TFile::Open("~/anatuples/anatuple_cutpt400eta25_prextau.root");		// Contains new preselection (without tau21 and deta) but no dalitz
+	return TFile::Open("~/anatuples/anatuple_cutpt400eta25_pre.root");		// Contains new preselection (without tau21 and deta) but no dalitz
 	
 //	if (cut == "sb2") return TFile::Open("~/anatuples/anatuple_ca12_fall15_cutpt400_presel.root");		// 
 ////	else return TFile::Open("~/anatuples/anatuple_dalitz_predeta.root");		// Contains dalitz variables

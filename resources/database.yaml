@@ -14,6 +14,15 @@ sample:
     name:
         type: text
         default: !!null
+#    name_proper:
+#        type: text
+#        default: NAME
+#    name_proper_latex:
+#        type: text
+#        default: !!null
+#    name_proper_root:
+#        type: text
+#        default: !!null
     data:
         type: integer
         default: 0

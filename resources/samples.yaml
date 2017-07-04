@@ -1,6 +1,8 @@
 sqto4j:
     sq100to4j:
         - name: Sq100To4J
+#          name_proper_latex: "$m_{\\tilde{q}} = 100$~\\text{GeV}"
+#          name_proper_root: "m_{#tilde{q}} = 100 GeV"
           signal: True
           ms: [100, 75]
           sigma: 1521.11
@@ -15,6 +17,8 @@ sqto4j:
     
     sq150to4j:
         - name: Sq150To4J
+#          name_proper_latex: "$m_{\\tilde{q}} = 150$~\\text{GeV}"
+#          name_proper_root: "m_{#tilde{q}} = 150 GeV"
           signal: True
           ms: [150, 110]
           sigma: 249.409
@@ -39,6 +43,8 @@ sqto4j:
     
     sq200to4j:
         - name: Sq200To4J
+#          name_proper_latex: "$m_{\\tilde{q}} = 200$~\\text{GeV}"
+#          name_proper_root: "m_{#tilde{q}} = 200 GeV"
           signal: True
           ms: [200, 150]
           sigma: 64.5085
@@ -57,6 +63,8 @@ sqto4j:
     
     sq250to4j:
         - name: Sq250To4J
+#          name_proper_latex: "$m_{\\tilde{q}} = 250$~\\text{GeV}"
+#          name_proper_root: "m_{#tilde{q}} = 250 GeV"
           signal: True
           ms: [250, 190]
           sigma: 21.5949
@@ -75,6 +83,8 @@ sqto4j:
     
     sq300to4j:
         - name: Sq300To4J
+#          name_proper_latex: "$m_{\\tilde{q}} = 300$~\\text{GeV}"
+#          name_proper_root: "m_{#tilde{q}} = 300 GeV"
           signal: True
           ms: [300, 230]
           sigma: 8.51615
@@ -99,6 +109,8 @@ sqto4j:
     
     sq400to4j:
         - name: Sq400To4J
+#          name_proper_latex: "$m_{\\tilde{q}} = 400$~\\text{GeV}"
+#          name_proper_root: "m_{#tilde{q}} = 400 GeV"
           signal: True
           ms: [400, 300]
           sigma: 1.83537
@@ -118,6 +130,8 @@ sqto4j:
     
     sq500to4j:
         - name: Sq500To4J
+#          name_proper_latex: "$m_{\\tilde{q}} = 500$~\\text{GeV}"
+#          name_proper_root: "m_{#tilde{q}} = 500 GeV"
           signal: True
           ms: [500, 375]
           sigma: 0.51848
@@ -197,6 +211,7 @@ sqto2j:
 qcd:
     qcdp:
         - name: QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8
+#          name_proper_root: "QCD (2 #rightarrow 2)"
           subprocess: qcdp50
           pts: [50, 80]
           sigma: 19204300.0
@@ -420,18 +435,28 @@ qcd:
                 name: /QCD_HT2000toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM
 
 ttbar:
-    ttbar:
+    ttbaramc:
         - name: TTJets_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
-          subprocess: ttbar
+          subprocess: ttbaramc
           m: 173.34
           sigma: 670.3
-          n: 42730273
           miniaods:
               - generation: fall15
                 name: /TTJets_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM
-              - generation: spring15
-                name: /TTJets_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM
-                n: 42730273
+                aod: /TTJets_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIIFall15DR76-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/AODSIM
+                gen: /TTJets_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISummer15GS-MCRUN2_71_V1-v1/GEN-SIM
+                lhe: /TTJets_13TeV-amcatnloFXFX-pythia8/RunIIWinter15wmLHE-MCRUN2_71_V1-v1/LHE
+    ttbar:
+        - name: TT_TuneCUETP8M1_13TeV-powheg-pythia8
+          subprocess: ttbar
+          m: 173.34
+          sigma: 730.0
+          miniaods:
+              - generation: spring16
+                name: /TT_TuneCUETP8M1_13TeV-powheg-pythia8/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext4-v1/MINIAODSIM
+                aod: /TT_TuneCUETP8M1_13TeV-powheg-pythia8/RunIISpring16DR80-PUSpring16_80X_mcRun2_asymptotic_2016_v3_ext4-v1/AODSIM
+                gen: /TT_TuneCUETP8M1_13TeV-powheg-pythia8/RunIISummer15GS-MCRUN2_71_V1_ext4-v1/GEN-SIM
+                lhe: /TT_13TeV-powheg/RunIIWinter15wmLHE-MCRUN2_71_V1_ext4-v1/LHE
     ttbarmg:
         - name: TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
           subprocess: ttbarmg
@@ -442,6 +467,7 @@ ttbar:
                 name: /TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
                 aod: /TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM
                 gen: /TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer15GS-MCRUN2_71_V1-v1/GEN-SIM
+                lhe: /TTJets_13TeV-madgraphMLM/RunIIWinter15wmLHE-MCRUN2_71_V1-v2/LHE
 
 zjets:
     zjets:
