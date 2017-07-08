@@ -515,8 +515,6 @@ ttbar:
           sigma: 730.0
           miniaods:
               - generation: spring16
-                name: /TT_TuneCUETP8M1_13TeV-powheg-pythia8/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext3-v2/MINIAODSIM
-              - generation: spring16ext
                 name: /TT_TuneCUETP8M1_13TeV-powheg-pythia8/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext4-v1/MINIAODSIM
                 aod: /TT_TuneCUETP8M1_13TeV-powheg-pythia8/RunIISpring16DR80-PUSpring16_80X_mcRun2_asymptotic_2016_v3_ext4-v1/AODSIM
                 gen: /TT_TuneCUETP8M1_13TeV-powheg-pythia8/RunIISummer15GS-MCRUN2_71_V1_ext4-v1/GEN-SIM
