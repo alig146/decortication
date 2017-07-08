@@ -28,9 +28,10 @@ map<TString, TString> lum_string {
 	{"all", "38.2"},		// 38.180 /fb
 };
 
-Double_t get_weight(TString ds="") {
+Double_t get_weight(TString ds="", TString era="") {
 	if (ds == "jetht" || ds == "15") return 1;
-	else return (38.180)/2.183;
+	if (era == "15") return 2.258/2.183;
+	else return 38.180/2.183;
 }
 
 

@@ -1,5 +1,6 @@
 #include "cuts.cc"
 #include "info.cc"
+#include "pileup.cc"
 #include "/home/tote/truculence/macros/styling_tools/styling_tools.cc"
 #include "/home/tote/truculence/macros/utilities.cc"
 #include "/home/tote/decortication/macros/background_tools/background_templates.cc"
@@ -9,7 +10,7 @@ void common() {return;}		// Stops a warning being printed when excuted by ROOT.
 TCanvas* draw_pull(TString name, TH1* obs, TH1* exp, double xmin, double xmax, TString metric="pull", bool mc=false, int corner=1) {
 	TH1* pull = (TH1*) obs->Clone("pull");
 	pull->SetStats(0);
-	pull->Sumw2();
+	pull->Sumw2();		// Why do I do this?
 	for (int i=1; i <= pull->GetNbinsX(); ++ i) {
 		double o = obs->GetBinContent(i);
 		double oe = obs->GetBinError(i);

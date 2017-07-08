@@ -52,30 +52,33 @@ map<TString, TString> cut_info{
 	
 	// SB: Sideband
 	/// (sb) Default sideband:
-	{"fjp_sb", "deta<1.0&&Max$(tau43)<0.90&&Max$(tau42)<0.55&&(Min$(tau42)>0.45||Min$(tau43)>0.80)&&Max$(tau21)<0.75&&masy_p<0.1"},
+	{"fjp_sbold", "deta<1.0&&Max$(tau43)<0.90&&Max$(tau42)<0.55&&(Min$(tau42)>0.45||Min$(tau43)>0.80)&&Max$(tau21)<0.75&&masy_p<0.1"},
+	{"fjp_sb", "deta<1.0&&Max$(tau43)<0.90&&Max$(tau42)<0.55&&((tau42[0]>0.45||tau43[0]>0.80)&&(tau42[1]>0.45||tau43[1]>0.80))&&Max$(tau21)<0.75&&masy_p<0.1"},
 	{"fj_sb", "deta<1.0&&tau43[0]<0.90&&tau42[0]<0.55&&(tau42[0]>0.45||tau43[0]>0.80)&&tau21[0]<0.75"},
 	
 	/// (sbx) Sideband n-1 cuts:
-	{"fjp_sbxdeta", "Max$(tau43)<0.90&&Max$(tau42)<0.55&&(Min$(tau42)>0.45||Min$(tau43)>0.80)&&Max$(tau21)<0.75&&masy_p<0.1"},
-	{"fjp_sbxtau21", "deta<1.0&&Max$(tau43)<0.90&&Max$(tau42)<0.55&&(Min$(tau42)>0.45||Min$(tau43)>0.80)&&masy_p<0.1"},
+//	{"fjp_sbxdeta", "Max$(tau43)<0.90&&Max$(tau42)<0.55&&(Min$(tau42)>0.45||Min$(tau43)>0.80)&&Max$(tau21)<0.75&&masy_p<0.1"},
+//	{"fjp_sbxtau21", "deta<1.0&&Max$(tau43)<0.90&&Max$(tau42)<0.55&&(Min$(tau42)>0.45||Min$(tau43)>0.80)&&masy_p<0.1"},
 	
 	/// (sbs) Sideband, Dalitz distance squared:
-	{"fjp_sbs", "deta<1.0&&Max$(tau43)<0.90&&Max$(tau42)<0.55&&(Min$(tau42)>0.45||Min$(tau43)>0.80)&&Max$(tau21)<0.75&&masy_p<0.1&&Max$(sd)<0.15"},
-	{"fj_sbs", "deta<1.0&&tau43[0]<0.90&&tau42[0]<0.55&&(tau42[0]>0.45||tau43[0]>0.80)&&tau21[0]<0.75&&sd[0]<0.15"},
+//	{"fjp_sbs", "deta<1.0&&Max$(tau43)<0.90&&Max$(tau42)<0.55&&(Min$(tau42)>0.45||Min$(tau43)>0.80)&&Max$(tau21)<0.75&&masy_p<0.1&&Max$(sd)<0.15"},
+//	{"fj_sbs", "deta<1.0&&tau43[0]<0.90&&tau42[0]<0.55&&(tau42[0]>0.45||tau43[0]>0.80)&&tau21[0]<0.75&&sd[0]<0.15"},
 	
 	/// (sbp) Sideband, pruned taus
-	{"fjp_sbp", "deta<1.0&&Max$(tau43_p)<0.90&&Max$(tau42_p)<0.55&&(Min$(tau42_p)>0.45||Min$(tau43_p)>0.80)&&Max$(tau21_p)<0.75&&masy_p<0.1"},
-	{"fj_sbp", "deta<1.0&&tau43_p[0]<0.90&&tau42_p[0]<0.55&&(tau42_p[0]>0.45||tau43_p[0]>0.80)&&tau21_p[0]<0.75"},
+//	{"fjp_sbp", "deta<1.0&&Max$(tau43_p)<0.90&&Max$(tau42_p)<0.55&&(Min$(tau42_p)>0.45||Min$(tau43_p)>0.80)&&Max$(tau21_p)<0.75&&masy_p<0.1"},
+//	{"fj_sbp", "deta<1.0&&tau43_p[0]<0.90&&tau42_p[0]<0.55&&(tau42_p[0]>0.45||tau43_p[0]>0.80)&&tau21_p[0]<0.75"},
 	
 	/// (sbl) Loose sideband:
-	{"fjp_sbl", "deta<1.0&&Max$(tau43)<0.95&&Max$(tau42)<0.60&&(Min$(tau42)>0.45||Min$(tau43)>0.80)&&Max$(tau21)<0.75&&masy_p<0.1"},
+	{"fjp_sblold", "deta<1.0&&Max$(tau43)<0.95&&Max$(tau42)<0.60&&(Min$(tau42)>0.45||Min$(tau43)>0.80)&&Max$(tau21)<0.75&&masy_p<0.1"},
+	{"fjp_sbl", "deta<1.0&&Max$(tau43)<0.95&&Max$(tau42)<0.60&&((tau42[0]>0.45||tau43[0]>0.80)&&(tau42[1]>0.45||tau43[1]>0.80))&&Max$(tau21)<0.75&&masy_p<0.1"},
 	{"fj_sbl", "deta<1.0&&tau43[0]<0.95&&tau42[0]<0.60&&(tau42[0]>0.45||tau43[0]>0.80)&&tau21[0]<0.75"},
 	//// (sbls):
-	{"fjp_sbls", "deta<1.0&&htak8>900&&Max$(m_t)>50&&deta<1.0&&Max$(tau43)<0.95&&Max$(tau42)<0.60&&(Min$(tau42)>0.45||Min$(tau43)>0.80)&&Max$(tau21)<0.75&&masy_p<0.1&&Max$(sd)<0.15"},
-	{"fj_sbls", "deta<1.0&&tau43[0]<0.95&&tau42[0]<0.60&&(tau42[0]>0.45||tau43[0]>0.80)&&tau21[0]<0.75&&sd[0]<0.15"},
+//	{"fjp_sbls", "deta<1.0&&htak8>900&&Max$(m_t)>50&&deta<1.0&&Max$(tau43)<0.95&&Max$(tau42)<0.60&&(Min$(tau42)>0.45||Min$(tau43)>0.80)&&Max$(tau21)<0.75&&masy_p<0.1&&Max$(sd)<0.15"},
+//	{"fj_sbls", "deta<1.0&&tau43[0]<0.95&&tau42[0]<0.60&&(tau42[0]>0.45||tau43[0]>0.80)&&tau21[0]<0.75&&sd[0]<0.15"},
 	
 	/// (sbt) Tight sideband:
-	{"fjp_sbt", "deta<1.0&&Max$(tau43)<0.85&&Max$(tau42)<0.50&&(Min$(tau42)>0.45||Min$(tau43)>0.80)&&Max$(tau21)<0.75&&masy_p<0.1"},
+	{"fjp_sbtold", "deta<1.0&&Max$(tau43)<0.85&&Max$(tau42)<0.50&&(Min$(tau42)>0.45||Min$(tau43)>0.80)&&Max$(tau21)<0.75&&masy_p<0.1"},
+	{"fjp_sbt", "deta<1.0&&Max$(tau43)<0.85&&Max$(tau42)<0.50&&((tau42[0]>0.45||tau43[0]>0.80)&&(tau42[1]>0.45||tau43[1]>0.80))&&Max$(tau21)<0.75&&masy_p<0.1"},
 	{"fj_sbt", "deta<1.0&&tau43[0]<0.85&&tau42[0]<0.50&&(tau42[0]>0.45||tau43[0]>0.80)&&tau21[0]<0.75"},
 	
 	// (sbide):
@@ -85,28 +88,28 @@ map<TString, TString> cut_info{
 	
 	// SBB: Sidband, b-tagged:
 	/// (sbb) Default b-tagged sideband:
-	{"fjp_sbb", "deta<1.0&&Max$(tau43)<0.90&&Max$(tau42)<0.55&&(Min$(tau42)>0.45||Min$(tau43)>0.80)&&Max$(tau21)<0.75&&masy_p<0.1&&Min$(bd)>0.46"},
+	{"fjp_sbb", "deta<1.0&&Max$(tau43)<0.90&&Max$(tau42)<0.55&&((tau42[0]>0.45||tau43[0]>0.80)&&(tau42[1]>0.45||tau43[1]>0.80))&&Max$(tau21)<0.75&&masy_p<0.1&&Min$(bd)>0.46"},
 	{"fj_sbb", "deta<1.0&&tau43[0]<0.90&&tau42[0]<0.55&&(tau42[0]>0.45||tau43[0]>0.80)&&tau21[0]<0.75&&bd[0]>0.46"},
 	
 	/// (sbxb):
-	{"fjp_sbxtau21b", "deta<1.0&&Max$(tau43)<0.90&&Max$(tau42)<0.55&&(Min$(tau42)>0.45||Min$(tau43)>0.80)&&masy_p<0.1&&Min$(bd)>0.46"},
+//	{"fjp_sbxtau21b", "deta<1.0&&Max$(tau43)<0.90&&Max$(tau42)<0.55&&(Min$(tau42)>0.45||Min$(tau43)>0.80)&&masy_p<0.1&&Min$(bd)>0.46"},
 	
 	/// (sbsb) b-tagged sideband, Dalitz distance squared:
-	{"fjp_sbsb", "deta<1.0&&Max$(tau43)<0.90&&Max$(tau42)<0.55&&(Min$(tau42)>0.45||Min$(tau43)>0.80)&&Max$(tau21)<0.75&&masy_p<0.1&&Min$(bd)>0.46&&Max$(sd)<0.15"},
-	{"fj_sbsb", "deta<1.0&&tau43[0]<0.90&&tau42[0]<0.55&&(tau42[0]>0.45||tau43[0]>0.80)&&tau21[0]<0.75&&bd[0]>0.46&&sd[0]<0.15"},
-	{"fjp_sbslb", "deta<1.0&&Max$(tau43)<0.90&&Max$(tau42)<0.55&&(Min$(tau42)>0.45||Min$(tau43)>0.80)&&Max$(tau21)<0.75&&masy_p<0.1&&Min$(bd)>0.46&&Max$(sd)<0.28"},
-	{"fj_sbslb", "deta<1.0&&tau43[0]<0.90&&tau42[0]<0.55&&(tau42[0]>0.45||tau43[0]>0.80)&&tau21[0]<0.75&&bd[0]>0.46&&sd[0]<0.28"},
+//	{"fjp_sbsb", "deta<1.0&&Max$(tau43)<0.90&&Max$(tau42)<0.55&&(Min$(tau42)>0.45||Min$(tau43)>0.80)&&Max$(tau21)<0.75&&masy_p<0.1&&Min$(bd)>0.46&&Max$(sd)<0.15"},
+//	{"fj_sbsb", "deta<1.0&&tau43[0]<0.90&&tau42[0]<0.55&&(tau42[0]>0.45||tau43[0]>0.80)&&tau21[0]<0.75&&bd[0]>0.46&&sd[0]<0.15"},
+//	{"fjp_sbslb", "deta<1.0&&Max$(tau43)<0.90&&Max$(tau42)<0.55&&(Min$(tau42)>0.45||Min$(tau43)>0.80)&&Max$(tau21)<0.75&&masy_p<0.1&&Min$(bd)>0.46&&Max$(sd)<0.28"},
+//	{"fj_sbslb", "deta<1.0&&tau43[0]<0.90&&tau42[0]<0.55&&(tau42[0]>0.45||tau43[0]>0.80)&&tau21[0]<0.75&&bd[0]>0.46&&sd[0]<0.28"},
 	
 	/// (sblb) Loose b-tagged sideband:
-	{"fjp_sblb", "deta<1.0&&Max$(tau43)<0.95&&Max$(tau42)<0.60&&(Min$(tau42)>0.45||Min$(tau43)>0.80)&&Max$(tau21)<0.75&&masy_p<0.1&&Min$(bd)>0.46"},
+	{"fjp_sblb", "deta<1.0&&Max$(tau43)<0.95&&Max$(tau42)<0.60&&((tau42[0]>0.45||tau43[0]>0.80)&&(tau42[1]>0.45||tau43[1]>0.80))&&Max$(tau21)<0.75&&masy_p<0.1&&Min$(bd)>0.46"},
 	{"fj_sblb", "deta<1.0&&tau43[0]<0.95&&tau42[0]<0.60&&(tau42[0]>0.45||tau43[0]>0.80)&&tau21[0]<0.75&&bd[0]>0.46"},
-	{"fjp_sblsb", "deta<1.0&&Max$(tau43)<0.95&&Max$(tau42)<0.60&&(Min$(tau42)>0.45||Min$(tau43)>0.80)&&Max$(tau21)<0.75&&masy_p<0.1&&Min$(bd)>0.46&&Max$(sd)<0.15"},
-	{"fj_sblsb", "deta<1.0&&tau43[0]<0.95&&tau42[0]<0.60&&(tau42[0]>0.45||tau43[0]>0.80)&&tau21[0]<0.75&&bd[0]>0.46&&sd[0]<0.15"},
-	{"fjp_sblp", "deta<1.0&&Max$(tau43_p)<0.95&&Max$(tau42_p)<0.60&&(Min$(tau42_p)>0.45||Min$(tau43_p)>0.80)&&Max$(tau21_p)<0.75&&masy_p<0.1"},
-	{"fj_sblp", "deta<1.0&&tau43_p[0]<0.95&&tau42_p[0]<0.60&&(tau42_p[0]>0.45||tau43_p[0]>0.80)&&tau21[0]<0.75"},
+//	{"fjp_sblsb", "deta<1.0&&Max$(tau43)<0.95&&Max$(tau42)<0.60&&(Min$(tau42)>0.45||Min$(tau43)>0.80)&&Max$(tau21)<0.75&&masy_p<0.1&&Min$(bd)>0.46&&Max$(sd)<0.15"},
+//	{"fj_sblsb", "deta<1.0&&tau43[0]<0.95&&tau42[0]<0.60&&(tau42[0]>0.45||tau43[0]>0.80)&&tau21[0]<0.75&&bd[0]>0.46&&sd[0]<0.15"},
+//	{"fjp_sblp", "deta<1.0&&Max$(tau43_p)<0.95&&Max$(tau42_p)<0.60&&(Min$(tau42_p)>0.45||Min$(tau43_p)>0.80)&&Max$(tau21_p)<0.75&&masy_p<0.1"},
+//	{"fj_sblp", "deta<1.0&&tau43_p[0]<0.95&&tau42_p[0]<0.60&&(tau42_p[0]>0.45||tau43_p[0]>0.80)&&tau21[0]<0.75"},
 	
 	// (sbtb) Tighter sideband, b-tagged:
-	{"fjp_sbtb", "deta<1.0&&Max$(tau43)<0.85&&Max$(tau42)<0.50&&(Min$(tau42)>0.45||Min$(tau43)>0.80)&&Max$(tau21_p)<0.75&&masy_p<0.1&&Min$(bd)>0.46"},
+	{"fjp_sbtb", "deta<1.0&&Max$(tau43)<0.85&&Max$(tau42)<0.50&&((tau42[0]>0.45||tau43[0]>0.80)&&(tau42[1]>0.45||tau43[1]>0.80))&&Max$(tau21_p)<0.75&&masy_p<0.1&&Min$(bd)>0.46"},
 	{"fj_sbtb", "deta<1.0&&tau43[0]<0.85&&tau42[0]<0.50&&(tau42[0]>0.45||tau43[0]>0.80)&&tau21[0]<0.75&&bd[0]>0.46"},
 	
 	// (sbideb):
