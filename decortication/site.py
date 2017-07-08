@@ -12,7 +12,7 @@ from decortication import infrastructure
 # VARIABLES:
 site_names = {
 	"hexcms": ["hexcms", "hexfarm"], 
-	"cmslpc": ["cmslpc"],
+	"cmslpc": ["cmslpc", "fnal.gov"],
 	"lxplus": ["lxplus"],
 }
 path_config_default = infrastructure.get_res_path("sites.yaml")
@@ -53,7 +53,7 @@ class site:
 		for key, value in info.items(): setattr(self, key, value)
 	
 	def get_dir(self, name):
-		for name in self.dirs: return self.dirs[name]
+		if name in self.dirs: return self.dirs[name]
 		return False
 # :CLASSES
 
