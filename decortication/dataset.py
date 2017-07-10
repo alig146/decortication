@@ -98,9 +98,9 @@ class dataset:
 		## "Name":
 		self.Name = "_".join(self.primary_keys.values())
 		self.Name_safe = self.Name.replace("-", "")
-		## "dir":
-#		if self.path:
-#			self.dir = self.path.split("/")[-1]
+		## "dir":		// Kludge
+		if self.path:
+			self.path = self.path.split("/")[-1]
 		## "json" and "json_full":
 		if not self.json:
 			self.json = "{}/{}.json".format(json_dir_default, self.Name)
@@ -121,10 +121,16 @@ class dataset:
 #		self.dir = site.directory({"path": self.path, "eos": self.site.get_dir("data").eos})
 		if self.path:
 			self.dir = copy.copy(self.site.get_dir("data"))
-			self.dir.cd(self.path)
+			if self.kind == "tuple": self.dir.cd(self.get_sample().path + "/" + self.path)
+			else: self.dir.cd(self.path)
 #		# Connect to any children:
 #		if not isolated:
 #			self.set_connections(down=True, up=False)
+		
+		# Kludge: this needs to be governed by infrastructure:
+		if self.kind == "tuple":
+			self.das = False
+			self.instance = "global"
 		
 		# Aliases:
 		self.sp = self.subprocess
@@ -153,7 +159,7 @@ class dataset:
 		if hasattr(self, "das"):
 			print "\t* path: {} (das = {}, instance = {})".format(self.dir.path, self.das, self.instance)
 		else:
-			print "\t* path: {}".format(self.path)
+			print "\t* path: {}".format(self.dir.path)
 		if hasattr(self, "files"):
 			print "\t\t* {} files".format(len(self.files))
 			print "\t\t* example file: {}".format(self.files[0])
@@ -249,7 +255,7 @@ class dataset:
 	#			if os.path.exists(self.path):		# I CAN'T DO THIS BECAUSE OF EOS!
 				print "Getting the ns from {} ...".format(self.path)
 				from truculence import analysis		# I don't import analysis at the top because it imports ROOT, which breaks cmsRun. Since this function shouldn't get called during cmsRun, we're okay. Yes, this is kludgy.
-				ns = analysis.get_nevents(self.dir, self.files, tt_name=variables.tt_names[self.kind])
+				ns = analysis.get_nevents(self.dir, [self.path + "/" + f for f in self.files], tt_name=variables.tt_names[self.kind])
 			elif not ns and self.das:		# Check DAS
 				print "Checking DAS for nevents list of {} ...".format(self.Name)
 				result = das.get_info(self.name, instance=self.instance)
@@ -377,11 +383,12 @@ class dataset:
 			return True
 	
 	
-	def find_tuples(self):
+	def find_tuples(self, v=False):
 		tuples = []
-		p = self.path
+		p = self.dir.path
 		if hasattr(self, "sample"):
-			p = self.sample.path
+			p = self.dir.path
+		if v: print "Searching in " + p
 		if p and p != "None":
 			tuple_dirs = [d for d in listpath(p) if "tuple" in d]
 			for d in tuple_dirs:

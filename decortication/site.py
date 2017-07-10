@@ -29,7 +29,9 @@ class directory:
 	
 	def cd(self, path):
 		if path[0] == "/": self.path = path
-		else: self.path += path
+		else:
+			if self.path[-1] != "/": self.path += "/"
+			self.path += path
 		return path
 	
 	def ls(self, recursive=True):
@@ -41,11 +43,18 @@ class directory:
 					files.append(os.path.join(origin, filename))
 				if not recursive: break
 			return files
-		else:
+		else: # recursive doesn't work:
 			from subprocess import Popen, PIPE
-			cmd = 'eos root://{} ls {}'.format(self.url_eos, d)
+			path = self.path
+			if path != "/": path += "/"
+			cmd = 'eos root://{} ls {}'.format(self.url_eos, path)
 			raw_output = Popen([cmd], shell=True, stdout=PIPE, stderr=PIPE).communicate()
-			files = [thing for thing in raw_output[0].split("\n") if thing]
+			date = [thing for thing in raw_output[0].split("\n") if thing][-1]		# Take the most recent
+			path += date + "/"
+			cmd = 'eos root://{} ls {}'.format(self.url_eos, path)
+			raw_output = Popen([cmd], shell=True, stdout=PIPE, stderr=PIPE).communicate()
+			# SKIPPED CRAB SUBDIR SECTION!
+			files = [thing for thing in raw_output[0].split("\n") if ".root" in thing]		# Take the most recent
 			return files
 
 class site:
