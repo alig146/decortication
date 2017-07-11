@@ -227,7 +227,7 @@ class dataset:
 					good = False
 		return good
 	
-	def set_files(self, j=True):
+	def set_files(self, j=True, v=False):
 		files = []
 		if j:
 			if os.path.exists(self.json_full):
@@ -254,7 +254,7 @@ class dataset:
 	#			if os.path.exists(self.path):		# I CAN'T DO THIS BECAUSE OF EOS!
 				print "Getting the ns from {} ...".format(self.path)
 				from truculence import analysis		# I don't import analysis at the top because it imports ROOT, which breaks cmsRun. Since this function shouldn't get called during cmsRun, we're okay. Yes, this is kludgy.
-				ns = analysis.get_nevents(self.dir, [self.path + "/" + f for f in self.files], tt_name=variables.tt_names[self.kind])
+				ns = analysis.get_nevents(self.dir, [f for f in self.files], tt_name=variables.tt_names[self.kind])
 			elif not ns and self.das:		# Check DAS
 				print "Checking DAS for nevents list of {} ...".format(self.Name)
 				result = das.get_info(self.name, instance=self.instance)
@@ -385,7 +385,7 @@ class dataset:
 	def find_tuples(self, v=False):
 		tuples = []
 		p = self.path
-		if hasattr(self, "sample"):
+		if hasattr(self, "sample") or self.kind == "sample":
 			p = self.dir.path
 		if v: print "Searching in " + p
 		if p and p != "None":

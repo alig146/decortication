@@ -50,11 +50,11 @@ class directory:
 			cmd = 'eos root://{} ls {}'.format(self.url_eos, path)
 			raw_output = Popen([cmd], shell=True, stdout=PIPE, stderr=PIPE).communicate()
 			date = [thing for thing in raw_output[0].split("\n") if thing][-1]		# Take the most recent
-			path += date + "/"
+			path += date +"/"
 			cmd = 'eos root://{} ls {}'.format(self.url_eos, path)
 			raw_output = Popen([cmd], shell=True, stdout=PIPE, stderr=PIPE).communicate()
 			# SKIPPED CRAB SUBDIR SECTION!
-			files = [thing for thing in raw_output[0].split("\n") if ".root" in thing]		# Take the most recent
+			files = [path + thing for thing in raw_output[0].split("\n") if ".root" in thing]		# Take the most recent
 			return files
 
 class site:
