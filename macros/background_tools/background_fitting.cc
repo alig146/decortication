@@ -219,6 +219,42 @@ void perform_fit(TH1* hFullSel, TH1* hCDF, vector<double> binsx, TH1* params) {
 	return;
 }
 
+void perform_fit(TH1* hFullSel, TH1* hCDF, vector<double> binsx, double &amp, double &ampe, double &shift, double &shifte, double &stretch, double &stretche) {
+	theDATA = hFullSel->Rebin(binsx.size() - 1, "theDATA", &binsx[0]);
+	theCDF = hCDF;
+	thePDF = (TH1*) theDATA->Clone("thePDF");       // use the same binning as theDATA
+	
+	TMinuit minuit;
+//	minuit.SetErrorDef(1.0); // chi^2
+	minuit.SetErrorDef(0.5); // nll
+	minuit.SetPrintLevel(3);
+	minuit.Command("SET STR 2");  // precision (slow) mode
+	
+	// define parameter 0 (median), and fix it
+	double median = median_from_cdf(theCDF);
+	minuit.DefineParameter(0, "MEDIAN", median, 0.0, 0.0, 0.0);
+	
+	// define parameter 1 (amplitude) and bound the amplitude by 0 from below
+	minuit.DefineParameter(1, "AMP", amp, amp*0.1, 0.0, amp*100);
+	
+	// set parameter 2 (shift) and do not bound
+	minuit.DefineParameter(2, "SHIFT", shift, 1, -200, 200);
+	
+	// set parameter 3 (stretch) and bound the stretch by 0 from below
+	minuit.DefineParameter(3, "STRETCH", stretch, stretch*0.1, .01, stretch*100);
+	
+//	minuit.SetFCN(CHISQ); // set the function
+	minuit.SetFCN(POISSONLL); // set the function
+	double tmp[1] = { 5000. }; int err;
+	minuit.mnexcm("MIGRAD", tmp, 1, err); // execute Minuit with MIGRAD
+	
+	// get the parameters
+	minuit.GetParameter(1, amp, ampe);
+	minuit.GetParameter(2, shift, shifte);
+	minuit.GetParameter(3, stretch, stretche);
+	
+	return;
+}
 
 //// Perform a fit of the template to the data in the full selection using
 //// the CDF, getting the new amplitude, shift and stretch for the template.

@@ -86,6 +86,9 @@ miniaod:
     das:
         type: integer
         default: 1
+    site:
+        type: text
+        default: !!null
     path:
         type: text
         default: !!null
@@ -147,6 +150,9 @@ tuple:
     data:
         type: integer
         default: PARENT
+    site:
+        type: text
+        default: !!null
     path:
         type: text
         default: !!null

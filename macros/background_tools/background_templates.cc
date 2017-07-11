@@ -133,7 +133,7 @@ TH1* make_template(TH3* h, TString ds, TString cut_name, TString dir="", int f=0
 	return (TH1*) temp_proto_htre->ProjectionX();
 }
 
-TH1* fetch_template(TString ds, TString cut, TString dir="", int f=0, bool ht=true) {
+TH1* fetch_template(TString ds, TString cut, TString dir="", int f=1, bool ht=true) {
 	TString name = "temp_" + ds + "_" + cut + "_p" + "_f" + to_string(f);
 	if (dir != "") name = name + "_" + dir;
 	if (!ht) name = name + "_xht";

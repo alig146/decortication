@@ -99,8 +99,8 @@ class dataset:
 		self.Name = "_".join(self.primary_keys.values())
 		self.Name_safe = self.Name.replace("-", "")
 		## "dir":		// Kludge
-		if self.path:
-			self.path = self.path.split("/")[-1]
+		if self.kind == "sample": self.path = self.name
+#		else: self.path = self.get_sample().path + "/" + self.path
 		## "json" and "json_full":
 		if not self.json:
 			self.json = "{}/{}.json".format(json_dir_default, self.Name)
@@ -121,8 +121,7 @@ class dataset:
 #		self.dir = site.directory({"path": self.path, "eos": self.site.get_dir("data").eos})
 		if self.path:
 			self.dir = copy.copy(self.site.get_dir("data"))
-			if self.kind == "tuple": self.dir.cd(self.get_sample().path + "/" + self.path)
-			else: self.dir.cd(self.path)
+			self.dir.cd(self.path)
 #		# Connect to any children:
 #		if not isolated:
 #			self.set_connections(down=True, up=False)
@@ -157,9 +156,9 @@ class dataset:
 		else: print "\t* UNSCANNED"
 		# Path and files:
 		if hasattr(self, "das"):
-			print "\t* path: {} (das = {}, instance = {})".format(self.dir.path, self.das, self.instance)
+			print "\t* path: {} (das = {}, instance = {})".format(self.path, self.das, self.instance)
 		else:
-			print "\t* path: {}".format(self.dir.path)
+			print "\t* path: {}".format(self.path)
 		if hasattr(self, "files"):
 			print "\t\t* {} files".format(len(self.files))
 			print "\t\t* example file: {}".format(self.files[0])
@@ -271,22 +270,22 @@ class dataset:
 		sample = self.get_sample()
 		
 		# "path":
-		if not self.path or self.path == "None":
-			if self.kind == "sample":
-				self.path = dir_data.path + "/" + self.name
-			elif self.kind == "miniaod":
-				if hasattr(sample, "path"):
-					self.path = sample.path + "/" + sample.name
-			elif self.kind == "tuple":
-				if hasattr(sample, "path"):
-					self.path = sample.path + "/tuple_{}".format(self.Name)
-			if self.path:
-#				self.dir = self.path.split("/")[-1]		# This is to keep "dir" defined because "self" isn't reinitilized.
-				info["path"] = self.path
-		elif self.path[-1] == "/":		# Erase trailing "/" in path if it exists.
-			self.path = self.path[:-1]
-#			self.dir = self.path.split("/")[-1]
-			info["path"] = self.path
+#		if not self.path or self.path == "None":
+#			if self.kind == "sample":
+#				self.path = dir_data.path + "/" + self.name
+#			elif self.kind == "miniaod":
+#				if hasattr(sample, "path"):
+#					self.path = sample.path + "/" + sample.name
+#			elif self.kind == "tuple":
+#				if hasattr(sample, "path"):
+#					self.path = sample.path + "/tuple_{}".format(self.Name)
+#			if self.path:
+##				self.dir = self.path.split("/")[-1]		# This is to keep "dir" defined because "self" isn't reinitilized.
+#				info["path"] = self.path
+#		elif self.path[-1] == "/":		# Erase trailing "/" in path if it exists.
+#			self.path = self.path[:-1]
+##			self.dir = self.path.split("/")[-1]
+#			info["path"] = self.path
 		
 		# "name_full", "instance":
 		if hasattr(self, "name"):
@@ -385,7 +384,7 @@ class dataset:
 	
 	def find_tuples(self, v=False):
 		tuples = []
-		p = self.dir.path
+		p = self.path
 		if hasattr(self, "sample"):
 			p = self.dir.path
 		if v: print "Searching in " + p
