@@ -92,7 +92,7 @@ class analyzer:
 				# A bit KLUDGY:
 				fs = []
 				for tup in tups:
-					fs += [f if "root://cmsxrootd.fnal.gov/" in f else "root://cmsxrootd.fnal.gov/" + f for f in tup.files]
+					fs += [f if not tup.dir.eos else "root://cmsxrootd.fnal.gov/" + f for f in tup.files]
 					ns += tup.ns
 				tups = fs
 			if v: print "\tMaking TChain(s) for {} ...".format(sample)
