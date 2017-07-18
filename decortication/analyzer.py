@@ -244,8 +244,7 @@ class analyzer:
 		for i, f_dict in enumerate(files):
 			f = f_dict["file"]
 			if f[:12] == "/store/user/": f = "root://cmseos.fnal.gov/" + f
-			out_file = "{}_{}".format(tstring, i + 1)
-			job_name = "analyzer_{}".format(out_file)
+			job_name = "analyzer_job{}_{}".format(i + 1, tstring)
 			job_script = "#!/bin/bash\n"
 			job_script += "\n"
 			job_script += "# Untar CMSSW area:\n"
@@ -268,7 +267,7 @@ class analyzer:
 	
 		## Make condor configs:
 		for i in range(len(files)):
-			job_name = "analyzer_{}_{}".format(tstring, i + 1)
+			job_name = "analyzer_job{}_{}".format(i + 1, tstring)
 			job_config = "universe = vanilla\n"
 			job_config += "Executable = {}.sh\n".format(job_name)
 			job_config += "Should_Transfer_Files = YES\n"
@@ -307,7 +306,7 @@ class analyzer:
 		run_script += "\n"
 		run_script += "# Submit condor jobs:\n"
 		for i in range(len(files)):
-			job_name = "analyzer_{}_{}".format(tstring, i + 1)
+			job_name = "analyzer_job{}_{}".format(i + 1, tstring)
 			run_script += "condor_submit {}.jdl\n".format(job_name)
 		
 		with open("{}/run.sh".format(path), "w") as out:

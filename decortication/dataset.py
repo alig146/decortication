@@ -1124,15 +1124,19 @@ def sort_datasets(dss, collapse=True):
 	for ds in dss:
 		key = [ds.kind]
 		key += [getattr(ds, k) for k in ["process", "generation", "suffix"]]
+		# Get rid of "ext" in generations:
+		if key[2][-3:] == "ext": key[2] = key[2][:-3]
+		
 		key = tuple(key)
+		
 		if key not in results:
 			results[key] = []
 		results[key].append(ds)
-		key_n = len(key)
 	
 	# Collapse keys:
+	## This reduces the keys to the least number of identifying parameters.
 	if collapse:
-		if len(set([k[0] for k in results.keys()])) != 1:		# If all of the kinds are the same.
+		if len(set([k[0] for k in results.keys()])) != 1:		# If all of the kinds are not the same.
 			return results
 		results_collapsed = {}
 		for keys, value in results.items():
@@ -1147,8 +1151,8 @@ def sort_datasets(dss, collapse=True):
 			except:
 				pass
 			results_collapsed["_".join([key for i, key in enumerate(keys) if i not in i_collapse])] = value
+		
 		return results_collapsed
-	
 # /FUNCTIONS
 
 # VARIABLES:
