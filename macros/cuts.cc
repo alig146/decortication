@@ -123,7 +123,7 @@ map<TString, TString> cut_info{
 ////	{"fjp_sbb", "w*(Max$(tau43)<0.90&&Max$(tau42)<0.55&&(Min$(tau42)>0.45||Min$(tau43)>0.80)&&masy_p<0.1&&Min$(bd)>0.46)"},
 };
 
-TCut get_cut(TString cut, Double_t weight=1, bool pre=true) {
+TCut get_cut(TString cut, Double_t weight=1, TString ds="", bool pre=true) {
 	// Check if the cut name is valid:
 	if (cut_info.find(cut) == cut_info.end()) {
 		cout << "[!!] Cut " << cut << " not found!" << endl;
@@ -144,7 +144,8 @@ TCut get_cut(TString cut, Double_t weight=1, bool pre=true) {
 	/// Add weight:
 	TString weight_string;
 	weight_string.Form("%f", weight);
-	tcut = tcut * "w" * "wtt" * weight_string;
+	if (ds == "ttbar") tcut = tcut * "W" * weight_string;
+	else tcut = tcut * "w" * "wtt" * weight_string;
 	
 	return tcut;
 }
