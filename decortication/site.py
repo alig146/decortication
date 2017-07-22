@@ -34,7 +34,7 @@ class directory:
 			self.path += path
 		return path
 	
-	def ls(self, recursive=True):
+	def ls(self, crab=True, recursive=True):
 		if not self.eos:
 			import fnmatch
 			files = []
@@ -47,11 +47,13 @@ class directory:
 			from subprocess import Popen, PIPE
 			path = self.path
 			if path != "/": path += "/"
+			if crab:
+				cmd = 'eos root://{} ls {}'.format(self.url_eos, path)
+				raw_output = Popen([cmd], shell=True, stdout=PIPE, stderr=PIPE).communicate()
+				date = [thing for thing in raw_output[0].split("\n") if thing][-1]		# Take the most recent
+				path += date +"/"
 			cmd = 'eos root://{} ls {}'.format(self.url_eos, path)
-			raw_output = Popen([cmd], shell=True, stdout=PIPE, stderr=PIPE).communicate()
-			date = [thing for thing in raw_output[0].split("\n") if thing][-1]		# Take the most recent
-			path += date +"/"
-			cmd = 'eos root://{} ls {}'.format(self.url_eos, path)
+			print cmd
 			raw_output = Popen([cmd], shell=True, stdout=PIPE, stderr=PIPE).communicate()
 			# SKIPPED CRAB SUBDIR SECTION!
 			files = [path + thing for thing in raw_output[0].split("\n") if ".root" in thing]		# Take the most recent
@@ -67,10 +69,10 @@ class site:
 # :CLASSES
 
 # FUNCTIONS:
-def get_site():
+def get_site(site_name=None):
 	sites = parse_configuration()
-	site_name = get_site_name()
-	if site_name: return [s for s in sites if s.name == get_site_name()][0]
+	if not site_name: site_name = get_site_name()
+	if site_name: return [s for s in sites if s.name == site_name][0]
 	return False
 
 def get_site_name():
