@@ -18,8 +18,8 @@ from truculence import analysis
 
 # FUNCTIONS:
 def get_crab_config(
+	kind="aod",
 	sample=None,                               # A sample object
-	miniaod=None,                              # A miniaod object
 	generation="",
 	suffix="",
 	instance="",
@@ -30,7 +30,6 @@ def get_crab_config(
 	units=-1,                                   # The number of events to run over ("-1" means "all")
 	cut_pt_filter=300,
 	cut_eta_filter=2.5,
-	kind="tuple",
 ):
 	# Parse arguments and set other variables:
 	dataset_name = ""
@@ -56,7 +55,7 @@ def get_crab_config(
 		cmssw_params["suffix"] = suffix
 #	cmssw_params["dataset"] = dataset.name                    # See comment on line above.
 #	cmssw_params["cmssw"] = analysis.get_cmssw()              # I stopped using this. The version is found inside of the CMSSW config. (Not changed for jets.)
-	if "tuple" in kind:
+	if kind == "tuple":
 		cmssw_params["cutPtFilter"] = cut_pt_filter
 		cmssw_params["cutEtaFilter"] = cut_eta_filter
 		cmssw_params["data"] = sample.data
@@ -78,6 +77,7 @@ def get_crab_config(
 	template = template.replace("%%SUFFIX%%", suffix)
 	template = template.replace("%%DATASET%%", dataset_name)
 	template = template.replace("%%NAME%%", sample.name)
+	template = template.replace("%%PLUGINNAME%%", "PrivateMC" if kind in ["aod", "gen"] else "Analysis")
 	template = template.replace("%%CMSSWCONFIG%%", cmssw_config)
 	template = template.replace("%%LISTOFPARAMS%%", params_str)
 #	template = template.replace("%%UNITS%%", str(units))
