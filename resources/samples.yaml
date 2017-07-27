@@ -545,7 +545,7 @@ zjets:
           hts: [600, 3000]
           sigma: 5.67
           miniaods:
-              - generation: summer16
+              - generation: moriond17
                 name: /ZJetsToQQ_HT600toInf_13TeV-madgraph/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
                 aod: /ZJetsToQQ_HT600toInf_13TeV-madgraph/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM
                 gen: /ZJetsToQQ_HT600toInf_13TeV-madgraph/RunIISummer15GS-MCRUN2_71_V1-v1/GEN-SIM
@@ -556,8 +556,12 @@ wjets:
           subprocess: wjets
           hts: [600, 3000]
           sigma: 95.14
-#          n: 1025005
           miniaods:
+              - generation: moriond17
+                name: /WJetsToQQ_HT-600ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
+                aod: /WJetsToQQ_HT-600ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM
+                gen: /WJetsToQQ_HT-600ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer15GS-MCRUN2_71_V1-v1/GEN-SIM
+                lhe: /WJetsToQQ_HT-600ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIWinter15wmLHE-MCRUN2_71_V1-v1/LHE
               - generation: spring16
                 name: /WJetsToQQ_HT-600ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM
               - generation: fall15
@@ -569,7 +573,7 @@ zzto4q:
           subprocess: zzto4q
           sigma: 6.842
           miniaods:
-              - generation: summer16
+              - generation: moriond17
                 name: /ZZTo4Q_13TeV_amcatnloFXFX_madspin_pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
                 aod: /ZZTo4Q_13TeV_amcatnloFXFX_madspin_pythia8/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM
                 gen: /ZZTo4Q_13TeV_amcatnloFXFX_madspin_pythia8/RunIISummer15GS-MCRUN2_71_V1-v1/GEN-SIM
@@ -580,7 +584,7 @@ zzto2l2q:
           subprocess: zzto2l2q
           sigma: 1.999
           miniaods:
-              - generation: summer16
+              - generation: moriond17
                 name: /ZZTo2L2Q_13TeV_powheg_pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
                 aod: /ZZTo2L2Q_13TeV_powheg_pythia8/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM
                 gen: /ZZTo2L2Q_13TeV_powheg_pythia8/RunIISummer15wmLHEGS-MCRUN2_71_V1-v1/GEN-SIM
@@ -591,7 +595,7 @@ zzto4l:
           subprocess: zzto4l
           sigma: 1.191
           miniaods:
-              - generation: summer16
+              - generation: moriond17
                 name: /ZZTo4L_13TeV-amcatnloFXFX-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM
                 aod: /ZZTo4L_13TeV-amcatnloFXFX-pythia8/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/AODSIM
                 gen: /ZZTo4L_13TeV-amcatnloFXFX-pythia8/RunIISummer15wmLHEGS-MCRUN2_71_V1_ext1-v2/GEN-SIM
@@ -600,9 +604,9 @@ wwto4q:
     wwto4q:
         - name: WWTo4Q_13TeV-powheg
           subprocess: wwto4q
-          sigma: 51.1
+          sigma: 52.4
           miniaods:
-              - generation: summer16
+              - generation: moriond17
                 name: /WWTo4Q_13TeV-powheg/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
                 aod: /WWTo4Q_13TeV-powheg/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM
                 gen: /WWTo4Q_13TeV-powheg/RunIISummer15GS-MCRUN2_71_V1-v1/GEN-SIM
@@ -611,9 +615,9 @@ wwto2l2q:
     wwto2l2q:
         - name: WWToLNuQQ_13TeV-powheg
           subprocess: wwto2l2q
-          sigma: 1.0
+          sigma: 34.9
           miniaods:
-              - generation: summer16
+              - generation: moriond17
                 name: /WWToLNuQQ_13TeV-powheg/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
                 aod: /WWToLNuQQ_13TeV-powheg/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM
                 gen: /WWToLNuQQ_13TeV-powheg/RunIISummer15GS-MCRUN2_71_V1-v1/GEN-SIM
@@ -635,7 +639,7 @@ zto2m:
           subprocess: zto2m50
           sigma: 1975.00
           miniaods:
-              - generation: summer16
+              - generation: moriond17
                 name: /ZToMuMu_NNPDF30_13TeV-powheg_M_50_120/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
                 aod: /ZToMuMu_NNPDF30_13TeV-powheg_M_50_120/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM
                 gen: /ZToMuMu_NNPDF30_13TeV-powheg_M_50_120/RunIISummer15GS-MCRUN2_71_V1-v1/GEN-SIM
@@ -644,7 +648,7 @@ zto2m:
           subprocess: zto2m120
           sigma: 19.32
           miniaods:
-              - generation: summer16
+              - generation: moriond17
                 name: /ZToMuMu_NNPDF30_13TeV-powheg_M_120_200/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
                 aod: /ZToMuMu_NNPDF30_13TeV-powheg_M_120_200/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM
                 gen: /ZToMuMu_NNPDF30_13TeV-powheg_M_120_200/RunIISummer15GS-MCRUN2_71_V1-v1/GEN-SIM
@@ -653,7 +657,7 @@ zto2m:
           subprocess: zto2m200
           sigma: 2.73
           miniaods:
-              - generation: summer16
+              - generation: moriond17
                 name: /ZToMuMu_NNPDF30_13TeV-powheg_M_200_400/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
                 aod: /ZToMuMu_NNPDF30_13TeV-powheg_M_200_400/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM
                 gen: /ZToMuMu_NNPDF30_13TeV-powheg_M_200_400/RunIISummer15GS-MCRUN2_71_V1-v1/GEN-SIM
@@ -662,7 +666,7 @@ zto2m:
           subprocess: zto2m400
           sigma: 0.24
           miniaods:
-              - generation: summer16
+              - generation: moriond17
                 name: /ZToMuMu_NNPDF30_13TeV-powheg_M_400_800/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
                 aod: /ZToMuMu_NNPDF30_13TeV-powheg_M_400_800/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM
                 gen: /ZToMuMu_NNPDF30_13TeV-powheg_M_400_800/RunIISummer15GS-MCRUN2_71_V1-v1/GEN-SIM
@@ -671,7 +675,7 @@ zto2m:
           subprocess: zto2m800
           sigma: 0.01678
           miniaods:
-              - generation: summer16
+              - generation: moriond17
                 name: /ZToMuMu_NNPDF30_13TeV-powheg_M_800_1400/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
                 aod: /ZToMuMu_NNPDF30_13TeV-powheg_M_800_1400/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM
                 gen: /ZToMuMu_NNPDF30_13TeV-powheg_M_800_1400/RunIISummer15GS-MCRUN2_71_V1-v1/GEN-SIM
@@ -680,7 +684,7 @@ zto2m:
           subprocess: zto2m1400
           sigma: 0.00139
           miniaods:
-              - generation: summer16
+              - generation: moriond17
                 name: /ZToMuMu_NNPDF30_13TeV-powheg_M_1400_2300/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
                 aod: /ZToMuMu_NNPDF30_13TeV-powheg_M_1400_2300/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM
                 gen: /ZToMuMu_NNPDF30_13TeV-powheg_M_1400_2300/RunIISummer15GS-MCRUN2_71_V1-v1/GEN-SIM
@@ -689,7 +693,7 @@ zto2m:
           subprocess: zto2m2300
           sigma: 0.00008948
           miniaods:
-              - generation: summer16
+              - generation: moriond17
                 name: /ZToMuMu_NNPDF30_13TeV-powheg_M_2300_3500/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
                 aod: /ZToMuMu_NNPDF30_13TeV-powheg_M_2300_3500/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM
                 gen: /ZToMuMu_NNPDF30_13TeV-powheg_M_2300_3500/RunIISummer15GS-MCRUN2_71_V1-v1/GEN-SIM
@@ -698,7 +702,7 @@ zto2m:
           subprocess: zto2m3500
           sigma: 0.000004135
           miniaods:
-              - generation: summer16
+              - generation: moriond17
                 name: /ZToMuMu_NNPDF30_13TeV-powheg_M_3500_4500/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
                 aod: /ZToMuMu_NNPDF30_13TeV-powheg_M_3500_4500/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM
                 gen: /ZToMuMu_NNPDF30_13TeV-powheg_M_3500_4500/RunIISummer15GS-MCRUN2_71_V1-v1/GEN-SIM
@@ -707,7 +711,7 @@ zto2m:
           subprocess: zto2m4500
           sigma: 0.000000456
           miniaods:
-              - generation: summer16
+              - generation: moriond17
                 name: /ZToMuMu_NNPDF30_13TeV-powheg_M_4500_6000/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
                 aod: /ZToMuMu_NNPDF30_13TeV-powheg_M_4500_6000/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM
                 gen: /ZToMuMu_NNPDF30_13TeV-powheg_M_4500_6000/RunIISummer15GS-MCRUN2_71_V1-v1/GEN-SIM
@@ -716,7 +720,7 @@ zto2m:
           subprocess: zto2m6000
           sigma: 0.00000002066
           miniaods:
-              - generation: summer16
+              - generation: moriond17
                 name: /ZToMuMu_NNPDF30_13TeV-powheg_M_6000_Inf/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
                 aod: /ZToMuMu_NNPDF30_13TeV-powheg_M_6000_Inf/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM
                 gen: /ZToMuMu_NNPDF30_13TeV-powheg_M_6000_Inf/RunIISummer15GS-MCRUN2_71_V1-v1/GEN-SIM
