@@ -2,6 +2,8 @@ hexcms:
     username: tote
     dir_data:
         path: /cms/tote/store
+    dir_lhe:
+        path: /cms/tote/store/lhe
 
 cmslpc:
     url_eos: cmseos.fnal.gov

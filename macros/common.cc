@@ -83,7 +83,7 @@ TCanvas* draw_pull(TString name, TH1* obs, TH1* exp, double xmin, double xmax, T
 	pull->GetYaxis()->SetTitleSize(pull->GetYaxis()->GetTitleSize()*0.5);
 	pull->GetYaxis()->SetTitleOffset(pull->GetYaxis()->GetTitleOffset()*0.9);
 	pull->GetYaxis()->SetLabelSize(pull->GetYaxis()->GetLabelSize()*0.6);
-	pull->GetYaxis()->SetNdivisions(504);
+	pull->GetYaxis()->SetNdivisions(405);
 	pull->GetYaxis()->SetTitle("Pull");
 //	h3->GetYaxis()->SetTitleFont(43);
 //	h3->GetYaxis()->SetTitleSize(25);

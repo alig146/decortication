@@ -2,7 +2,8 @@ void cuts() {return;}
 
 map<TString, TString> cut_info{
 	// (pre) Preselection:
-	{"fjp_pre", "htak8>900&&Max$(m_t)>50&&Min$(pt)>400&&Max$(abs(eta))<2.0"},
+//	{"fjp_pre", "htak8>900&&Max$(m_t)>50&&Min$(pt)>400&&Max$(abs(eta))<2.0"},
+	{"fjp_pre", "htak8>900&&Min$(pt)>400&&Max$(abs(eta))<2.0"},
 	
 	
 	// Single cuts:
@@ -72,12 +73,23 @@ map<TString, TString> cut_info{
 	{"fjp_sblold", "deta<1.0&&Max$(tau43)<0.95&&Max$(tau42)<0.60&&(Min$(tau42)>0.45||Min$(tau43)>0.80)&&Max$(tau21)<0.75&&masy_p<0.1"},
 	{"fjp_sbl", "deta<1.0&&Max$(tau43)<0.95&&Max$(tau42)<0.60&&((tau42[0]>0.45||tau43[0]>0.80)&&(tau42[1]>0.45||tau43[1]>0.80))&&Max$(tau21)<0.75&&masy_p<0.1"},
 	{"fj_sbl", "tau43[0]<0.95&&tau42[0]<0.60&&(tau42[0]>0.45||tau43[0]>0.80)&&tau21[0]<0.75"},
+	
+	{"fjp_sbl42", "deta<1.0&&Max$(tau43)<0.80&&Max$(tau42)<0.60&&Min$(tau42)>0.45&&Max$(tau21)<0.75&&masy_p<0.1"},
+	{"fj_sbl42", "tau43[0]<0.80&&tau42[0]<0.60&&tau42[0]>0.45&&tau21[0]<0.75"},
+	{"fjp_sbl43", "deta<1.0&&Max$(tau43)<0.95&&Max$(tau42)<0.45&&Min$(tau43)>0.80&&Max$(tau21)<0.75&&masy_p<0.1"},
+	{"fj_sbl43", "tau43[0]<0.95&&tau42[0]<0.45&&tau43[0]>0.80&&tau21[0]<0.75"},
+	
+	{"fjp_sbl42b", "deta<1.0&&Max$(tau43)<0.80&&Max$(tau42)<0.60&&Min$(tau42)>0.45&&Max$(tau21)<0.75&&masy_p<0.1&&Min$(bd)>0.46"},
+	{"fj_sbl42b", "tau43[0]<0.80&&tau42[0]<0.60&&tau42[0]>0.45&&tau21[0]<0.75&&bd[0]>0.46"},
+	{"fjp_sbl43b", "deta<1.0&&Max$(tau43)<0.95&&Max$(tau42)<0.45&&Min$(tau43)>0.80&&Max$(tau21)<0.75&&masy_p<0.1&&Min$(bd)>0.46"},
+	{"fj_sbl43b", "tau43[0]<0.95&&tau42[0]<0.45&&tau43[0]>0.80&&tau21[0]<0.75&&bd[0]>0.46"},
 	//// (sbls):
 //	{"fjp_sbls", "deta<1.0&&htak8>900&&Max$(m_t)>50&&deta<1.0&&Max$(tau43)<0.95&&Max$(tau42)<0.60&&(Min$(tau42)>0.45||Min$(tau43)>0.80)&&Max$(tau21)<0.75&&masy_p<0.1&&Max$(sd)<0.15"},
 //	{"fj_sbls", "deta<1.0&&tau43[0]<0.95&&tau42[0]<0.60&&(tau42[0]>0.45||tau43[0]>0.80)&&tau21[0]<0.75&&sd[0]<0.15"},
 	
 	/// (sbt) Tight sideband:
-	{"fjp_sbtold", "deta<1.0&&Max$(tau43)<0.85&&Max$(tau42)<0.50&&(Min$(tau42)>0.45||Min$(tau43)>0.80)&&Max$(tau21)<0.75&&masy_p<0.1"},
+	// Original definition:
+	{"fjp_sbtorig", "deta<1.0&&Max$(tau43)<0.85&&Max$(tau42)<0.50&&(Min$(tau42)>0.45||Min$(tau43)>0.80)&&Max$(tau21)<0.75&&masy_p<0.1"},
 	{"fjp_sbt", "deta<1.0&&Max$(tau43)<0.85&&Max$(tau42)<0.50&&((tau42[0]>0.45||tau43[0]>0.80)&&(tau42[1]>0.45||tau43[1]>0.80))&&Max$(tau21)<0.75&&masy_p<0.1"},
 	{"fj_sbt", "tau43[0]<0.85&&tau42[0]<0.50&&(tau42[0]>0.45||tau43[0]>0.80)&&tau21[0]<0.75"},
 	
@@ -144,8 +156,8 @@ TCut get_cut(TString cut, Double_t weight=1, TString ds="", bool pre=true) {
 	/// Add weight:
 	TString weight_string;
 	weight_string.Form("%f", weight);
-	if (ds == "ttbar") tcut = tcut * "W" * weight_string;
-	else tcut = tcut * "w" * "wtt" * weight_string;
+	tcut = tcut * "abs(W)" * weight_string;
+//	tcut = tcut * "w" * "wtt" * weight_string;		// Old way, can delete
 	
 	return tcut;
 }

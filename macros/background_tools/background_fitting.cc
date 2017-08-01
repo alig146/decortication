@@ -407,7 +407,7 @@ void perform_stacked_fit(TH1* hFullSel1, TH1* hCDF1, TH1* hCDF2, vector<double> 
 
 	// set parameter 2 (shift1), and fix it
 //	minuit.DefineParameter(2, "SHIFT1", newShift1, 0.0, 0.0, 0.0);
-	minuit.DefineParameter(2, "SHIFT1", newShift1, 1,-100, 100);
+	minuit.DefineParameter(2, "SHIFT1", newShift1, 0.5, -50, 50);
 
 	// set parameter 3 (stretch1), and fix it
 //	minuit.DefineParameter(3, "STRETCH1", newStretch1, 0.0, 0.0, 0.0);
@@ -422,12 +422,12 @@ void perform_stacked_fit(TH1* hFullSel1, TH1* hCDF1, TH1* hCDF2, vector<double> 
 	minuit.DefineParameter(5, "AMP2", newAmp2, 0.01, 0.0, newAmp2*1000);
 
 	// set parameter 6 (shift2), and fix it.
-//	minuit.DefineParameter(6, "SHIFT2", newShift2, 0.0, 0.0, 0.0);
 	minuit.DefineParameter(6, "SHIFT2", newShift2, 10, -5000, 5000);
+//	minuit.DefineParameter(6, "SHIFT2", newShift2, 0.5, -50, 50);
 
 	// set parameter 7 (stretch2), and fix it.
 //	minuit.DefineParameter(7, "STRETCH2", newStretch2, newStretch2*0.001, .01, newStretch2*10);
-	minuit.DefineParameter(7, "STRETCH2", newStretch2, 0.1, .00001, 10000);
+	minuit.DefineParameter(7, "STRETCH2", newStretch2, 0.1, 0.00001, 10000);
 //	minuit.DefineParameter(7, "STRETCH2", 1.0, 0.0, 0.0, 0.0);
 
 //	minuit.SetFCN(CHISQ_stack2); // set the function

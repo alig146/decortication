@@ -1,36 +1,31 @@
 from CRABClient.UserUtilities import config
 configure = config()
 
-# Variables
-kind = "%%KIND%%"
-process = "%%PROCESS%%"           # "qcdp", "sq150to4j", etc.
-subprocess = "%%SUBPROCESS%%"     # "qcdp50", "sq150to4j", etc. This is used in the output name.
-generation = "%%GENERATION%%"
-suffix = "%%SUFFIX%%"
-n = "%%UNITSPER%%"                         # Number of events per job.
-#units = %%UNITS%%                 # The number of events to run over (only necessary when generating!)
-# /Variables
+kind = '%%KIND%%'
+mask = '%%MASK%%'
 
-configure.General.requestName = '{}_{}_{}'.format(kind, subprocess, generation)
-if kind == "tuple": configure.General.requestName += "_{}".format(suffix)
+configure.General.requestName = '%%REQUESTNAME%%'
 configure.General.workArea = 'crab_projects'
 configure.General.transferLogs = True
 configure.JobType.pluginName = '%%PLUGINNAME%%'
 configure.JobType.psetName = '%%CMSSWCONFIG%%'       # The CMSSW configuration file name
 configure.JobType.pyCfgParams = %%LISTOFPARAMS%%     # The parameters passed to the CMSSW configuration file
-configure.JobType.inputFiles = ["jec_data"]          # Files and directories that CRAB has access to.
+if kind == "tuple": configure.JobType.inputFiles = ["jec_data", "pileup_data"]          # Files and directories that CRAB has access to.
 
-configure.Data.inputDataset = '%%DATASET%%'          # Input dataset name
-configure.Data.inputDBS = '%%INSTANCE%%'             # "global" (official), "phys03" (private), etc.
+configure.Data.outputPrimaryDataset = '%%DATASET%%'          # Output dataset
+if kind not in ["aod", "gen"]: 
+	configure.Data.inputDataset = '%%DATASETFULL%%'          # Input dataset name
+	configure.Data.inputDBS = '%%INSTANCE%%'             # "global" (official), "phys03" (private), etc.
 
-configure.Data.splitting = 'EventAwareLumiBased'
-configure.Data.unitsPerJob = n
-if configure.JobType.pluginName == "PrivateMC": configure.Data.totalUnits = '%%TOTALUNITS%%'
+if configure.JobType.pluginName == "PrivateMC": configure.Data.splitting = 'EventBased'
+else: configure.Data.splitting = 'EventAwareLumiBased'
+configure.Data.unitsPerJob = %%UNITSPER%%
+if configure.JobType.pluginName == "PrivateMC": configure.Data.totalUnits = %%UNITS%%
 configure.Data.outLFNDirBase = '/store/user/elhughes'         # Only other option: "/store/group/<groupname>/<subdir>"
-configure.Data.publication = False
-configure.Data.outputDatasetTag = '{0}_{1}_{2}_{3}'.format(kind, subprocess, generation, suffix)
-%%MASK%%
+configure.Data.publication = %%PUBLICATION%%
+configure.Data.outputDatasetTag = '%%REQUESTNAME%%'
+if mask: configure.Data.lumiMask = mask
 
-configure.JobType.maxMemoryMB = 5000
+configure.JobType.maxMemoryMB = 6000
 
 configure.Site.storageSite = 'T3_US_FNALLPC'
