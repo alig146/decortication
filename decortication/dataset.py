@@ -331,12 +331,14 @@ class dataset:
 			if self.data:
 				self.weight = 1
 			else:
-				if self.n:
-#					print sample.sigma, sample.luminosity
-					self.weight = self.preweight*sample.sigma*sample.luminosity/self.n
+				if "weight" in [stuff for stuff in infrastructure.get_ds_info(completed=False)["miniaod"] if stuff["generation"] == self.generation and stuff["subprocess"] == self.subprocess][0]: print "WARNING: Skipping weight calculation because it's defined in the YAML."
 				else:
-					print "WARNING (dataset.py): Trying to set the weight when the necessary variables aren't defined."
-					self.weight == None
+					if self.n:
+	#					print sample.sigma, sample.luminosity
+						self.weight = self.preweight*sample.sigma*sample.luminosity/self.n
+					else:
+						print "WARNING (dataset.py): Trying to set the weight when the necessary variables aren't defined."
+						self.weight == None
 			info["weight"] = self.weight
 		
 		# Update DB:
