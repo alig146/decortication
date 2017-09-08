@@ -7,6 +7,16 @@ sqto4j:
           ms: [100, 75]
           sigma: 1521.11
           miniaods:
+              - generation: moriond17cutht700
+                name: /Sq100To4J/elhughes-miniaod_sq100to4j_moriond17cutht700-c25660a1db7b69b092e620682f3b66ea/USER
+                aod: /Sq100To4J/elhughes-aod_sq100to4j_cutht700_moriond17-cd4d375aba4ea180dd20f8c96b358a6b/USER
+                instance: phys03
+                preweight: 0.0031
+              - generation: moriond17
+                name: /Sq100To4J/elhughes-miniaod_sq100to4j_moriond17-c25660a1db7b69b092e620682f3b66ea/USER
+                aod: /Sq100To4J/elhughes-aod_sq100to4j_moriond17-cd4d375aba4ea180dd20f8c96b358a6b/USER
+                instance: phys03
+                preweight: 1.0
               - generation: "0706"
                 name: /Sq100To4J/elhughes-sq100to4j-miniaod-928d46295c808b28c2560dd199b08897/USER
                 instance: phys03
@@ -23,17 +33,17 @@ sqto4j:
           ms: [150, 110]
           sigma: 249.409
           miniaods:
-#              - generation: spring15
-#                name: /Sq150To4J/elhughes-Sq150To4J-a8bc5525fb601f2f2f57bdb9ea72969e/USER
-#                das: False
-#                lhe_cut: pt200
-#                preweight: 0.094801
-#              - generation: spring15-cutht700
-#                name: /Sq150To4J/elhughes-Sq400To4J_cutht700-a8bc5525fb601f2f2f57bdb9ea72969e/USER      # Yes, the "400" was a dumb mistake.
-#                instance: phys03
-#                das: True
-#                lhe_cut: ht700
-#                preweight: 0.004135
+              - generation: moriond17cutht700
+                name: /Sq150To4J/elhughes-miniaod_sq150to4j_moriond17cutht700-c25660a1db7b69b092e620682f3b66ea/USER
+                aod: /Sq150To4J/elhughes-aod_sq150to4j_cutht700_moriond17-cd4d375aba4ea180dd20f8c96b358a6b/USER
+                instance: phys03
+                lhe_cut: ht700
+                preweight: 0.04135
+              - generation: moriond17
+                name: /Sq150To4J/elhughes-miniaod_sq150to4j_moriond17-c25660a1db7b69b092e620682f3b66ea/USER
+                aod: /Sq150To4J/elhughes-aod_sq150to4j_moriond17-cd4d375aba4ea180dd20f8c96b358a6b/USER
+                instance: phys03
+                preweight: 1.0
               - generation: "0706"
                 name: /Sq150To4J/elhughes-sq150to4j-miniaod-928d46295c808b28c2560dd199b08897/USER
                 instance: phys03
@@ -43,17 +53,21 @@ sqto4j:
     
     sq200to4j:
         - name: Sq200To4J
-#          name_proper_latex: "$m_{\\tilde{q}} = 200$~\\text{GeV}"
-#          name_proper_root: "m_{#tilde{q}} = 200 GeV"
           signal: True
           ms: [200, 150]
           sigma: 64.5085
           miniaods:
-#              - generation: spring15
-#                name: /Sq200To4J/elhughes-Sq200To4J-a8bc5525fb601f2f2f57bdb9ea72969e/USER
-#                das: False
-#                lhe_cut: pt200
-#                preweight: 0.131616
+              - generation: moriond17cutht700
+                name: /Sq200To4J/elhughes-miniaod_sq200to4j_moriond17cutht700-c25660a1db7b69b092e620682f3b66ea/USER
+                aod: /Sq200To4J/elhughes-aod_sq200to4j_cutht700_moriond17-cd4d375aba4ea180dd20f8c96b358a6b/USER
+                instance: phys03
+                lhe_cut: ht700
+                preweight: 0.0481
+              - generation: moriond17
+                name: /Sq200To4J/elhughes-miniaod_sq200to4j_moriond17-c25660a1db7b69b092e620682f3b66ea/USER
+                aod: /Sq200To4J/elhughes-aod_sq200to4j_moriond17-cd4d375aba4ea180dd20f8c96b358a6b/USER
+                instance: phys03
+                preweight: 1.0
               - generation: "0706"
                 name: /Sq200To4J/elhughes-sq200to4j-miniaod-928d46295c808b28c2560dd199b08897/USER
                 instance: phys03
@@ -63,17 +77,21 @@ sqto4j:
     
     sq250to4j:
         - name: Sq250To4J
-#          name_proper_latex: "$m_{\\tilde{q}} = 250$~\\text{GeV}"
-#          name_proper_root: "m_{#tilde{q}} = 250 GeV"
           signal: True
           ms: [250, 190]
           sigma: 21.5949
           miniaods:
-#              - generation: spring15
-#                name: /Sq250To4J/elhughes-Sq250To4J-a8bc5525fb601f2f2f57bdb9ea72969e/USER
-#                das: False
-#                lhe_cut: pt200
-#                preweight: 0.207295
+              - generation: moriond17cutht700
+                name: /Sq250To4J/elhughes-miniaod_sq250to4j_moriond17cutht700-c25660a1db7b69b092e620682f3b66ea/USER
+                aod: /Sq250To4J/elhughes-aod_sq250to4j_cutht700_moriond17-cd4d375aba4ea180dd20f8c96b358a6b/USER
+                instance: phys03
+                lhe_cut: ht700
+                preweight: 0.0673
+              - generation: moriond17
+                name: /Sq250To4J/elhughes-miniaod_sq250to4j_moriond17-c25660a1db7b69b092e620682f3b66ea/USER
+                aod: /Sq250To4J/elhughes-aod_sq250to4j_moriond17-cd4d375aba4ea180dd20f8c96b358a6b/USER
+                instance: phys03
+                preweight: 1.0
               - generation: "0706"
                 name: /Sq250To4J/elhughes-sq250to4j-miniaod-928d46295c808b28c2560dd199b08897/USER
                 instance: phys03
@@ -83,23 +101,21 @@ sqto4j:
 
     sq300to4j:
         - name: Sq300To4J
-#          name_proper_latex: "$m_{\\tilde{q}} = 300$~\\text{GeV}"
-#          name_proper_root: "m_{#tilde{q}} = 300 GeV"
           signal: True
           ms: [300, 230]
           sigma: 8.51615
           miniaods:
-#              - generation: spring15
-#                name: /Sq300To4J/elhughes-SqToJJJJ_300-a8bc5525fb601f2f2f57bdb9ea72969e/USER
-#                das: False
-#                lhe_cut: pt200
-#                preweight: 0.293902
-#              - generation: spring15-inverted
-#                name: /Sq300To4J/elhughes-Sq300To4J_Inverted-a8bc5525fb601f2f2f57bdb9ea72969e/USER
-#                instance: phys03
-#                das: True
-#                lhe_cut: pti200
-#                preweight: 0.706098
+              - generation: moriond17cutht700
+                name: /Sq300To4J/elhughes-miniaod_sq300to4j_moriond17cutht700-c25660a1db7b69b092e620682f3b66ea/USER
+                aod: /Sq300To4J/elhughes-aod_sq300to4j_cutht700_moriond17-cd4d375aba4ea180dd20f8c96b358a6b/USER
+                instance: phys03
+                lhe_cut: ht700
+                preweight: 0.1664
+              - generation: moriond17
+                name: /Sq300To4J/elhughes-miniaod_sq300to4j_moriond17-c25660a1db7b69b092e620682f3b66ea/USER
+                aod: /Sq300To4J/elhughes-aod_sq300to4j_moriond17-cd4d375aba4ea180dd20f8c96b358a6b/USER
+                instance: phys03
+                preweight: 1.0
               - generation: "0706"
                 name: /Sq300To4J/elhughes-sq300to4j-miniaod-928d46295c808b28c2560dd199b08897/USER
                 instance: phys03
@@ -109,18 +125,21 @@ sqto4j:
     
     sq400to4j:
         - name: Sq400To4J
-#          name_proper_latex: "$m_{\\tilde{q}} = 400$~\\text{GeV}"
-#          name_proper_root: "m_{#tilde{q}} = 400 GeV"
           signal: True
           ms: [400, 300]
           sigma: 1.83537
           miniaods:
-#              - generation: spring15
-#                name: /Sq400To4J/elhughes-Sq400To4J-a8bc5525fb601f2f2f57bdb9ea72969e/USER
-#                instance: phys03
-#                das: True
-#                lhe_cut: pt200
-#                preweight: 0.458053
+              - generation: moriond17cutht700
+                name: /Sq400To4J/elhughes-miniaod_sq400to4j_moriond17cutht700-c25660a1db7b69b092e620682f3b66ea/USER
+                aod: /Sq400To4J/elhughes-aod_sq400to4j_cutht700_moriond17-cd4d375aba4ea180dd20f8c96b358a6b/USER
+                instance: phys03
+                lhe_cut: ht700
+                preweight: 0.6709
+              - generation: moriond17
+                name: /Sq400To4J/elhughes-miniaod_sq400to4j_moriond17-c25660a1db7b69b092e620682f3b66ea/USER
+                aod: /Sq400To4J/elhughes-aod_sq400to4j_moriond17-cd4d375aba4ea180dd20f8c96b358a6b/USER
+                instance: phys03
+                preweight: 1.0
               - generation: "0706"
                 name: /Sq400To4J/elhughes-sq400to4j-miniaod-928d46295c808b28c2560dd199b08897/USER
                 instance: phys03
@@ -130,12 +149,21 @@ sqto4j:
     
     sq500to4j:
         - name: Sq500To4J
-#          name_proper_latex: "$m_{\\tilde{q}} = 500$~\\text{GeV}"
-#          name_proper_root: "m_{#tilde{q}} = 500 GeV"
           signal: True
           ms: [500, 375]
           sigma: 0.51848
           miniaods:
+              - generation: moriond17cutht700
+                name: /Sq500To4J/elhughes-miniaod_sq500to4j_moriond17cutht700-c25660a1db7b69b092e620682f3b66ea/USER
+                aod: /Sq500To4J/elhughes-aod_sq500to4j_cutht700_moriond17-cd4d375aba4ea180dd20f8c96b358a6b/USER
+                instance: phys03
+                lhe_cut: ht700
+                preweight: 0.9556
+              - generation: moriond17
+                name: /Sq500To4J/elhughes-miniaod_sq500to4j_moriond17-c25660a1db7b69b092e620682f3b66ea/USER
+                aod: /Sq500To4J/elhughes-aod_sq500to4j_moriond17-cd4d375aba4ea180dd20f8c96b358a6b/USER
+                instance: phys03
+                preweight: 1.0
               - generation: "0706"
                 name: /Sq500To4J/elhughes-sq500to4j-miniaod-928d46295c808b28c2560dd199b08897/USER
                 instance: phys03

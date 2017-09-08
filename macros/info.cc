@@ -1,11 +1,11 @@
 map<TString, TString> name_proper {
-	{"sq100to4j", "m_{#tilde{q}} = 100 GeV"},
-	{"sq150to4j", "m_{#tilde{q}} = 150 GeV"},
-	{"sq200to4j", "m_{#tilde{q}} = 200 GeV"},
-	{"sq250to4j", "m_{#tilde{q}} = 250 GeV"},
-	{"sq300to4j", "m_{#tilde{q}} = 300 GeV"},
-	{"sq400to4j", "m_{#tilde{q}} = 400 GeV"},
-	{"sq500to4j", "m_{#tilde{q}} = 500 GeV"},
+	{"sq100to4j", "#it{m}_{#tilde{q}} = 100 GeV"},
+	{"sq150to4j", "#it{m}_{#tilde{q}} = 150 GeV"},
+	{"sq200to4j", "#it{m}_{#tilde{q}} = 200 GeV"},
+	{"sq250to4j", "#it{m}_{#tilde{q}} = 250 GeV"},
+	{"sq300to4j", "#it{m}_{#tilde{q}} = 300 GeV"},
+	{"sq400to4j", "#it{m}_{#tilde{q}} = 400 GeV"},
+	{"sq500to4j", "#it{m}_{#tilde{q}} = 500 GeV"},
 	{"qcdp", "QCD (2 #rightarrow 2)"},
 	{"qcdmg", "QCD (2 #rightarrow 4)"},
 	{"ttbar", "t#bar{t}"},
@@ -13,6 +13,47 @@ map<TString, TString> name_proper {
 	{"jetht", "JetHT '15 + '16"},
 	{"jetht15", "JetHT 2015"},
 	{"jetht16", "JetHT 2016"},
+};
+
+map<TString, TString> variable_proper {
+	{"ht", "#it{H}_{T}"},
+	{"mavg", "#bar{#it{m}}"},
+	{"deta", "#left|#Delta#eta#right|"},
+	{"masy", "#it{A}_{#it{m}}"},
+	{"tau21", "max#left(#tau_{21}#right)"},
+	{"tau42", "max#left(#tau_{42}#right)"},
+	{"tau43", "max#left(#tau_{43}#right)"},
+	{"eta0", "#eta of leading fatjet"},
+	{"phi0", "#phi of leading fatjet"},
+	{"pt0", "#it{p}_{T} of leading fatjet"},
+	{"tau210", "#tau_{21} of the leading fatjet"},
+	{"tau420", "#tau_{42} of the leading fatjet"},
+	{"tau430", "#tau_{43} of the leading fatjet"},
+};
+
+map<TString, TString> unit_proper {
+	{"ht", "GeV"},
+	{"mavg", "GeV"},
+	{"deta", ""},
+	{"masy", ""},
+	{"tau21", ""},
+	{"tau42", ""},
+	{"tau43", ""},
+	{"eta0", ""},
+	{"phi0", ""},
+	{"pt0", "GeV"},
+	{"tau210", ""},
+	{"tau420", ""},
+	{"tau430", ""},
+};
+
+map<TString, TString> cut_proper {
+	{"sig", "signal region"},
+	{"sigl", "loose signal region"},
+	{"sb", "control region"},
+	{"sbb", "b-tagged control region"},
+	{"sbl", "loose control region"},
+	{"sblb", "b-tagged loose control region"},
 };
 
 map<TString, TString> groom_names {
@@ -25,6 +66,7 @@ map<TString, TString> groom_names {
 map<TString, TString> lum_string {
 	{"15", "2.3"},		// 2.258 /fb
 	{"16", "35.9"},		// 35.922 /fb
+	{"sum", "(2.3 + 35.9)"},
 	{"all", "38.2"},		// 38.180 /fb
 };
 

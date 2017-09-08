@@ -43,6 +43,21 @@ TCanvas* draw_pull(TString name, TH1* obs, TH1* exp, double xmin, double xmax, T
 	line->SetLineWidth(2);
 //	line->SetLineStyle(2);
 	
+	// Calculate chi2:
+	Float_t chi2 = 0;
+	Float_t ndf = 0;
+	for (int i = 1; i <= pull->GetNbinsX(); ++i) {
+//		cout << i << ", " << pull->GetBinContent(i) << ", " << pull->GetBinError(i) << endl;
+		if (pull->GetBinError(i) != 0) {
+			chi2 += pow(pull->GetBinContent(i) - yvalue, 2)/pow(pull->GetBinError(i), 2);
+			ndf += 1;
+		}
+	}
+	Float_t chi2perndf = chi2/ndf;
+//	cout << "Pull chi2 = " << chi2 << endl;
+//	cout << "Pull NDF = " << ndf << endl;
+//	cout << "Pull chi2/NDF = " << chi2perndf << endl;
+	
 	TCanvas* canvas = new TCanvas(name, name);
 //	canvas->SetCanvasSize(1250, 1250);
 //	canvas->SetWindowSize(1250 + (1250 - canvas->GetWw()), 1250 + (1250 - canvas->GetWh()));
@@ -54,11 +69,11 @@ TCanvas* draw_pull(TString name, TH1* obs, TH1* exp, double xmin, double xmax, T
 	upperPad->Draw();
 	lowerPad->Draw();
 	
-	upperPad->SetBottomMargin(0.023);
+	upperPad->SetBottomMargin(0.027);
 //	upperPad->SetTopMargin(0.055);
 //	upperPad->SetFillColorAlpha(42, 0.5);
 //	lowerPad->SetFillColorAlpha(41, 0.5);
-	lowerPad->SetTopMargin(0.025);
+	lowerPad->SetTopMargin(0.00);
 	lowerPad->SetBottomMargin(0.45);
 	lowerPad->SetGridy();
 	lowerPad->SetGridx();
@@ -84,11 +99,21 @@ TCanvas* draw_pull(TString name, TH1* obs, TH1* exp, double xmin, double xmax, T
 	pull->GetYaxis()->SetTitleOffset(pull->GetYaxis()->GetTitleOffset()*0.9);
 	pull->GetYaxis()->SetLabelSize(pull->GetYaxis()->GetLabelSize()*0.6);
 	pull->GetYaxis()->SetNdivisions(405);
+	pull->GetYaxis()->CenterTitle();
 	pull->GetYaxis()->SetTitle("Pull");
 //	h3->GetYaxis()->SetTitleFont(43);
 //	h3->GetYaxis()->SetTitleSize(25);
 //	h3->GetYaxis()->SetLabelFont(43);
 //	h3->GetYaxis()->SetLabelSize(30);
+	
+	TFile* tf = new TFile(TString(name) + ".root", "recreate");
+	TH1F* stats = new TH1F("stats", "", 10, 0, 10);
+	stats->SetBinContent(1, chi2);
+	stats->SetBinContent(2, ndf);
+	stats->SetBinContent(3, chi2perndf);
+	tf->WriteTObject(pull);
+	tf->WriteTObject(stats);
+	tf->Close();
 	
 	return canvas;
 }
@@ -176,3 +201,108 @@ void show_template(TH1* fj, TH1* fjp, TH1* temp, bool mc=false, TString tc_name=
 	
 	tc->SaveAs("template_" + tc_name + ".pdf");
 }
+
+//vector<int> sort_histograms(vector<TH1*> hs);
+
+vector<TCanvas*> same_set(vector<TH1*> hs, TString name) {
+	// Deal with plots:
+	vector<TH1*> hs_norm;
+	vector<TH1*> hs_logy;
+	vector<TH1*> hs_norm_logy;
+	double max, max_norm, min, min_norm;
+	int imax, imax_norm, imin, imin_norm;
+	min = 100000000;
+	min_norm = 1;
+	for (int i = 0; i < hs.size(); ++i) {
+		TH1* h_norm = (TH1*) hs[i]->Clone();
+		TH1* h_logy = (TH1*) hs[i]->Clone();
+		// Make normalized histogram:
+		double sf = 1/h_norm->Integral();
+		for (int ibin = 0; ibin < h_norm->GetNbinsX() + 1; ++ibin){
+			h_norm->SetBinContent(ibin, h_norm->GetBinContent(ibin)*sf);
+			h_norm->SetBinError(ibin, h_norm->GetBinError(ibin)*sf);
+		}
+		TH1* h_norm_logy = (TH1*) h_norm->Clone();
+		hs_norm.push_back(h_norm);
+		hs_logy.push_back(h_logy);
+		hs_norm_logy.push_back(h_norm_logy);
+		if (hs[i]->GetMaximum() > max) {
+			imax = i;
+			max = hs[i]->GetMaximum();
+		}
+		if (h_norm->GetMaximum() > max_norm) {
+			imax_norm = i;
+			max_norm = h_norm->GetMaximum();
+		}
+		if (hs[i]->GetMinimum() < min) {
+			imin = i;
+			min = hs[i]->GetMinimum();
+		}
+		if (h_norm->GetMinimum() < min_norm) {
+			imin_norm = i;
+			min_norm = h_norm->GetMinimum();
+		}
+	}
+	
+	// Make canvases:
+	vector<TCanvas*> canvases;
+	TCanvas* nom = new TCanvas(name, name);
+	TCanvas* norm = new TCanvas(name + "_norm", name + "_norm");
+	TCanvas* logy = new TCanvas(name + "_logy", name + "_logy");
+	TCanvas* norm_logy = new TCanvas(name + "_norm_logy", name + "_norm_logy");
+	canvases.push_back(nom);
+	canvases.push_back(norm);
+	canvases.push_back(logy);
+	canvases.push_back(norm_logy);
+	
+	//Draw:
+	gStyle->SetOptStat(0);
+	// Nominal:
+	nom->cd();
+	hs[imax]->SetMaximum(max*1.4);
+	hs[imax]->SetMinimum(0.0);
+	hs[imax]->SetTitle("");
+	hs[imax]->GetYaxis()->SetTitle("Events");
+	hs[imax]->Draw("e");
+	for (int i = 0; i < hs.size(); ++i) hs[i]->Draw("e same");
+	gPad->RedrawAxis();
+	
+	// Normalized:
+	norm->cd();
+	hs_norm[imax_norm]->SetMaximum(max_norm*1.4);
+	hs_norm[imax_norm]->SetMinimum(0.0);
+	hs_norm[imax_norm]->SetTitle("");
+	hs_norm[imax_norm]->GetYaxis()->SetTitle("Normalized events");
+	hs_norm[imax_norm]->Draw("e");
+	for (int i = 0; i < hs_norm.size(); ++i) hs_norm[i]->Draw("e same");
+	gPad->RedrawAxis();
+	
+	// Logy:
+	logy->cd();
+	logy->SetLogy();
+	hs_logy[imax]->SetMaximum(max*10);
+	hs_logy[imax]->SetMinimum(max*0.0005);
+	hs_logy[imax]->SetTitle("");
+	hs_logy[imax]->GetYaxis()->SetTitle("Events");
+	hs_logy[imax]->Draw("e");
+	for (int i = 0; i < hs_logy.size(); ++i) hs_logy[i]->Draw("e same");
+	gPad->RedrawAxis();
+	
+	// Norm logy:
+	norm_logy->cd();
+	norm_logy->SetLogy();
+	hs_norm_logy[imax_norm]->SetMaximum(max_norm*10);
+	hs_norm_logy[imax_norm]->SetMinimum(max_norm*0.005);
+	hs_norm_logy[imax_norm]->SetTitle("");
+	hs_norm_logy[imax_norm]->GetYaxis()->SetTitle("Normalized events");
+	hs_norm_logy[imax_norm]->Draw("e");
+	for (int i = 0; i < hs_norm_logy.size(); ++i) hs_norm_logy[i]->Draw("e same");
+	gPad->RedrawAxis();
+	
+	cout << imax << ", " << hs[imax]->GetMaximum() << ", " << hs[imax]->GetMinimum() << endl;
+	cout << imax_norm << ", " << hs_norm[imax_norm]->GetMaximum() << ", " << hs_norm[imax_norm]->GetMinimum() << endl;
+	cout << imax << ", " << hs_logy[imax]->GetMaximum() << ", " << gPad->GetUymin() << endl;
+	
+	return canvases;
+}
+

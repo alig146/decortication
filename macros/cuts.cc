@@ -24,12 +24,18 @@ map<TString, TString> cut_info{
 	//// (sig15):
 	{"fjp_sig15", "deta<1.0&&Max$(tau43)<0.80&&Max$(tau42)<0.45&&Max$(tau21)<0.75&&masy_p<0.1&&run<260628"},
 	{"fj_sig15", "tau43[0]<0.80&&tau42[0]<0.45&&tau21[0]<0.75&&run<260628"},
+	//// (sig16):
+	{"fjp_sig16", "deta<1.0&&Max$(tau43)<0.80&&Max$(tau42)<0.45&&Max$(tau21)<0.75&&masy_p<0.1&&run>273157"},
+	{"fj_sig16", "tau43[0]<0.80&&tau42[0]<0.45&&tau21[0]<0.75&&run<260628"},
 	
 	/// (sigx) Signal region n-1 cuts:
 	{"fjp_sigxdeta", "Max$(tau43)<0.80&&Max$(tau42)<0.45&&Max$(tau21)<0.75&&masy_p<0.1"},
 	{"fjp_sigxmasyp", "deta<1.0&&Max$(tau43)<0.80&&Max$(tau42)<0.45&&Max$(tau21)<0.75"},
 	{"fjp_sigxtau21", "deta<1.0&&Max$(tau43)<0.80&&Max$(tau42)<0.45&&masy_p<0.1"},
-	{"fjp_sigxtau", "deta<1.0&&Max$(tau21)<0.75&&masy_p<0.1"},
+	{"fjp_sigxtau42", "deta<1.0&&Max$(tau43)<0.80&&Max$(tau21)<0.75&&masy_p<0.1"},
+	{"fjp_sigxtau43", "deta<1.0&&Max$(tau42)<0.45&&Max$(tau21)<0.75&&masy_p<0.1"},
+	{"fjp_sigxtau4", "deta<1.0&&Max$(tau21)<0.75&&masy_p<0.1"},
+	{"fjp_sigxtau", "deta<1.0&&masy_p<0.1"},
 	
 	/// (sigl) Loose signal region:
 	{"fjp_sigl", "deta<1.0&&Max$(tau43)<0.90&&Max$(tau42)<0.50&&Max$(tau21)<0.75&&masy_p<0.1"},
@@ -56,6 +62,12 @@ map<TString, TString> cut_info{
 	{"fjp_sbold", "deta<1.0&&Max$(tau43)<0.90&&Max$(tau42)<0.55&&(Min$(tau42)>0.45||Min$(tau43)>0.80)&&Max$(tau21)<0.75&&masy_p<0.1"},
 	{"fjp_sb", "deta<1.0&&Max$(tau43)<0.90&&Max$(tau42)<0.55&&((tau42[0]>0.45||tau43[0]>0.80)&&(tau42[1]>0.45||tau43[1]>0.80))&&Max$(tau21)<0.75&&masy_p<0.1"},
 	{"fj_sb", "tau43[0]<0.90&&tau42[0]<0.55&&(tau42[0]>0.45||tau43[0]>0.80)&&tau21[0]<0.75"},
+	/// (sb15):
+	{"fjp_sb15", "deta<1.0&&Max$(tau43)<0.90&&Max$(tau42)<0.55&&((tau42[0]>0.45||tau43[0]>0.80)&&(tau42[1]>0.45||tau43[1]>0.80))&&Max$(tau21)<0.75&&masy_p<0.1&&run<260628"},
+	{"fj_sb15", "tau43[0]<0.90&&tau42[0]<0.55&&(tau42[0]>0.45||tau43[0]>0.80)&&tau21[0]<0.75&&run<260628"},
+	/// (sb16):
+	{"fjp_sb16", "deta<1.0&&Max$(tau43)<0.90&&Max$(tau42)<0.55&&((tau42[0]>0.45||tau43[0]>0.80)&&(tau42[1]>0.45||tau43[1]>0.80))&&Max$(tau21)<0.75&&masy_p<0.1&&run>273157"},
+	{"fj_sb16", "tau43[0]<0.90&&tau42[0]<0.55&&(tau42[0]>0.45||tau43[0]>0.80)&&tau21[0]<0.75&&run>273157"},
 	
 	/// (sbx) Sideband n-1 cuts:
 //	{"fjp_sbxdeta", "Max$(tau43)<0.90&&Max$(tau42)<0.55&&(Min$(tau42)>0.45||Min$(tau43)>0.80)&&Max$(tau21)<0.75&&masy_p<0.1"},
@@ -135,7 +147,7 @@ map<TString, TString> cut_info{
 ////	{"fjp_sbb", "w*(Max$(tau43)<0.90&&Max$(tau42)<0.55&&(Min$(tau42)>0.45||Min$(tau43)>0.80)&&masy_p<0.1&&Min$(bd)>0.46)"},
 };
 
-TCut get_cut(TString cut, Double_t weight=1, TString ds="", bool pre=true) {
+TCut get_cut(TString cut, TString run="", Double_t weight=1, TString ds="", bool pre=true) {
 	// Check if the cut name is valid:
 	if (cut_info.find(cut) == cut_info.end()) {
 		cout << "[!!] Cut " << cut << " not found!" << endl;
@@ -144,6 +156,18 @@ TCut get_cut(TString cut, Double_t weight=1, TString ds="", bool pre=true) {
 	
 	// Construct cut:
 	TCut tcut = TCut(cut, cut_info[cut]);
+	
+	/// Run range:
+	if (run == "15") {
+		TCut tcut_range = TCut("15", "run<260628");
+		tcut = tcut + tcut_range;
+		tcut.SetName(TString(tcut.GetName()) + "15");
+	}
+	else if (run == "16") {
+		TCut tcut_range = TCut("16", "run>273157");
+		tcut = tcut + tcut_range;
+		tcut.SetName(TString(tcut.GetName()) + "16");
+	}
 	
 	/// Add preselection if asked (default):
 	if (pre && cut != "fjp_pre") {

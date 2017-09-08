@@ -193,8 +193,9 @@ class dataset:
 		if not self.kind == "miniaod":
 			return False
 		else:
-			lhe_n = lhe.get_info(self.lhe_path)["nevents"]
-			return lhe_n
+			lhe_info = lhe.get_info(self.lhe_path)
+			if lhe_info: return lhe_info["nevents"]
+			else: False
 	
 	
 	

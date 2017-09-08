@@ -122,6 +122,9 @@ miniaod:
     mask:
         type: text
         default: !!null
+    aod:
+        type: text
+        default: !!null
     time:
         type: real
         default: 0

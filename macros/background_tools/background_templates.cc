@@ -62,7 +62,7 @@ TH1* make_template(TH2* h, TString ds, TString cut_name="sig", double masy_cut=0
 	return temp;
 }
 
-TH1* make_template(TH3* h, TString ds, TString cut_name, TString dir="", int f=0, double masy_cut=0.1, double deta_cut=1.0, bool htreweight=true) {
+TH1* make_template(TH3* h, TString ds, TString cut_name, TString dir="", int f=1, double masy_cut=0.1, double deta_cut=1.0, bool htreweight=true) {
 	TString name = h->GetName() + TString("_temp");
 	int xbins = h->GetNbinsX();		// m
 	int ybins = h->GetNbinsY();		// eta
