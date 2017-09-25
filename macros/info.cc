@@ -13,13 +13,18 @@ map<TString, TString> name_proper {
 	{"jetht", "JetHT '15 + '16"},
 	{"jetht15", "JetHT 2015"},
 	{"jetht16", "JetHT 2016"},
+	{"all", "Total MC"},
+	{"inj", "JetHT + #it{m}_{#tilde{q}} = 150 GeV"},
 };
 
 map<TString, TString> variable_proper {
 	{"ht", "#it{H}_{T}"},
+	{"m0", "#it{m} of leading fatjet"},
 	{"mavg", "#bar{#it{m}}"},
+	{"mavgp", "#bar{#it{m}}"},
 	{"deta", "#left|#Delta#eta#right|"},
 	{"masy", "#it{A}_{#it{m}}"},
+	{"masyp", "#it{A}_{#it{m}}"},
 	{"tau21", "max#left(#tau_{21}#right)"},
 	{"tau42", "max#left(#tau_{42}#right)"},
 	{"tau43", "max#left(#tau_{43}#right)"},
@@ -33,9 +38,12 @@ map<TString, TString> variable_proper {
 
 map<TString, TString> unit_proper {
 	{"ht", "GeV"},
+	{"m0", "GeV"},
 	{"mavg", "GeV"},
+	{"mavgp", "GeV"},
 	{"deta", ""},
 	{"masy", ""},
+	{"masyp", ""},
 	{"tau21", ""},
 	{"tau42", ""},
 	{"tau43", ""},
@@ -49,6 +57,11 @@ map<TString, TString> unit_proper {
 
 map<TString, TString> cut_proper {
 	{"sig", "signal region"},
+	{"sigxdeta", "#it{N}-1 (signal region)"},
+	{"sigxmasyp", "#it{N}-1 (signal region)"},
+	{"sigxtau21", "#it{N}-1 (signal region)"},
+	{"sigxtau42", "#it{N}-1 (signal region)"},
+	{"sigxtau43", "#it{N}-1 (signal region)"},
 	{"sigl", "loose signal region"},
 	{"sb", "control region"},
 	{"sbb", "b-tagged control region"},
@@ -70,9 +83,16 @@ map<TString, TString> lum_string {
 	{"all", "38.2"},		// 38.180 /fb
 };
 
+TString get_xtitle(TString var) {
+	TString title = variable_proper[var];
+	TString unit = unit_proper[var];
+	if (unit != "") title += " [" + unit + "]";
+	return title;
+}
+
 Double_t get_weight(TString ds="", TString era="") {
-//	if (ds == "jetht" || ds == "15") return 1;
-	if (era == "15") return 2.258/38.180;
+	if (ds == "jetht") return 1;
+	else if (era == "15") return 2.258/38.180;
 	else if (ds == "old") return 38.180/2.183;
 	else return 1.0;
 }

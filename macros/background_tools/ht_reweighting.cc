@@ -1,5 +1,3 @@
-//#include "/home/tote/decortication/macros/common.cc"
-
 double correction_function(double x, TString ds, TString cut, TString dir="fix", int f=0) {
 //	if (ds == "jetht") ds = "qcdmg";		// Use qcdmg corrections for data.
 	if (cut == "sbb") cut = "sb";

@@ -23,6 +23,7 @@ map<TString, TString> cut_info{
 	{"fj_sig", "tau43[0]<0.80&&tau42[0]<0.45&&tau21[0]<0.75"},
 	//// (sig15):
 	{"fjp_sig15", "deta<1.0&&Max$(tau43)<0.80&&Max$(tau42)<0.45&&Max$(tau21)<0.75&&masy_p<0.1&&run<260628"},
+	{"fjp_sig15t", "deta<1.0&&Max$(tau43)<0.80&&Max$(tau42)<0.45&&Max$(tau21)<0.75&&masy_p<0.1&&run<260628&&trig_pfht900"},
 	{"fj_sig15", "tau43[0]<0.80&&tau42[0]<0.45&&tau21[0]<0.75&&run<260628"},
 	//// (sig16):
 	{"fjp_sig16", "deta<1.0&&Max$(tau43)<0.80&&Max$(tau42)<0.45&&Max$(tau21)<0.75&&masy_p<0.1&&run>273157"},
@@ -178,10 +179,12 @@ TCut get_cut(TString cut, TString run="", Double_t weight=1, TString ds="", bool
 	}
 	
 	/// Add weight:
-	TString weight_string;
-	weight_string.Form("%f", weight);
-	tcut = tcut * "abs(W)" * weight_string;
-//	tcut = tcut * "w" * "wtt" * weight_string;		// Old way, can delete
+	if (weight != 0) {
+		TString weight_string;
+		weight_string.Form("%f", weight);
+		tcut = tcut * "abs(W)" * weight_string;
+	//	tcut = tcut * "w" * "wtt" * weight_string;		// Old way, can delete
+	}
 	
 	return tcut;
 }

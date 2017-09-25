@@ -1,9 +1,10 @@
-#include "cuts.cc"
-#include "info.cc"
-#include "pileup.cc"
-#include "/home/tote/truculence/macros/styling_tools/styling_tools.cc"
-#include "/home/tote/truculence/macros/utilities.cc"
-#include "/home/tote/decortication/macros/background_tools/background_templates.cc"
+#include <Deracination/Straphanger/test/decortication/macros/cuts.cc>
+#include <Deracination/Straphanger/test/decortication/macros/info.cc>
+#include <Deracination/Straphanger/test/decortication/macros/pileup.cc>
+#include <Deracination/Straphanger/test/decortication/macros/statistical_tools.cc>
+#include <Deracination/Straphanger/test/truculence/macros/styling_tools/styling_tools.cc>
+#include <Deracination/Straphanger/test/truculence/macros/utilities.cc>
+#include <Deracination/Straphanger/test/decortication/macros/background_tools/background_templates.cc>
 
 void common() {return;}		// Stops a warning being printed when excuted by ROOT.
 
@@ -101,6 +102,7 @@ TCanvas* draw_pull(TString name, TH1* obs, TH1* exp, double xmin, double xmax, T
 	pull->GetYaxis()->SetNdivisions(405);
 	pull->GetYaxis()->CenterTitle();
 	pull->GetYaxis()->SetTitle("Pull");
+	if (pull->GetMinimum() < -10) pull->SetMinimum(-10);
 //	h3->GetYaxis()->SetTitleFont(43);
 //	h3->GetYaxis()->SetTitleSize(25);
 //	h3->GetYaxis()->SetLabelFont(43);
