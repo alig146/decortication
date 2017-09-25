@@ -14,3 +14,6 @@ cmslpc:
         eos: True
     dir_lhe:
         path: /uscms_data/d3/tote/lhe
+
+lxplus:
+    username: elhughes
