@@ -308,3 +308,9 @@ vector<TCanvas*> same_set(vector<TH1*> hs, TString name) {
 	return canvases;
 }
 
+
+
+
+TLatex* style_cut(TString cut) {
+	return style_write(TString("Selection: #bf{") + cut_proper[cut] + "}",  0.18, 0.94, 0.020);
+}

@@ -57,6 +57,10 @@ map<TString, TString> cut_info{
 	{"fjp_sigide", "deta>1.0&&Max$(tau43)<0.80&&Max$(tau42)<0.45&&Max$(tau21_p)<0.75&&masy_p<0.1"},
 	{"fjp_siglide", "deta>1.0&&Max$(tau43)<0.90&&Max$(tau42)<0.50&&Max$(tau21_p)<0.75&&masy_p<0.1"},
 	
+	/// (sigmsq): Other signal regions based on optimizing for certain mass points:
+	{"fjp_sig100", "deta<1.0&&Max$(tau43)<0.80&&Max$(tau42)<0.50&&Max$(tau21)<0.75&&masy_p<0.1"},
+	{"fjp_sig500", "deta<1.0&&Max$(tau43)<0.75&&Max$(tau42)<0.45&&Max$(tau21)<0.75&&masy_p<0.1"},
+	
 	
 	// SB: Sideband
 	/// (sb) Default sideband:

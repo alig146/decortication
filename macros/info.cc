@@ -19,6 +19,7 @@ map<TString, TString> name_proper {
 
 map<TString, TString> variable_proper {
 	{"ht", "#it{H}_{T}"},
+	{"msq", "#it{m}_{#tilde{q}}"},
 	{"m0", "#it{m} of leading fatjet"},
 	{"mavg", "#bar{#it{m}}"},
 	{"mavgp", "#bar{#it{m}}"},
@@ -28,6 +29,7 @@ map<TString, TString> variable_proper {
 	{"tau21", "max#left(#tau_{21}#right)"},
 	{"tau42", "max#left(#tau_{42}#right)"},
 	{"tau43", "max#left(#tau_{43}#right)"},
+	{"eta", "#eta"},
 	{"eta0", "#eta of leading fatjet"},
 	{"phi0", "#phi of leading fatjet"},
 	{"pt0", "#it{p}_{T} of leading fatjet"},
@@ -38,6 +40,7 @@ map<TString, TString> variable_proper {
 
 map<TString, TString> unit_proper {
 	{"ht", "GeV"},
+	{"msq", "GeV"},
 	{"m0", "GeV"},
 	{"mavg", "GeV"},
 	{"mavgp", "GeV"},
@@ -67,6 +70,12 @@ map<TString, TString> cut_proper {
 	{"sbb", "b-tagged control region"},
 	{"sbl", "loose control region"},
 	{"sblb", "b-tagged loose control region"},
+	{"sbl42", "loose-#tau_{42} control region"},
+	{"sbl42b", "b-tagged loose-#tau_{42} control region"},
+	{"sbl43", "loose-#tau_{43} control region"},
+	{"sbl43b", "b-tagged loose-#tau_{43} control region"},
+	{"sbide", "inverted-#Delta#eta control region"},
+	{"sbideb", "b-tagged inverted-#Delta#eta control region"},
 };
 
 map<TString, TString> groom_names {
