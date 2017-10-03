@@ -95,7 +95,7 @@ map<TString, TString> lum_string {
 TString get_xtitle(TString var) {
 	TString title = variable_proper[var];
 	TString unit = unit_proper[var];
-	if (unit != "") title += " [" + unit + "]";
+	if (unit != "") title += "  [" + unit + "]";
 	return title;
 }
 

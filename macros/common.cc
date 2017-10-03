@@ -47,13 +47,14 @@ TCanvas* draw_pull(TString name, TH1* obs, TH1* exp, double xmin, double xmax, T
 	// Calculate chi2:
 	Float_t chi2 = 0;
 	Float_t ndf = 0;
-	for (int i = 1; i <= pull->GetNbinsX(); ++i) {
+	for (int i = 1; i <= pull->GetXaxis()->FindBin(600); ++i) {
 //		cout << i << ", " << pull->GetBinContent(i) << ", " << pull->GetBinError(i) << endl;
 		if (pull->GetBinError(i) != 0) {
 			chi2 += pow(pull->GetBinContent(i) - yvalue, 2)/pow(pull->GetBinError(i), 2);
 			ndf += 1;
 		}
 	}
+	ndf -= 3;
 	Float_t chi2perndf = chi2/ndf;
 //	cout << "Pull chi2 = " << chi2 << endl;
 //	cout << "Pull NDF = " << ndf << endl;
@@ -74,10 +75,11 @@ TCanvas* draw_pull(TString name, TH1* obs, TH1* exp, double xmin, double xmax, T
 //	upperPad->SetTopMargin(0.055);
 //	upperPad->SetFillColorAlpha(42, 0.5);
 //	lowerPad->SetFillColorAlpha(41, 0.5);
-	lowerPad->SetTopMargin(0.00);
+	lowerPad->SetTopMargin(0.02);
 	lowerPad->SetBottomMargin(0.45);
 	lowerPad->SetGridy();
 	lowerPad->SetGridx();
+	pull->GetXaxis()->SetTickLength(0.1);
 	
 	lowerPad->cd();
 	pull->Draw("y+");
@@ -311,6 +313,8 @@ vector<TCanvas*> same_set(vector<TH1*> hs, TString name) {
 
 
 
-TLatex* style_cut(TString cut) {
-	return style_write(TString("Selection: #bf{") + cut_proper[cut] + "}",  0.18, 0.94, 0.020);
+TLatex* style_cut(TString cut, bool pull=false) {
+	double scale = 0.02;
+	if (pull) scale *= 1.5;
+	return style_write(TString("Selection: #bf{") + cut_proper[cut] + "}",  0.18, 0.94, scale);
 }
