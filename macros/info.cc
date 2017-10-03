@@ -33,6 +33,7 @@ map<TString, TString> variable_proper {
 	{"eta0", "#eta of leading fatjet"},
 	{"phi0", "#phi of leading fatjet"},
 	{"pt0", "#it{p}_{T} of leading fatjet"},
+	{"ptsq0", "#it{p}_{T} of leading squark"},
 	{"tau210", "#tau_{21} of the leading fatjet"},
 	{"tau420", "#tau_{42} of the leading fatjet"},
 	{"tau430", "#tau_{43} of the leading fatjet"},
@@ -53,12 +54,15 @@ map<TString, TString> unit_proper {
 	{"eta0", ""},
 	{"phi0", ""},
 	{"pt0", "GeV"},
+	{"ptsq0", "GeV"},
 	{"tau210", ""},
 	{"tau420", ""},
 	{"tau430", ""},
 };
 
 map<TString, TString> cut_proper {
+	{"pre", "pre-selection"},
+	{"ht900", "#it{H}_{T} > 900 GeV"},
 	{"sig", "signal region"},
 	{"sigxdeta", "#it{N}-1 (signal region)"},
 	{"sigxmasyp", "#it{N}-1 (signal region)"},
