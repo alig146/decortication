@@ -17,6 +17,7 @@ TCanvas* draw_pull(TString name, TH1* obs, TH1* exp, double xmin, double xmax, T
 		double oe = obs->GetBinError(i);
 		double e = exp->GetBinContent(i);
 		double ee = exp->GetBinError(i);
+//		cout << ee << endl;
 		
 		double r = 0;
 		if (o != 0 && e != 0) r = o/e;
@@ -75,7 +76,7 @@ TCanvas* draw_pull(TString name, TH1* obs, TH1* exp, double xmin, double xmax, T
 //	upperPad->SetTopMargin(0.055);
 //	upperPad->SetFillColorAlpha(42, 0.5);
 //	lowerPad->SetFillColorAlpha(41, 0.5);
-	lowerPad->SetTopMargin(0.02);
+	lowerPad->SetTopMargin(0.028);
 	lowerPad->SetBottomMargin(0.45);
 	lowerPad->SetGridy();
 	lowerPad->SetGridx();
@@ -100,11 +101,11 @@ TCanvas* draw_pull(TString name, TH1* obs, TH1* exp, double xmin, double xmax, T
 	pull->GetXaxis()->SetTitleOffset(pull->GetXaxis()->GetTitleOffset()*2.9);
 	pull->GetYaxis()->SetTitleSize(pull->GetYaxis()->GetTitleSize()*0.5);
 	pull->GetYaxis()->SetTitleOffset(pull->GetYaxis()->GetTitleOffset()*0.9);
-	pull->GetYaxis()->SetLabelSize(pull->GetYaxis()->GetLabelSize()*0.6);
+	pull->GetYaxis()->SetLabelSize(pull->GetYaxis()->GetLabelSize()*0.53);
 	pull->GetYaxis()->SetNdivisions(405);
 	pull->GetYaxis()->CenterTitle();
 	pull->GetYaxis()->SetTitle("Pull");
-	if (pull->GetMinimum() < -10) pull->SetMinimum(-10);
+//	if (pull->GetMinimum() < -10) pull->SetMinimum(-10);
 //	h3->GetYaxis()->SetTitleFont(43);
 //	h3->GetYaxis()->SetTitleSize(25);
 //	h3->GetYaxis()->SetLabelFont(43);
@@ -314,7 +315,10 @@ vector<TCanvas*> same_set(vector<TH1*> hs, TString name) {
 
 
 TLatex* style_cut(TString cut, bool pull=false) {
-	double scale = 0.02;
-	if (pull) scale *= 1.5;
-	return style_write(TString("Selection: #bf{") + cut_proper[cut] + "}",  0.18, 0.94, scale);
+	double scale = 0.025;
+	if (pull) scale *= 1.4;
+	if (cut == "sblb" || cut == "sbtb" || cut == "sbl42b" || cut == "sbl43b" || cut == "sbide" || cut == "pretsbl") scale *= 0.8;
+	if (cut == "sbideb" || cut == "pretsblb") scale *= 0.7;
+	if (cut_proper[cut] != "") return style_write(TString("Selection: #bf{") + cut_proper[cut] + "}",  0.18, 0.94, scale);
+	else  return style_write(TString("Selection: #bf{") + cut + "}",  0.18, 0.94, scale);
 }

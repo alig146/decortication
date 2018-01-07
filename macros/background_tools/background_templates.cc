@@ -1,6 +1,8 @@
 #include "background_fitting.cc"
 #include "ht_reweighting.cc"
 
+TString template_path = "background_tools/templates/";
+
 TH1* make_template(TH1* h, double masy_cut=0.1) {
 	TString name = h->GetName() + TString("_temp");
 	int xbins = h->GetNbinsX();
@@ -62,26 +64,27 @@ TH1* make_template(TH2* h, TString ds, TString cut_name="sig", double masy_cut=0
 	return temp;
 }
 
-TH1* make_template(TH3* h, TString ds, TString cut_name, TString dir="", int f=1, double masy_cut=0.1, double deta_cut=1.0, bool htreweight=true) {
-	TString name = h->GetName() + TString("_temp");
+TH1* make_template(TFile* tf_out, TString prefix, TH3* h, TString ds, TString cut, TString dir="", int f=1, double masy_cut=0.1, double deta_cut=1.0, bool htreweight=true) {
 	int xbins = h->GetNbinsX();		// m
 	int ybins = h->GetNbinsY();		// eta
 	int zbins = h->GetNbinsZ();		// ht
+	
+	// Information:
+	cout << "There are " << zbins << " HT bins." << endl;
+	cout << "There are " << ybins << " eta bins between -2.0 and 2.0." << endl;
+	cout << "There are " << xbins << " m bins between 0 and 1200." << endl;
+	
 	/// Make output histogram:
 	TH1* hht_fj = (TH1*) h->ProjectionZ();
-	TH2D* temp_proto = new TH2D(name + "proto", "", 1200, 0, 1200, hht_fj->GetNbinsX(), hht_fj->GetXaxis()->GetBinLowEdge(1), hht_fj->GetXaxis()->GetBinUpEdge(hht_fj->GetNbinsX()));
-//	TH1D* temp = new TH1D(name, "", 1000, 0, 1000);
-//	TH1* hht_fjp = (TH1*) hht_fjp->Clone("hht_fjp");
+	TH2D* temp_proto = new TH2D(prefix + "_proto", "", h->GetNbinsX(), h->GetXaxis()->GetXbins()->GetArray(), h->GetNbinsZ(), h->GetZaxis()->GetXbins()->GetArray());
+//	TH2D* temp_proto = new TH2D(name + "proto", "", 1200, 0, 1200, hht_fj->GetNbinsX(), hht_fj->GetXaxis()->GetBinLowEdge(1), hht_fj->GetXaxis()->GetBinUpEdge(hht_fj->GetNbinsX()));
 	
 	// Do the convolutions:
 //	double htnormfirst = hht_fj->GetBinContent(1);
 	for (int zbin = 1; zbin <= zbins; zbin++) {
 		double ht = h->GetZaxis()->GetBinCenter(zbin);
 //		double htnormratio = htnormfirst/hht_fj->GetBinContent(zbin);
-		double weight_factor = 1;
-//		if (htreweight) weight_factor = correction_function(ht, ds, cut_name, dir)/correction_function(900, ds, cut_name, dir);
-//		if (htreweight) weight_factor = correction_function(900, ds, cut_name, dir)/correction_function(ht, ds, cut_name, dir);
-		cout << "htbin = " << zbin << " (" << ht << " GeV), reweight = " << weight_factor << endl;
+		cout << "htbin = " << zbin << " (" << ht << " GeV)" << endl;
 		for (int x0bin = 1; x0bin <= xbins; x0bin++) {
 			for (int x1bin = x0bin; x1bin <= xbins; x1bin++) {
 				for (int y0bin = 1; y0bin <= ybins; y0bin++) {
@@ -96,7 +99,7 @@ TH1* make_template(TH3* h, TString ds, TString cut_name, TString dir="", int f=1
 						double n0 = h->GetBinContent(x0bin, y0bin, zbin);
 						double n1 = h->GetBinContent(x1bin, y1bin, zbin);
 						double weight = n0*n1;
-						if (cut_name == "sbide" || cut_name == "sbideb"){
+						if (cut == "sbide" || cut == "sbideb"){
 							if (deta > deta_cut) temp_proto->Fill(mavg, ht, weight);
 						}
 						else{
@@ -110,27 +113,47 @@ TH1* make_template(TH3* h, TString ds, TString cut_name, TString dir="", int f=1
 		}
 	}
 	
-	if (!htreweight) return (TH1*) temp_proto->ProjectionX();
-	// ht-reweight:
-	TH2* temp_proto_htre = (TH2*) temp_proto->Clone(name + "protohtre");
-	TH1* hht_proto = (TH1*) temp_proto->ProjectionY();
-	double htnormfirst = hht_proto->GetBinContent(1);
-	for (int htbin = 1; htbin <= temp_proto->GetNbinsY(); htbin++) {
-		double ht = hht_proto->GetBinCenter(htbin);
-		double w = htnormfirst/hht_proto->GetBinContent(htbin);		// make the ht distribution flat
-		w = w*correction_function(ht, ds, cut_name, dir, f)/correction_function(900, ds, cut_name, dir, f);		// weight the ht distribution to the measured.
-		for (int mbin = 1; mbin <= temp_proto->GetNbinsX(); mbin++) {
-			temp_proto_htre->SetBinContent(mbin, htbin, temp_proto->GetBinContent(mbin, htbin)*w);
-		}
+	TH1* temp;
+	if (!htreweight) {
+		temp = temp_proto->ProjectionX(prefix + "_temp");
 	}
+	else {
+		// ht-reweight:
+	//	check_reweight(cut);
+		TH2* temp_proto_htre = (TH2*) temp_proto->Clone(prefix + "_protohtre");
+		TH1* hht_proto = (TH1*) temp_proto->ProjectionY();
+		// Start re-weighting at first HT bin with contents:
+		double htnormfirst;
+		int htbinfirst;
+		for (int htbin = 1; htbin < hht_proto->GetNbinsX(); ++htbin) {
+			double n = hht_proto->GetBinContent(htbin);
+			htnormfirst = hht_proto->GetBinCenter(htbin);
+			htbinfirst = htbin;
+			if (n > 0) break;
+		}
+		cout << htbinfirst << endl;
+		cout << htnormfirst << endl;
+		// Loop over HT bins:
+		for (int htbin = htbinfirst; htbin <= temp_proto->GetNbinsY(); htbin++) {
+			double ht = hht_proto->GetBinCenter(htbin);
+			double w = htnormfirst/hht_proto->GetBinContent(htbin);		// make the ht distribution flat
+			w = w*correction_function(ht, ds, cut, "", f)/correction_function(htnormfirst, ds, cut, dir, f);		// weight the ht distribution to the measured.
+			for (int mbin = 1; mbin <= temp_proto->GetNbinsX(); mbin++) {
+				temp_proto_htre->SetBinContent(mbin, htbin, temp_proto->GetBinContent(mbin, htbin)*w);
+				temp_proto_htre->SetBinError(mbin, htbin, 0);
+			}
+		}
 	
-//	TF1* f1 = new TF1("f1", "[0]*x^[1]");
-//	f1->SetLineColor(kRed);
-//	f1->SetParameters(7e20, -5);
-//	TH1* hht_proto_htre = (TH1*) temp_proto_htre->ProjectionY();
-//	hht_proto_htre->Draw();
-//	hht_proto_htre->Fit("f1", "", "", 900, 3200);
-	return (TH1*) temp_proto_htre->ProjectionX();
+	//	TF1* f1 = new TF1("f1", "[0]*x^[1]");
+	//	f1->SetLineColor(kRed);
+	//	f1->SetParameters(7e20, -5);
+		TH1* hht_proto_htre = (TH1*) temp_proto_htre->ProjectionY(prefix + "_ht");
+		temp = temp_proto_htre->ProjectionX(prefix + "_temp");
+		tf_out->WriteTObject(hht_proto_htre);
+		tf_out->WriteTObject(temp_proto_htre);
+	}
+	tf_out->WriteTObject(temp);
+	return temp;
 }
 
 TH1* fetch_template(TString ds, TString cut, TString dir="", int f=1, bool ht=true) {
@@ -138,8 +161,10 @@ TH1* fetch_template(TString ds, TString cut, TString dir="", int f=1, bool ht=tr
 	if (dir != "") name = name + "_" + dir;
 	if (!ht) name = name + "_xht";
 	
-	TFile* tf_in = TFile::Open("/home/tote/decortication/macros/background_tools/template_plots.root");
-	TH1* temp = (TH1*) tf_in->Get(name);
+//	TFile* tf_in = TFile::Open("/home/tote/decortication/macros/background_tools/template_plots.root");
+	TString fname = "template_plots_" + cut + ".root";
+	TFile* tf_in = TFile::Open(TString(getenv("CMSSW_BASE")) + "/src/Deracination/Straphanger/test/decortication/macros/" + template_path + fname);
+	TH1* temp = (TH1*) tf_in->Get(name + "_temp");
 	return temp;
 }
 

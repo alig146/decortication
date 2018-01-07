@@ -26,16 +26,18 @@ void POISSONLL(int &, double *, double &f, double *par, int)
 		double obs = theDATA->GetBinContent(i);
 		double obse = theDATA->GetBinError(i);
 		double exp = thePDF->GetBinContent(i);
-//		cout << i << endl;
-		if (exp <= 0.0){
-			cout << i << endl;
-			assert(exp > 0.0);
-		}
+//		if (exp <= 0.0){
+//			cout << i << endl;
+//			assert(exp > 0.0);
+//		}
 //		cout << "obs = " << obs << ", exp = " << exp << endl;
 //		double ll_term = obs*log(exp) - exp - log((double) factorial(obs));
-		double ll_term = obs*log(exp) - exp;
-//		cout << ll_term << endl;
-		ll += ll_term;
+		
+		if (exp > 0.0) {
+			double ll_term = obs*log(exp) - exp - log((double) factorial(obs)); 		// I haven't been using this factorial term.
+			
+			ll += ll_term;
+		}
 	}
 	f = -ll;
 	
@@ -59,21 +61,35 @@ void POISSONLL_stack2(int &, double *, double &f, double *par, int) {
 	differentiate_cdf(theCDF2, thePDF2, median2, amplitude2, shift2, stretch2);
 	
 	double ll = 0.0;
+	int nbins_flag = 0;
+	TString flagged = "";
 	for(int i = 1; i <= theDATA1->GetNbinsX(); i++) {
+//		cout << i << endl;
+		double m = theDATA1->GetXaxis()->GetBinUpEdge(i);
+		if (m > 900) break;
 		double obs = theDATA1->GetBinContent(i);
 		double obse = theDATA1->GetBinError(i);
 		double exp = thePDF1->GetBinContent(i) + thePDF2->GetBinContent(i);
-		if (exp <= 0.0){
-			cout << i << endl;
-			assert(exp > 0.0);
+//		if (exp <= 0.0){
+//			cout << i << endl;
+//			assert(exp > 0.0);
+//		}
+
+		if (exp <= 0 ) {
+			exp = 0.000001;
+			nbins_flag += 1;
+			flagged += to_string(i) + ", ";
 		}
-//		cout << "obs = " << obs << ", exp = " << exp << endl;
-//		double ll_term = obs*log(exp) - exp - log((double) factorial(obs));
-		double ll_term = obs*log(exp) - exp;
+		double ll_term = obs*log(exp) - exp - TMath::LnGamma(obs + 1);
+//			double ll_term = obs*log(exp) - exp;
+//		cout << "m = " << m << ", obs = " << obs << ", exp = " << exp << ", L = " << ll_term << endl;		// DEBUG
+//		cout << "t1 = " << obs*log(exp) << ", t2 = " << exp << ", t3 = " << TMath::LnGamma(obs + 1) << endl;
 //		cout << ll_term << endl;
 		ll += ll_term;
 	}
 	f = -ll;
+	if (nbins_flag > 0) cout << "nbins_flag = " << nbins_flag << " (" + flagged + ")" << endl;
+//	cout << "nll = " << -ll << endl;
 	
 	return;
 }
@@ -169,7 +185,7 @@ void CHISQ_stack3(int &, double *, double &f, double *par, int) {
 
 //// Perform a fit of the template to the data in the full selection using
 //// the CDF, getting the new amplitude, shift and stretch for the template.
-void perform_fit(TH1* hFullSel, TH1* hCDF, vector<double> binsx, TH1* params) {
+void perform_fit_chi2(TH1* hFullSel, TH1* hCDF, vector<double> binsx, TH1* params) {
 	theDATA = hFullSel->Rebin(binsx.size() - 1, "theDATA", &binsx[0]);
 	theCDF = hCDF;
 	thePDF = (TH1*) theDATA->Clone("thePDF");       // use the same binning as theDATA
@@ -180,8 +196,8 @@ void perform_fit(TH1* hFullSel, TH1* hCDF, vector<double> binsx, TH1* params) {
 	double ampe, shifte, stretche;
 	
 	TMinuit minuit;
-//	minuit.SetErrorDef(1.0); // chi^2
-	minuit.SetErrorDef(0.5); // nll
+	minuit.SetErrorDef(1.0); // chi^2
+//	minuit.SetErrorDef(0.5); // nll
 	minuit.SetPrintLevel(3);
 	minuit.Command("SET STR 2");  // precision (slow) mode
 	
@@ -198,8 +214,8 @@ void perform_fit(TH1* hFullSel, TH1* hCDF, vector<double> binsx, TH1* params) {
 	// set parameter 3 (stretch) and bound the stretch by 0 from below
 	minuit.DefineParameter(3, "STRETCH", stretch, stretch*0.1, .01, stretch*100);
 	
-//	minuit.SetFCN(CHISQ); // set the function
-	minuit.SetFCN(POISSONLL); // set the function
+	minuit.SetFCN(CHISQ); // set the function
+//	minuit.SetFCN(POISSONLL); // set the function
 	double tmp[1] = { 5000. }; int err;
 	minuit.mnexcm("MIGRAD", tmp, 1, err); // execute Minuit with MIGRAD
 	
@@ -389,8 +405,8 @@ void perform_stacked_fit(TH1* hFullSel1, TH1* hCDF1, TH1* hCDF2, vector<double> 
 	theDATA1 = hFullSel1->Rebin(binsx.size() - 1, "theDATA1", &binsx[0]);
 	theCDF1 = hCDF1;
 	theCDF2 = hCDF2;
-	thePDF1 = (TH1*) theDATA1->Clone("thePDF");       // use the same binning as theDATA
-	thePDF2 = (TH1*) theDATA1->Clone("thePDF");       // use the same binning as theDATA
+	thePDF1 = (TH1*) theDATA1->Clone("thePDF1");       // use the same binning as theDATA
+	thePDF2 = (TH1*) theDATA1->Clone("thePDF2");       // use the same binning as theDATA
 
 	TMinuit minuit;
 //	minuit.SetErrorDef(1); // chi^2
@@ -407,7 +423,7 @@ void perform_stacked_fit(TH1* hFullSel1, TH1* hCDF1, TH1* hCDF2, vector<double> 
 
 	// set parameter 2 (shift1), and fix it
 //	minuit.DefineParameter(2, "SHIFT1", newShift1, 0.0, 0.0, 0.0);
-	minuit.DefineParameter(2, "SHIFT1", newShift1, 0.5, -50, 50);
+	minuit.DefineParameter(2, "SHIFT1", newShift1, 0.1, -100, 100);
 
 	// set parameter 3 (stretch1), and fix it
 //	minuit.DefineParameter(3, "STRETCH1", newStretch1, 0.0, 0.0, 0.0);
@@ -418,21 +434,21 @@ void perform_stacked_fit(TH1* hFullSel1, TH1* hCDF1, TH1* hCDF2, vector<double> 
 	minuit.DefineParameter(4, "MEDIAN2", median2, 0.0, 0.0, 0.0);
 
 	// define parameter 5 (amplitude2) and bound the amplitude by 0 from below
-//	minuit.DefineParameter(5, "AMP2", newAmp2, newAmp2*0.1, 0.0, newAmp2*100);
-	minuit.DefineParameter(5, "AMP2", newAmp2, 0.01, 0.0, newAmp2*1000);
+	minuit.DefineParameter(5, "AMP2", newAmp2, newAmp2*0.1, 0.0, newAmp2*100);
+//	minuit.DefineParameter(5, "AMP2", newAmp2, 0.01, 0.0, newAmp2*1000);
 
 	// set parameter 6 (shift2), and fix it.
-	minuit.DefineParameter(6, "SHIFT2", newShift2, 10, -5000, 5000);
-//	minuit.DefineParameter(6, "SHIFT2", newShift2, 0.5, -50, 50);
+//	minuit.DefineParameter(6, "SHIFT2", newShift2, 10, -5000, 5000);
+	minuit.DefineParameter(6, "SHIFT2", newShift2, 0.1, -100, 100);
 
 	// set parameter 7 (stretch2), and fix it.
-//	minuit.DefineParameter(7, "STRETCH2", newStretch2, newStretch2*0.001, .01, newStretch2*10);
-	minuit.DefineParameter(7, "STRETCH2", newStretch2, 0.1, 0.00001, 10000);
+	minuit.DefineParameter(7, "STRETCH2", newStretch2, newStretch2*0.01, .001, newStretch2*100);
+//	minuit.DefineParameter(7, "STRETCH2", newStretch2, 0.1, 0.00001, 10000);
 //	minuit.DefineParameter(7, "STRETCH2", 1.0, 0.0, 0.0, 0.0);
 
 //	minuit.SetFCN(CHISQ_stack2); // set the function
 	minuit.SetFCN(POISSONLL_stack2); // set the function
-	double tmp[1] = { 5000. }; int err;
+	double tmp[1] = { 20000. }; int err;		// was 5000.
 	minuit.mnexcm("MIGRAD", tmp, 1, err); // execute Minuit with MIGRAD
 //	minuit.mnmnos();
 

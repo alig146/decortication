@@ -8,8 +8,9 @@ sqto4j:
           sigma: 1521.11
           miniaods:
               - generation: moriond17cutht700
-                name: /Sq100To4J/elhughes-miniaod_sq100to4j_moriond17cutht700-c25660a1db7b69b092e620682f3b66ea/USER
-                aod: /Sq100To4J/elhughes-aod_sq100to4j_cutht700_moriond17-cd4d375aba4ea180dd20f8c96b358a6b/USER
+                name: /Sq100To4J/elhughes-miniaod_sq100to4j_moriond17cutht700_v2-c25660a1db7b69b092e620682f3b66ea/USER
+#                name: /Sq100To4J/elhughes-miniaod_sq100to4j_moriond17cutht700-c25660a1db7b69b092e620682f3b66ea/USER
+#                aod: /Sq100To4J/elhughes-aod_sq100to4j_cutht700_moriond17-cd4d375aba4ea180dd20f8c96b358a6b/USER
                 instance: phys03
                 preweight: 0.0031
               - generation: moriond17
@@ -38,7 +39,7 @@ sqto4j:
                 aod: /Sq150To4J/elhughes-aod_sq150to4j_cutht700_moriond17-cd4d375aba4ea180dd20f8c96b358a6b/USER
                 instance: phys03
                 lhe_cut: ht700
-                preweight: 0.04135
+                preweight: 0.01628
               - generation: moriond17
                 name: /Sq150To4J/elhughes-miniaod_sq150to4j_moriond17-c25660a1db7b69b092e620682f3b66ea/USER
                 aod: /Sq150To4J/elhughes-aod_sq150to4j_moriond17-cd4d375aba4ea180dd20f8c96b358a6b/USER
@@ -49,7 +50,20 @@ sqto4j:
                 instance: phys03
                 das: True
                 lhe_cut: ht700
-                preweight: 0.04135
+                preweight: 0.04135     # This is off by a factor of 10!
+
+    sq175to4j:
+        - name: Sq175To4J
+          signal: True
+          ms: [175, 131]
+          sigma: 121.416
+          miniaods:
+              - generation: moriond17cutht700
+                name: /Sq175To4J/elhughes-miniaod_sq175to4j_moriond17cutht700_v1-c25660a1db7b69b092e620682f3b66ea/USER
+                aod: /Sq175To4J/elhughes-aod_sq175to4j_cutht700_moriond17_v1-cd4d375aba4ea180dd20f8c96b358a6b/USER
+                instance: phys03
+                lhe_cut: ht700
+                preweight: 0.0295
     
     sq200to4j:
         - name: Sq200To4J
@@ -171,6 +185,32 @@ sqto4j:
                 lhe_cut: ht700
                 lhe_n: 100000
                 preweight: 0.9556
+    
+    sq600to4j:
+        - name: Sq600To4J
+          signal: True
+          ms: [600, 450]
+          sigma: 0.174599
+          miniaods:
+              - generation: moriond17cutht700
+                name: /Sq600To4J/elhughes-miniaod_sq600to4j_moriond17cutht700_v1-c25660a1db7b69b092e620682f3b66ea/USER
+                aod: /Sq600To4J/elhughes-aod_sq600to4j_cutht700_moriond17_v1-cd4d375aba4ea180dd20f8c96b358a6b/USER
+                instance: phys03
+                lhe_cut: ht700
+                preweight: 0.9948
+    
+    sq700to4j:
+        - name: Sq700To4J
+          signal: True
+          ms: [700, 525]
+          sigma: 0.0670476
+          miniaods:
+              - generation: moriond17cutht700
+                name: /Sq700To4J/elhughes-miniaod_sq700to4j_moriond17cutht700-c25660a1db7b69b092e620682f3b66ea/USER
+                aod: /Sq700To4J/elhughes-aod_sq700to4j_cutht700_moriond17-cd4d375aba4ea180dd20f8c96b358a6b/USER
+                instance: phys03
+                lhe_cut: ht700
+                preweight: 0.99934
 
 sgto5j:
     sg300to5j:

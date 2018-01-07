@@ -1156,6 +1156,13 @@ def sort_datasets(dss, collapse=True):
 			results_collapsed["_".join([key for i, key in enumerate(keys) if i not in i_collapse])] = value
 		
 		return results_collapsed
+
+def fetch_sqto4j_samples():
+	return fetch_entries("sample", dict(category="sqto4j"))
+
+def get_sqto4j_processes():
+	dss = fetch_sqto4j_samples()
+	return [ds.process for ds in dss]
 # /FUNCTIONS
 
 # VARIABLES:

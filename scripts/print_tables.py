@@ -31,13 +31,13 @@ background_info_other = [
 	{"process": "wz", "generation": "spring16"},
 ]
 signal_info = [
-	{"process": "sq100to4j", "generation": "0706"},
-	{"process": "sq150to4j", "generation": "0706"},
-	{"process": "sq200to4j", "generation": "0706"},
-	{"process": "sq250to4j", "generation": "0706"},
-	{"process": "sq300to4j", "generation": "0706"},
-	{"process": "sq400to4j", "generation": "0706"},
-	{"process": "sq500to4j", "generation": "0706"},
+	{"process": "sq100to4j", "generation": "moriond17cutht700"},
+	{"process": "sq150to4j", "generation": "moriond17cutht700"},
+	{"process": "sq200to4j", "generation": "moriond17cutht700"},
+	{"process": "sq250to4j", "generation": "moriond17cutht700"},
+	{"process": "sq300to4j", "generation": "moriond17cutht700"},
+	{"process": "sq400to4j", "generation": "moriond17cutht700"},
+	{"process": "sq500to4j", "generation": "moriond17cutht700"},
 ]
 data_info = [
 	{"process": "jetht15", "generation": "0706"},
@@ -146,10 +146,10 @@ def make_dataset_table_mc(dss_info, name, caption, grouping=True):
 	return table
 
 def main():
-	make_dataset_table_data(data_info, "data", "JetHT datasets")
-	make_json_table(data_info, "data", "CMS data luminosities and masks")
-	make_dataset_table_mc(background_info_qcd, "background_qcd", "QCD background Monte Carlo samples")
-	make_dataset_table_mc(background_info_other, "background_other", "$\TTBAR$ and bosonic background Monte Carlo samples", grouping=False)
+#	make_dataset_table_data(data_info, "data", "JetHT datasets")
+#	make_json_table(data_info, "data", "CMS data luminosities and masks")
+#	make_dataset_table_mc(background_info_qcd, "background_qcd", "QCD background Monte Carlo samples")
+#	make_dataset_table_mc(background_info_other, "background_other", "$\TTBAR$ and bosonic background Monte Carlo samples", grouping=False)
 	make_dataset_table_mc(signal_info, "signal", "Signal Monte Carlo samples")
 # :FUNCTIONS
 

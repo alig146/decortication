@@ -7,7 +7,7 @@ TH1D* GarwoodErrorBands_68CL(TH1D* h){
 		double high  = 0.5*TMath::ChisquareQuantile( 1 - a/2 , 2*(yield+1));    //double dm    = h->GetBinWidth(i);
 		h->SetBinContent(i, yield);
 		h->SetBinError(i, (high-low)/2. );
-		}
+	}
 	return h;
 }
 
@@ -36,7 +36,7 @@ TH1D* make_qcd_garwood(TFile* tf_in, TString ds, TString cut, int nrebin=30) {
 		cuts_weight.push_back(TCut("qcdp800", "sigma>30&&sigma<40"));
 		cuts_weight.push_back(TCut("qcdp600", "sigma>180&&sigma<200"));
 		cuts_weight.push_back(TCut("qcdp470", "sigma>600&&sigma<800"));
-		cuts_weight.push_back(TCut("qcdp300", "sigma>7800"));
+//		cuts_weight.push_back(TCut("qcdp300", "sigma>7800"));
 	}
 ////	if (ds == "qcdmg") {
 ////		cuts_weight.push_back(TCut("qcdmg", "1"));
@@ -78,7 +78,7 @@ TH1D* make_qcd_garwood(TFile* tf_in, TString ds, TString cut, int nrebin=30) {
 		w->SetName("w_" + name);
 		if (i > 0) cout << i << " " << cuts_weight[i].GetName() << " " << w->GetMean() << " (" << w->GetEntries() << ")" << endl;
 		
-		if (i > 0) {
+		if (i > 0 && w->GetMean() > 0) {
 			TH1* h_gar = (TH1*) h->Clone(name + "_gar");
 			h_gar->Scale(1.0/w->GetMean());
 			h_gar = GarwoodErrorBands_68CL((TH1D*) h_gar);

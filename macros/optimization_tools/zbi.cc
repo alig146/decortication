@@ -173,53 +173,53 @@ double zbi(double obs, double bkg, double bkge)
 // bkg = expected number of background events
 // bkge = uncertainty on the expected number of background events
 // ntoys = how many toys to throw
-double expectedZbi(double sig, double bkg, double bkge, int ntoys=10000)
+double expectedZbi(double sig, double bkg, double bkge, bool verbose=true, int ntoys=10000)
 {
-  // setup random stuff
-  static TRandom3 *rand=0;
-  if(!rand) rand=new TRandom3(31415);
-  RandomLognormal randlogn(bkg, bkge);
-  
-  TH1D* hPBIs=new TH1D("hPBIs","P_BIs",102,-0.01,1.01);
-  std::vector<double> pbis;
-  double average=0;
-  for(int toy=0; toy<ntoys; toy++) {
-    double sig_obs=rand->PoissonD(sig);		// Tote changed "Poisson" to "PoissonD", which returns a double (see TRandom ROOT docs).
-    double thing = randlogn.getRandom();
-    double bkg_obs=rand->PoissonD(thing);
-    double nobs=sig_obs+bkg_obs;
-    if (nobs < 0) {
-    	cout << sig << "   " << sig_obs << "   " << bkg << "   " << bkg_obs << "   " << nobs << "   " << thing << endl;
-    }
-    double pbival=pbi(nobs, bkg, bkge);
-    pbis.push_back(pbival);
-    hPBIs->Fill(pbival);
-    average+=pbival;
-  }
+	// setup random stuff
+	static TRandom3 *rand=0;
+	if(!rand) rand=new TRandom3(31415);
+	RandomLognormal randlogn(bkg, bkge);
 
-  hPBIs->Draw();
+	TH1D* hPBIs=new TH1D("hPBIs","P_BIs",102,-0.01,1.01);
+	std::vector<double> pbis;
+	double average=0;
+	for(int toy=0; toy<ntoys; toy++) {
+		double sig_obs=rand->PoissonD(sig);		// Tote changed "Poisson" to "PoissonD", which returns a double (see TRandom ROOT docs).
+		double thing = randlogn.getRandom();
+		double bkg_obs=rand->PoissonD(thing);
+		double nobs=sig_obs+bkg_obs;
+		if (nobs < 0) cout << sig << "   " << sig_obs << "   " << bkg << "   " << bkg_obs << "   " << nobs << "   " << thing << endl;
+		double pbival=pbi(nobs, bkg, bkge);
+		pbis.push_back(pbival);
+		hPBIs->Fill(pbival);
+		average+=pbival;
+	}
+	
+	hPBIs->Draw();
+	
+	average/=ntoys;
+	double median;
+	std::pair<double, double> onesigma;
+	std::pair<double, double> twosigma;
 
-  average/=ntoys;
-  double median;
-  std::pair<double, double> onesigma;
-  std::pair<double, double> twosigma;
-  
-  getQuantiles(pbis, median, onesigma, twosigma);
-  std::cout << "--------------------------------------------------" << std::endl;
-  std::cout << "observed pbi: " << pbi(sig+bkg, bkg, bkge) << std::endl;
-  std::cout << "median expected pbi: " << median << std::endl;
-  std::cout << "average expected pbi: " << average << std::endl;
-  std::cout << "+/-1 sigma band: [ " << onesigma.first << " , " << onesigma.second << " ] " << std::endl;
-  std::cout << "+/-2 sigma band: [ " << twosigma.first << " , " << twosigma.second << " ] " << std::endl;
-  std::cout << "--------------------------------------------------" << std::endl;
-  std::cout << "observed zbi: " << pValueToZScore(pbi(sig+bkg, bkg, bkge)) << std::endl;
-  std::cout << "median expected zbi: " << pValueToZScore(median) << std::endl;
-  std::cout << "average expected zbi: " << pValueToZScore(average) << std::endl;
-  std::cout << "+/-1 sigma band: [ " << pValueToZScore(onesigma.second) << " , " << pValueToZScore(onesigma.first) << " ] " << std::endl;
-  std::cout << "+/-2 sigma band: [ " << pValueToZScore(twosigma.second) << " , " << pValueToZScore(twosigma.first) << " ] " << std::endl;
-  std::cout << "--------------------------------------------------" << std::endl;
+	getQuantiles(pbis, median, onesigma, twosigma);
+	if (verbose) {
+		std::cout << "--------------------------------------------------" << std::endl;
+		std::cout << "observed pbi: " << pbi(sig+bkg, bkg, bkge) << std::endl;
+		std::cout << "median expected pbi: " << median << std::endl;
+		std::cout << "average expected pbi: " << average << std::endl;
+		std::cout << "+/-1 sigma band: [ " << onesigma.first << " , " << onesigma.second << " ] " << std::endl;
+		std::cout << "+/-2 sigma band: [ " << twosigma.first << " , " << twosigma.second << " ] " << std::endl;
+		std::cout << "--------------------------------------------------" << std::endl;
+		std::cout << "observed zbi: " << pValueToZScore(pbi(sig+bkg, bkg, bkge)) << std::endl;
+		std::cout << "median expected zbi: " << pValueToZScore(median) << std::endl;
+		std::cout << "average expected zbi: " << pValueToZScore(average) << std::endl;
+		std::cout << "+/-1 sigma band: [ " << pValueToZScore(onesigma.second) << " , " << pValueToZScore(onesigma.first) << " ] " << std::endl;
+		std::cout << "+/-2 sigma band: [ " << pValueToZScore(twosigma.second) << " , " << pValueToZScore(twosigma.first) << " ] " << std::endl;
+		std::cout << "--------------------------------------------------" << std::endl;
+	}
 
-  return pValueToZScore(median);
+	return pValueToZScore(median);
 }
 
 
