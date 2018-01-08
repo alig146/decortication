@@ -82,6 +82,7 @@ def main():
 		if ds.kind != "tuple":
 			print "\t{} ({})".format(ds.Name, ds.kind)
 			check_result = dataset.check_db_against_yaml(ds)
+			if not check_result: continue
 			# Update entries in the DB that need updating (e.g., if you recently edited "samples.yaml"):
 			keys_update = [key for key, value in check_result.items() if value["change"] and key != "time"]
 			if keys_update:

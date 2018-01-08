@@ -985,6 +985,9 @@ def check_db_against_yaml(thing_db):
 	if len(thing_yaml) > 1:
 		print "AAAAAAAA (check_db)"
 		return False
+	elif len(thing_yaml) == 0:
+		print "[--] WARNING: This dataset is no longer in the YAML (deleting it from the DB isn't implemented, yet.)"
+		return False
 	thing_yaml = thing_yaml[0]
 	
 	results = {}
