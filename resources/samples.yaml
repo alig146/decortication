@@ -311,7 +311,7 @@ sgto5j:
               - generation: moriond17cutht500
                 das: True
                 instance: phys03
-                name: /Sg350To5J/agarabag-miniaod_sg350to5j_moriond17_cutht500-c25660a1db7b69b092e620682f3b66ea/USER
+                name: /Sg350To5J/agarabag-miniaod_sg350to5j_moriond17_cutht500_v2-c25660a1db7b69b092e620682f3b66ea/USER
                 aod: /Sg350To5J/agarabag-aod_sg350to5j_moriond17_cutht500-cd4d375aba4ea180dd20f8c96b358a6b/USER
                 preweight: 0.96835
     sg400to5j:
