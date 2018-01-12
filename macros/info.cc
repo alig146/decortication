@@ -29,6 +29,7 @@ map<TString, TString> variable_proper {
 	{"msq", "#it{m}_{#tilde{q}}"},
 	{"m0", "#it{m} of leading fatjet"},
 	{"m0ak8", "#it{m} of leading AK8 jet"},
+	{"m0ca12", "#it{m} of leading CA12 jet"},
 	{"mavg", "#bar{#it{m}}"},
 	{"mavgp", "#bar{#it{m}}"},
 	{"deta", "#left|#Delta#eta#right|"},
@@ -54,6 +55,7 @@ map<TString, TString> unit_proper {
 	{"msq", "GeV"},
 	{"m0", "GeV"},
 	{"m0ak8", "GeV"},
+	{"m0ca12", "GeV"},
 	{"mavg", "GeV"},
 	{"mavgp", "GeV"},
 	{"deta", ""},
@@ -122,6 +124,7 @@ map<TString, TString> groom_names {
 map<TString, TString> lum_string {
 	{"15", "2.3"},		// 2.258 /fb
 	{"16", "35.9"},		// 35.922 /fb
+	{"16f", "3.1"},
 	{"sum", "(2.3 + 35.9)"},
 	{"all", "38.2"},		// 38.180 /fb
 };
