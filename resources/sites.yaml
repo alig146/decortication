@@ -1,19 +1,14 @@
 hexcms:
-    username: tote
+    username: ag1378
     dir_data:
-        path: /cms/tote/store
-    dir_lhe:
-        path: /cms/tote/store/lhe
+        path: /cms/ag1378/store
 
 cmslpc:
     url_eos: cmseos.fnal.gov
     url_root: cmsxrootd.fnal.gov
-    username: tote
+    username: agarabag
     dir_data:
-        path: /store/user/tote
+        path: /store/user/agarabag
         eos: True
     dir_lhe:
-        path: /uscms_data/d3/tote/lhe
-
-lxplus:
-    username: elhughes
+        path: /uscms_data/d3/agarabag/lhe
