@@ -5,11 +5,26 @@ map<TString, TString> name_proper {
 	{"sq100to4j", "#it{m}_{#tilde{q}} = 100 GeV"},
 	{"sq150to4j", "#it{m}_{#tilde{q}} = 150 GeV"},
 	{"sq173to4j", "#it{m}_{#tilde{q}} = 173 GeV"},
+	{"sq175to4j", "#it{m}_{#tilde{q}} = 175 GeV"},
 	{"sq200to4j", "#it{m}_{#tilde{q}} = 200 GeV"},
 	{"sq250to4j", "#it{m}_{#tilde{q}} = 250 GeV"},
 	{"sq300to4j", "#it{m}_{#tilde{q}} = 300 GeV"},
 	{"sq400to4j", "#it{m}_{#tilde{q}} = 400 GeV"},
 	{"sq500to4j", "#it{m}_{#tilde{q}} = 500 GeV"},
+	{"sq600to4j", "#it{m}_{#tilde{q}} = 600 GeV"},
+	{"sq700to4j", "#it{m}_{#tilde{q}} = 700 GeV"},
+	{"sg100to5j", "#it{m}_{#tilde{g}} = 100 GeV"},
+	{"sg150to5j", "#it{m}_{#tilde{g}} = 150 GeV"},
+	{"sg200to5j", "#it{m}_{#tilde{g}} = 200 GeV"},
+	{"sg250to5j", "#it{m}_{#tilde{g}} = 250 GeV"},
+	{"sg300to5j", "#it{m}_{#tilde{g}} = 300 GeV"},
+	{"sg350to5j", "#it{m}_{#tilde{g}} = 350 GeV"},
+	{"sg400to5j", "#it{m}_{#tilde{g}} = 400 GeV"},
+	{"sg450to5j", "#it{m}_{#tilde{g}} = 450 GeV"},
+	{"sg500to5j", "#it{m}_{#tilde{g}} = 500 GeV"},
+	{"sg550to5j", "#it{m}_{#tilde{g}} = 550 GeV"},
+	{"sg600to5j", "#it{m}_{#tilde{g}} = 600 GeV"},
+	{"sg650to5j", "#it{m}_{#tilde{g}} = 650 GeV"},
 	{"qcdp", "QCD (2 #rightarrow 2)"},
 	{"qcdmg", "QCD (2 #rightarrow 4)"},
 	{"ttbar", "t#bar{t}"},
@@ -124,7 +139,9 @@ map<TString, TString> groom_names {
 map<TString, TString> lum_string {
 	{"15", "2.3"},		// 2.258 /fb
 	{"16", "35.9"},		// 35.922 /fb
+	{"16e", "4.0"},
 	{"16f", "3.1"},
+	{"16ef", "7.1"},
 	{"sum", "(2.3 + 35.9)"},
 	{"all", "38.2"},		// 38.180 /fb
 };
@@ -159,6 +176,8 @@ TFile* get_ana(TString option="") {
 	else if (option == "sq100") return TFile::Open("~/anatuples/anatuple_sq100to4j_cutpt300eta20_pre.root");
 	else if (option == "bosons") return TFile::Open("~/anatuples/anatuple_vbosons_moriond17_cutpt400eta25_pre.root");
 	else if (option == "qcdmgext") return TFile::Open("~/anatuples/temp/anatuple_qcdmg_moriond17_cutpt400eta25_pre.root");
+	else if (option == "sqto4j") return TFile::Open("~/anatuples/anatuple_sqto4j_moriond17cutht700_cutpt300eta20_pre.root");
+	else if (option == "sgto5j") return TFile::Open("~/anatuples/anatuple_sgto5j_moriond17cutht500_cutpt300eta20_pre.root");
 	else return TFile::Open("~/anatuples/anatuple_cutpt400eta25_pre.root");		// Contains new preselection (without tau21 and deta) but no dalitz
 	
 //	if (cut == "sb2") return TFile::Open("~/anatuples/anatuple_ca12_fall15_cutpt400_presel.root");		// 

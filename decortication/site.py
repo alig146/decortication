@@ -38,7 +38,11 @@ class directory:
 		if not self.eos:
 			import fnmatch
 			files = []
-			for origin, dirnames, filenames in os.walk(self.path):
+			# Deal with date directories:
+			dir_date = sorted(os.listdir(self.path))[-1]
+			p = os.path.join(self.path, dir_date)
+			# Get all root files inside the date directory:
+			for origin, dirnames, filenames in os.walk(p):
 				for filename in fnmatch.filter(filenames, '*.root'):
 					files.append(os.path.join(origin, filename))
 				if not recursive: break

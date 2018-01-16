@@ -26,18 +26,23 @@ def get_crab_config(
 	suffix="",
 	dataset_out="",
 	dataset_in="",
-	instance="global",
+	instance="",
 	cmssw_config="aod_cfg.py",
 	cmssw_params=None,                          # Input a dictionary
 	units=-1,                                   # The number of events to run over ("-1" means "all")
 	unitsper=100,
 	publish=True,
 	cut_pt_filter=300,
-	cut_eta_filter=2.5,
+	cut_eta_filter=2.0,
+	cut_smu_filter=False,
 ):
 	# Parse arguments and set other variables:
-	assert((sample or miniaod) and kind and generation and dataset_out)
-	if miniaod: sample = miniaod.get_sample()
+	assert((sample or miniaod) and kind) # and generation and dataset_out)
+	if miniaod:
+		sample = miniaod.get_sample()
+		if not generation: generation = miniaod.generation
+		if not dataset_in: dataset_in = miniaod.name
+		if not instance: instance = miniaod.instance
 	if not subprocess: subprocess = sample.subprocess
 	
 	## Request name:
@@ -54,6 +59,7 @@ def get_crab_config(
 	if kind == "tuple":
 		cmssw_params["cutPtFilter"] = cut_pt_filter
 		cmssw_params["cutEtaFilter"] = cut_eta_filter
+		cmssw_params["cutSmuFilter"] = cut_smu_filter
 		cmssw_params["data"] = sample.data
 	### Make a string for these parameters for the CRAB configuration file:
 	params_str = "[\n"

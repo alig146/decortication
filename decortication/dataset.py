@@ -100,7 +100,14 @@ class dataset:
 		self.Name_safe = self.Name.replace("-", "")
 		## "dir":		// Kludge
 		if self.kind == "sample": self.path = self.name
-#		else: self.path = self.get_sample().path + "/" + self.path
+		elif self.kind == "tuple": self.path = self.get_sample().name + "/tuple_{}_{}_{}".format(self.subprocess, self.generation, self.suffix)
+		self.site = Site
+		self.dir = copy.copy(self.site.get_dir("data"))
+		if self.path:
+			self.dir.cd(self.path)
+#		# Connect to any children:
+#		if not isolated:
+#			self.set_connections(down=True, up=False)
 		## "json" and "json_full":
 		if not self.json:
 			self.json = "{}/{}.json".format(json_dir_default, self.Name)
@@ -108,7 +115,7 @@ class dataset:
 		## "ns", "files":
 		if self.kind != "sample" and os.path.exists(self.json_full):
 			set_ns(self, j=True)
-			set_files(self, j=True)
+			self.set_files(j=True)
 #		## "n":
 #		if not self.n and hasattr(self, "ns"):
 #			self.n = sum(self.ns)
@@ -117,14 +124,6 @@ class dataset:
 			if self.lhe_path:
 				self.lhe_file = self.lhe_path.split("/")[-1]
 		
-		self.site = Site
-#		self.dir = site.directory({"path": self.path, "eos": self.site.get_dir("data").eos})
-		if self.path:
-			self.dir = copy.copy(self.site.get_dir("data"))
-			self.dir.cd(self.path)
-#		# Connect to any children:
-#		if not isolated:
-#			self.set_connections(down=True, up=False)
 		
 		# Kludge: this needs to be governed by infrastructure:
 		if self.kind == "tuple":
@@ -232,7 +231,10 @@ class dataset:
 		files = []
 		if j:
 			if os.path.exists(self.json_full):
-				with open(self.json_full) as infile: files = json.load(infile)["files"]
+				with open(self.json_full) as infile:
+					files = json.load(infile)["files"]
+#					if self.kind == "tuple": files = ["/".join([self.dir.path, f]) for f in files]
+					if self.kind == "tuple": files = [os.path.join(self.dir.path, f) for f in files]
 		if not files:
 			if self.path and not self.das:
 	#			if os.path.exists(self.path):		# I CAN'T DO THIS BECAUSE OF EOS!
@@ -433,8 +435,13 @@ class dataset:
 		dir_json = os.path.dirname(self.json_full)
 		if not os.path.exists(dir_json):
 			os.makedirs(dir_json)
+		files = self.files
+		if self.kind == "tuple":
+			files = [f.replace(self.dir.path, "") for f in self.files]
+#			files = [f[1:] if f[0] == "/" else f for f in files]
+			while files[0][0] == "/": files = [f[1:] if f[0] == "/" else f for f in files]
 		info = {
-			"files": self.files,
+			"files": files,
 			"ns": self.ns,
 			"time": self.time
 		}
@@ -1038,23 +1045,23 @@ def sync_db(self):
 		return self.write()
 
 
-def set_files(thing, j=True, DAS=True):
-	files = []
-	if j:
-		if os.path.exists(thing.json_full):
-			with open(thing.json_full) as infile:
-				files = json.load(infile)["files"]
-	if not files:
-		if thing.path and not DAS:
-#			if os.path.exists(self.path):		# I CAN'T DO THIS BECAUSE OF EOS!
-			files = crab.find_files(thing.path)["files"]
-		if not files and DAS:		# Check DAS
-			print "Checking DAS for file list of {} ...".format(thing.Name)
-			result = das.get_info(thing.name, instance=thing.instance)
-#			print result["raw"]
-			files = result["files"]
-	thing.files = files
-	return files
+#def set_files(thing, j=True, DAS=True):
+#	files = []
+#	if j:
+#		if os.path.exists(thing.json_full):
+#			with open(thing.json_full) as infile:
+#				files = json.load(infile)["files"]
+#	if not files:
+#		if thing.path and not DAS:
+##			if os.path.exists(self.path):		# I CAN'T DO THIS BECAUSE OF EOS!
+#			files = crab.find_files(thing.path)["files"]
+#		if not files and DAS:		# Check DAS
+#			print "Checking DAS for file list of {} ...".format(thing.Name)
+#			result = das.get_info(thing.name, instance=thing.instance)
+##			print result["raw"]
+#			files = result["files"]
+#	thing.files = files
+#	return files
 
 
 def set_ns(thing, j=True, DAS=True):

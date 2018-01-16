@@ -10,7 +10,7 @@ configure.General.transferLogs = True
 configure.JobType.pluginName = '%%PLUGINNAME%%'
 configure.JobType.psetName = '%%CMSSWCONFIG%%'       # The CMSSW configuration file name
 configure.JobType.pyCfgParams = %%LISTOFPARAMS%%     # The parameters passed to the CMSSW configuration file
-if kind == "tuple": configure.JobType.inputFiles = ["jec_data", "pileup_data"]          # Files and directories that CRAB has access to.
+if kind == "tuple": configure.JobType.inputFiles = ["jec_data", "pileup_data", "CSVv2_ichep.csv"]          # Files and directories that CRAB has access to.
 
 if kind == "aod": configure.Data.outputPrimaryDataset = '%%DATASET%%'          # Output dataset
 if kind not in ["aod", "gen"]: 
