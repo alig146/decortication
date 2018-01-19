@@ -4,6 +4,8 @@ map<TString, TString> cut_info{
 	// (pre) Preselection:
 //	{"fjp_pre", "htak8>900&&Max$(m_t)>50&&Min$(pt)>400&&Max$(abs(eta))<2.0"},
 	{"fjp_pre", "htak8>900&&Min$(pt)>400&&Max$(abs(eta))<2.0"},
+	{"fjp_prehtjec", "htak8jec>945&&Min$(pt)>400&&Max$(abs(eta))<2.0"},
+	{"fjp_prehtjec900", "htak8jec>900&&Min$(pt)>400&&Max$(abs(eta))<2.0"},
 	
 	
 	// Single cuts:
@@ -26,6 +28,8 @@ map<TString, TString> cut_info{
 //	{"fj_sig", "tau43[0]<0.80&&tau42[0]<0.45&&tau21[0]<0.75"},		// Before tau42 0.45 -> 0.50
 	{"fjp_sig", "deta<1.0&&Max$(tau43)<0.80&&Max$(tau42)<0.50&&Max$(tau21)<0.75&&masy_p<0.1"},
 	{"fj_sig", "tau43[0]<0.80&&tau42[0]<0.50&&tau21[0]<0.75"},
+	{"fjp_sigprehtjec", "htak8jec>945&&Min$(pt)>400&&Max$(abs(eta))<2.0&&deta<1.0&&Max$(tau43)<0.80&&Max$(tau42)<0.50&&Max$(tau21)<0.75&&masy_p<0.1"},
+	{"fjp_sigprehtjec900", "htak8jec>900&&Min$(pt)>400&&Max$(abs(eta))<2.0&&deta<1.0&&Max$(tau43)<0.80&&Max$(tau42)<0.50&&Max$(tau21)<0.75&&masy_p<0.1"},
 	//// (sig15):
 	{"fjp_sig15", "deta<1.0&&Max$(tau43)<0.80&&Max$(tau42)<0.50&&Max$(tau21)<0.75&&masy_p<0.1&&run<260628"},
 	{"fjp_sig15t", "deta<1.0&&Max$(tau43)<0.80&&Max$(tau42)<0.45&&Max$(tau21)<0.75&&masy_p<0.1&&run<260628&&trig_pfht900"},
@@ -59,8 +63,8 @@ map<TString, TString> cut_info{
 	{"fj_sigp", "tau43_p[0]<0.80&&tau42_p[0]<0.45&&tau21_p[0]<0.75"},
 	
 	/// (sigide): Inverted deta cut in signal region:
-	{"fjp_sigide", "deta>1.0&&Max$(tau43)<0.80&&Max$(tau42)<0.45&&Max$(tau21_p)<0.75&&masy_p<0.1"},
-	{"fjp_siglide", "deta>1.0&&Max$(tau43)<0.90&&Max$(tau42)<0.50&&Max$(tau21_p)<0.75&&masy_p<0.1"},
+	{"fjp_sigide", "deta>1.0&&Max$(tau43)<0.80&&Max$(tau42)<0.45&&Max$(tau21)<0.75&&masy_p<0.1"},
+	{"fjp_siglide", "deta>1.0&&Max$(tau43)<0.90&&Max$(tau42)<0.50&&Max$(tau21)<0.75&&masy_p<0.1"},
 	
 	/// (sigmsq): Other signal regions based on optimizing for certain mass points:
 	{"fjp_sig4075", "deta<1.0&&Max$(tau43)<0.75&&Max$(tau42)<0.40&&Max$(tau21)<0.75&&masy_p<0.1"},
@@ -145,7 +149,7 @@ map<TString, TString> cut_info{
 	{"fj_sbll", "tau43[0]>0.80&&tau42[0]<0.45&&tau21[0]<0.75"},
 	
 	// (sbide):
-	{"fjp_sbide", "deta>1.0&&Max$(tau43)<0.80&&Max$(tau42)<0.45&&Max$(tau21_p)<0.75"},
+	{"fjp_sbide", "deta>1.0&&Max$(tau43)<0.80&&Max$(tau42)<0.45&&Max$(tau21)<0.75"},
 	{"fj_sbide", "tau43[0]<0.80&&tau42[0]<0.45&&tau21[0]<0.75"},
 	
 	
@@ -188,7 +192,7 @@ map<TString, TString> cut_info{
 	{"fj_sbllb", "tau43[0]<0.90&&tau42[0]<0.58&&(tau42[0]>0.50||tau43[0]>0.80)&&tau21[0]<0.75&&bd[0]>0.5426"},
 	
 	// (sbideb):
-	{"fjp_sbideb", "deta>1.0&&Max$(tau43)<0.80&&Max$(tau42)<0.45&&Max$(tau21_p)<0.75&&Min$(bd)>0.5426"},
+	{"fjp_sbideb", "deta>1.0&&Max$(tau43)<0.80&&Max$(tau42)<0.45&&Max$(tau21)<0.75&&Min$(bd)>0.5426"},
 	{"fj_sbideb", "tau43[0]<0.80&&tau42[0]<0.45&&tau21[0]<0.75&&bd[0]>0.5426"},
 	
 	
@@ -227,7 +231,7 @@ TCut get_cut(TString cut, TString run="xwtt", Double_t weight=1, TString ds="", 
 	}
 	
 	/// Add preselection if asked (default):
-	if (pre && cut != "fjp_pre") {
+	if (pre && cut != "fjp_pre" && cut != "fjp_prehtjec" && cut != "fjp_prehtxjec" && cut != "fjp_sigprehtjec" && cut != "fjp_prehtjec900" && cut != "fjp_sigprehtjec900") {
 		TCut tcut_pre = TCut("pre", cut_info["fjp_pre"]);
 		tcut = tcut + tcut_pre;
 //		cout << tcut_pre.GetTitle() << endl;
@@ -238,8 +242,10 @@ TCut get_cut(TString cut, TString run="xwtt", Double_t weight=1, TString ds="", 
 	if (weight != 0) {
 		TString weight_string;
 		weight_string.Form("%f", weight);
-		if (run == "xwtt") tcut = tcut * "abs(wpu)*w" * weight_string;
-		else tcut = tcut * "abs(W)" * weight_string;
+		tcut = tcut * "W" * weight_string;
+		if (run == "wtt") tcut = tcut * "W*wtt" * weight_string;
+//		else if (run == "wtt") tcut = tcut * "abs(wpu)*w*wtt" * weight_string;
+//		else tcut = tcut * "abs(W)" * weight_string;
 		
 	//	tcut = tcut * "w" * "wtt" * weight_string;		// Old way, can delete
 	}

@@ -99,6 +99,7 @@ vector<TString> significance_proper {
 
 map<TString, TString> cut_proper {
 	{"pre", "pre-selection"},
+	{"ht945", "#it{H}_{T} > 945 GeV"},
 	{"ht900", "#it{H}_{T} > 900 GeV"},
 	{"ht850", "#it{H}_{T} > 850 GeV"},
 	{"sig", "signal region"},
@@ -176,9 +177,11 @@ TFile* get_ana(TString option="") {
 	else if (option == "sq100") return TFile::Open("~/anatuples/anatuple_sq100to4j_cutpt300eta20_pre.root");
 	else if (option == "bosons") return TFile::Open("~/anatuples/anatuple_vbosons_moriond17_cutpt400eta25_pre.root");
 	else if (option == "qcdmgext") return TFile::Open("~/anatuples/temp/anatuple_qcdmg_moriond17_cutpt400eta25_pre.root");
-	else if (option == "sqto4j") return TFile::Open("~/anatuples/anatuple_sqto4j_moriond17cutht700_cutpt300eta20_pre.root");
-	else if (option == "sgto5j") return TFile::Open("~/anatuples/anatuple_sgto5j_moriond17cutht500_cutpt300eta20_pre.root");
-	else return TFile::Open("~/anatuples/anatuple_cutpt400eta25_pre.root");		// Contains new preselection (without tau21 and deta) but no dalitz
+	else if (option == "sqto4j") return TFile::Open("~/anatuples/anatuple_sqto4j_moriond17cutht700_cutpt300eta20.root");
+	else if (option == "sqto4jprehtjec") return TFile::Open("~/anatuples/anatuple_sqto4j_moriond17cutht700_cutpt300eta20_prehtjec.root");
+	else if (option == "sgto5j") return TFile::Open("~/anatuples/anatuple_sgto5j_moriond17cutht500_cutpt300eta20.root");
+	else if (option == "sgto5jprehtjec") return TFile::Open("~/anatuples/anatuple_sgto5j_moriond17cutht500_cutpt300eta20_prehtjec.root");
+	else return TFile::Open("~/anatuples/anatuple_cutpt400eta25_pre.root");
 	
 //	if (cut == "sb2") return TFile::Open("~/anatuples/anatuple_ca12_fall15_cutpt400_presel.root");		// 
 ////	else return TFile::Open("~/anatuples/anatuple_dalitz_predeta.root");		// Contains dalitz variables

@@ -136,6 +136,7 @@ TH1* make_template(TFile* tf_out, TString prefix, TH3* h, TString ds, TString cu
 		// Loop over HT bins:
 		for (int htbin = htbinfirst; htbin <= temp_proto->GetNbinsY(); htbin++) {
 			double ht = hht_proto->GetBinCenter(htbin);
+//			cout << ht << endl;
 			double w = htnormfirst/hht_proto->GetBinContent(htbin);		// make the ht distribution flat
 			w = w*correction_function(ht, ds, cut, "", f)/correction_function(htnormfirst, ds, cut, dir, f);		// weight the ht distribution to the measured.
 			for (int mbin = 1; mbin <= temp_proto->GetNbinsX(); mbin++) {

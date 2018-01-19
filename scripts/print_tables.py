@@ -31,13 +31,34 @@ background_info_other = [
 	{"process": "wz", "generation": "spring16"},
 ]
 signal_info = [
-	{"process": "sq100to4j", "generation": "moriond17cutht700"},
-	{"process": "sq150to4j", "generation": "moriond17cutht700"},
-	{"process": "sq200to4j", "generation": "moriond17cutht700"},
-	{"process": "sq250to4j", "generation": "moriond17cutht700"},
-	{"process": "sq300to4j", "generation": "moriond17cutht700"},
-	{"process": "sq400to4j", "generation": "moriond17cutht700"},
-	{"process": "sq500to4j", "generation": "moriond17cutht700"},
+	[
+		{"process": "sq100to4j", "generation": "moriond17cutht700"},
+		{"process": "sq150to4j", "generation": "moriond17cutht700"},
+		{"process": "sq175to4j", "generation": "moriond17cutht700"},
+		{"process": "sq200to4j", "generation": "moriond17cutht700"},
+		{"process": "sq250to4j", "generation": "moriond17cutht700"},
+		{"process": "sq300to4j", "generation": "moriond17cutht700"},
+		{"process": "sq400to4j", "generation": "moriond17cutht700"},
+		{"process": "sq500to4j", "generation": "moriond17cutht700"},
+		{"process": "sq600to4j", "generation": "moriond17cutht700"},
+		{"process": "sq700to4j", "generation": "moriond17cutht700"},
+	],
+	[
+		{"process": "sg100to5j", "generation": "moriond17cutht500"},
+		{"process": "sg150to5j", "generation": "moriond17cutht500"},
+		{"process": "sg175to5j", "generation": "moriond17cutht500"},
+		{"process": "sg200to5j", "generation": "moriond17cutht500"},
+		{"process": "sg250to5j", "generation": "moriond17cutht500"},
+		{"process": "sg300to5j", "generation": "moriond17cutht500"},
+		{"process": "sg350to5j", "generation": "moriond17cutht500"},
+		{"process": "sg400to5j", "generation": "moriond17cutht500"},
+		{"process": "sg450to5j", "generation": "moriond17cutht500"},
+		{"process": "sg500to5j", "generation": "moriond17cutht500"},
+		{"process": "sg550to5j", "generation": "moriond17cutht500"},
+		{"process": "sg600to5j", "generation": "moriond17cutht500"},
+		{"process": "sg650to5j", "generation": "moriond17cutht500"},
+	],
+	
 ]
 data_info = [
 	{"process": "jetht15", "generation": "0706"},
@@ -115,22 +136,29 @@ def make_json_table(dss_info, name, caption):
 	return table
 
 
-def make_dataset_table_mc(dss_info, name, caption, grouping=True):
-	miniaods = OrderedDict()
-	for info in dss_info:
-		miniaods[info["process"]] = dataset.fetch_entries("miniaod", query=info)
-#	print miniaods
+def make_dataset_table_mc(dss_infos, name, caption, grouping=True):
+	# Arguments:
+	if not isinstance(dss_infos, list): dss_info = list(dss_infos)
 	
+	# Set up:
 	table = "\\begin{table}[htbp]\n\t\caption{" + caption + "}\n"
 	table += "\t\centering\setlength\doublerulesep{0.1in}\n\t\\resizebox{0.9\\textwidth}{!}{\n"
 	tabular = "\t\t\\begin{tabular}{|l|r|r|}\hline\n\t\t\t\\textbf{Dataset name} & \\textbf{Entries} & \\textbf{Cross section [pb]} \\\\\hline\n"
 	ngroup = 0
-	for key, maods in miniaods.items():
-		ngroup += 1
-		for miniaod in maods:
-			href_bit = "\href{https://cmsweb.cern.ch/das/request?view=list\&limit=50\&instance=prod\%2Fglobal\&input=" + urllib.quote(miniaod.name, safe='').replace("%", "\%") + "}"
-			tabular += "\t\t\t\\begin{tabular}{@{}l@{}}" + href_bit + "{\\texttt{/" + latex_escape(miniaod.name.split("/")[1]) + "}} \\\\ " + href_bit + "{\\footnotesize~~\\texttt{/" + "/".join(latex_escape(miniaod.name).split("/")[2:]) + "}}\end{tabular} & " + str(miniaod.n) + " & " + str(miniaod.get_sample().sigma) + " \\\\\hline\n"
-		if grouping and ngroup != len(miniaods) and name != "signal": tabular += "\hline\n"
+	
+	# Groups:
+	for igroup, dss_info in enumerate(dss_infos):
+		miniaods = OrderedDict()
+		for info in dss_info: miniaods[info["process"]] = dataset.fetch_entries("miniaod", query=info)
+#		print miniaods
+	
+		for key, maods in miniaods.items():
+			ngroup += 1
+			for miniaod in maods:
+				href_bit = "\href{https://cmsweb.cern.ch/das/request?view=list\&limit=50\&instance=prod\%2F" + miniaod.instance + "\&input=" + urllib.quote(miniaod.name, safe='').replace("%", "\%") + "}"
+				tabular += "\t\t\t\\begin{tabular}{@{}l@{}}" + href_bit + "{\\texttt{/" + latex_escape(miniaod.name.split("/")[1]) + "}} \\\\ " + href_bit + "{\\footnotesize~~\\texttt{/" + "/".join(latex_escape(miniaod.name).split("/")[2:]) + "}}\end{tabular} & " + str(miniaod.n) + " & " + str(miniaod.get_sample().sigma) + " \\\\\hline\n"
+#			if grouping and ngroup != len(miniaods) and name != "signal": tabular += "\hline\n"
+		if len(dss_infos) > 1 and igroup < len(dss_infos) - 1: tabular += "\hline\n"
 	tabular +="\t\t\end{tabular}\n"
 	table += tabular
 	table += "\t}\n"
