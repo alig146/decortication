@@ -222,20 +222,22 @@ class analyzer:
 #			return False
 		
 		# Define variables:
+		Site = dataset.Site
+		data_dir = Site.get_dir("data")
 		cmssw_version = cmssw.get_version(parsed=False)
 		if not cmd: cmd = "python {}.py -f %%FILE%% -o job_%%N%%.root".format(self.name)
 		tstring = utilities.time_string()[:-4]
 		path = "condor_jobs/{}/{}".format(self.name, tstring)
 		log_path = path + "/logs"
-		out_path = path + "/results"
-		eos_path = "/store/user/tote/analyzer_jobs/{}".format(tstring)		# Output path.
+#		out_path = path + "/results"
+		out_path = os.path.join(data_dir.path, "analyzer_jobs", tstring)		# Output path.
 		files_for_condor = ["{}/{}.py".format(os.getcwd(), self.name), "{}.tar.gz".format(cmssw_version)]
 		if isinstance(input_files, str): input_files = [input_files]
 		if input_files: input_files = [os.getcwd() + "/" + f for f in input_files if "/" not in f]
 		if input_files: files_for_condor.extend(input_files)
 		
 		# Make directories
-		for p in [path, log_path, out_path]:
+		for p in [path, log_path]:
 			if not os.path.exists(p): os.makedirs(p)
 		
 		# Make job files:
@@ -260,8 +262,8 @@ class analyzer:
 			job_script += "eval `scramv1 runtime -sh`		#cmsenv\n"
 			job_script += "\n"
 			job_script += cmd.replace("%%FILE%%", f).replace("%%PROCESS%%", f_dict["process"]).replace("%%N%%", str(i + 1)) + "\n"
-#			job_script += "cp job_{}.root {}/{}".format(i+1, os.getcwd(), out_path)
-			job_script += "xrdcp -f job_{}.root root://cmseos.fnal.gov/{}\n".format(i+1, eos_path)
+			if data_dir.eos: job_script += "xrdcp -f job_{}.root root://{}/{}\n".format(i+1, Site.url_eos, out_path)
+			else: job_script += "mv -f job_{}.root {}\n".format(i+1, Site.url_eos, out_path)
 			with open("{}/{}.sh".format(path, job_name), "w") as out:
 				out.write(job_script)
 	
@@ -280,7 +282,8 @@ class analyzer:
 			job_config += "Error = logs/{}.stderr\n".format(job_name)
 			job_config += "Log = logs/{}.log\n".format(job_name)
 			job_config += "notify_user = ${LOGNAME}@FNAL.GOV\n"
-			job_config += "x509userproxy = $ENV(X509_USER_PROXY)\n"
+			if Site.name == "hexcms": job_config += "x509userproxy = $ENV(HOME)/myproxy\n"
+			else: job_config += "x509userproxy = $ENV(X509_USER_PROXY)\n"
 			job_config += "request_memory = {}\n".format(memory)
 			job_config += "Queue 1\n"
 		
@@ -288,8 +291,7 @@ class analyzer:
 				out.write(job_config)
 	
 		## Make run script:
-		run_script = "# Update cache info:\n"
-		run_script += "bash $HOME/condor/cache.sh\n"
+		run_script = "#!/bin/bash\n"
 		run_script += "\n"
 		run_script += "# Grid proxy existence & expiration check:\n"
 		run_script += "PCHECK=`voms-proxy-info -timeleft`\n"
@@ -301,8 +303,9 @@ class analyzer:
 		run_script += "echo 'Making a tarball of the CMSSW area ...'\n"
 		run_script += "tar --exclude-caches-all -zcf ${CMSSW_VERSION}.tar.gz -C ${CMSSW_BASE}/.. ${CMSSW_VERSION}\n"
 		run_script += "\n"
-		run_script += "# Prepare EOS:\n"
-		run_script += "eos root://cmseos.fnal.gov mkdir -p {}\n".format(eos_path)
+		run_script += "# Prepare output directory:\n"
+		if data_dir.eos: run_script += "eos root://{} mkdir -p {}\n".format(Site.url_eos, out_path)
+		else: run_script += "mkdir -p {}\n".format(out_path)
 		run_script += "\n"
 		run_script += "# Submit condor jobs:\n"
 		for i in range(len(files)):

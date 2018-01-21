@@ -34,7 +34,7 @@ class directory:
 			self.path += path
 		return path
 	
-	def ls(self, crab=True, recursive=True):
+	def ls(self, recursive=True):
 		if not self.eos:
 			import fnmatch
 			files = []
@@ -49,18 +49,21 @@ class directory:
 			return files
 		else: # recursive doesn't work:
 			from subprocess import Popen, PIPE
-			path = self.path
-			if path != "/": path += "/"
-			if crab:
-				cmd = 'eos root://{} ls {}'.format(self.url_eos, path)
-				raw_output = Popen([cmd], shell=True, stdout=PIPE, stderr=PIPE).communicate()
-				date = [thing for thing in raw_output[0].split("\n") if thing][-1]		# Take the most recent
-				path += date +"/"
-			cmd = 'eos root://{} ls {}'.format(self.url_eos, path)
-			print cmd
+			cmd = 'eos root://{} ls {}'.format(self.url_eos, self.path)
 			raw_output = Popen([cmd], shell=True, stdout=PIPE, stderr=PIPE).communicate()
-			# SKIPPED CRAB SUBDIR SECTION!
-			files = [path + thing for thing in raw_output[0].split("\n") if ".root" in thing]		# Take the most recent
+			dir_date = [thing for thing in raw_output[0].split("\n") if thing][-1]		# Take the most recent
+			p = os.path.join(self.path, dir_date)
+			cmd = 'eos root://{} ls {}'.format(self.url_eos, p)
+#			print cmd
+			raw_output = Popen([cmd], shell=True, stdout=PIPE, stderr=PIPE).communicate()
+			files = [os.path.join(p, thing) for thing in raw_output[0].split("\n") if ".root" in thing]
+			ds = [os.path.join(p, thing) for thing in raw_output[0].split("\n") if thing and "." not in thing]
+			while ds:
+				p_temp = os.path.join(p, ds.pop())
+				cmd = 'eos root://{} ls {}'.format(self.url_eos, p_temp)
+				raw_output = Popen([cmd], shell=True, stdout=PIPE, stderr=PIPE).communicate()
+				files += [os.path.join(p_temp, thing) for thing in raw_output[0].split("\n") if ".root" in thing]
+				ds += [os.path.join(p_temp, thing) for thing in raw_output[0].split("\n") if thing and "." not in thing]
 			return files
 
 class site:
