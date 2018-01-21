@@ -34,13 +34,15 @@ class directory:
 			self.path += path
 		return path
 	
-	def ls(self, recursive=True):
+	def ls(self, most_recent=True, interactive=False, recursive=True):
 		if not self.eos:
 			import fnmatch
 			files = []
+			p = self.path
 			# Deal with date directories:
-			dir_date = sorted(os.listdir(self.path))[-1]
-			p = os.path.join(self.path, dir_date)
+			if most_recent:
+				dir_date = sorted(os.listdir(self.path))[-1]
+				p = os.path.join(self.path, dir_date)
 			# Get all root files inside the date directory:
 			for origin, dirnames, filenames in os.walk(p):
 				for filename in fnmatch.filter(filenames, '*.root'):
@@ -49,10 +51,12 @@ class directory:
 			return files
 		else: # recursive doesn't work:
 			from subprocess import Popen, PIPE
-			cmd = 'eos root://{} ls {}'.format(self.url_eos, self.path)
-			raw_output = Popen([cmd], shell=True, stdout=PIPE, stderr=PIPE).communicate()
-			dir_date = [thing for thing in raw_output[0].split("\n") if thing][-1]		# Take the most recent
-			p = os.path.join(self.path, dir_date)
+			p = self.path
+			if most_recent:
+				cmd = 'eos root://{} ls {}'.format(self.url_eos, self.path)
+				raw_output = Popen([cmd], shell=True, stdout=PIPE, stderr=PIPE).communicate()
+				dir_date = [thing for thing in raw_output[0].split("\n") if thing][-1]		# Take the most recent
+				p = os.path.join(self.path, dir_date)
 			cmd = 'eos root://{} ls {}'.format(self.url_eos, p)
 #			print cmd
 			raw_output = Popen([cmd], shell=True, stdout=PIPE, stderr=PIPE).communicate()
@@ -64,6 +68,7 @@ class directory:
 				raw_output = Popen([cmd], shell=True, stdout=PIPE, stderr=PIPE).communicate()
 				files += [os.path.join(p_temp, thing) for thing in raw_output[0].split("\n") if ".root" in thing]
 				ds += [os.path.join(p_temp, thing) for thing in raw_output[0].split("\n") if thing and "." not in thing]
+			if interactive: files = ["root://{}/{}".format(self.url_root, f) for f in files]
 			return files
 
 class site:
@@ -107,6 +112,7 @@ def parse_configuration(path=path_config_default):
 				info_dir = value
 				info_dir["name"] = match.group(1)
 				if "url_eos" in info: info_dir["url_eos"] = info["url_eos"]
+				if "url_root" in info: info_dir["url_root"] = info["url_root"]
 				info["dirs"][info_dir["name"]] = directory(info_dir)
 		
 		sites.append(site(info))

@@ -262,8 +262,10 @@ class analyzer:
 			job_script += "eval `scramv1 runtime -sh`		#cmsenv\n"
 			job_script += "\n"
 			job_script += cmd.replace("%%FILE%%", f).replace("%%PROCESS%%", f_dict["process"]).replace("%%N%%", str(i + 1)) + "\n"
-			if data_dir.eos: job_script += "xrdcp -f job_{}.root root://{}/{}\n".format(i+1, Site.url_eos, out_path)
-			else: job_script += "mv -f job_{}.root {}\n".format(i+1, Site.url_eos, out_path)
+			if data_dir.eos:
+				job_script += "xrdcp -f job_{}.root root://{}/{}\n".format(i+1, Site.url_eos, out_path)
+			else:
+				job_script += "mv -f job_{}.root {}\n".format(i+1, out_path)
 			with open("{}/{}.sh".format(path, job_name), "w") as out:
 				out.write(job_script)
 	
@@ -281,9 +283,11 @@ class analyzer:
 			job_config += "Output = logs/{}.stdout\n".format(job_name)
 			job_config += "Error = logs/{}.stderr\n".format(job_name)
 			job_config += "Log = logs/{}.log\n".format(job_name)
-			job_config += "notify_user = ${LOGNAME}@FNAL.GOV\n"
-			if Site.name == "hexcms": job_config += "x509userproxy = $ENV(HOME)/myproxy\n"
-			else: job_config += "x509userproxy = $ENV(X509_USER_PROXY)\n"
+			if Site.name == "hexcms":
+				job_config += "notify_user = ${LOGNAME}@FNAL.GOV\n"
+				job_config += "x509userproxy = $ENV(HOME)/myproxy\n"
+			else:
+				job_config += "x509userproxy = $ENV(X509_USER_PROXY)\n"
 			job_config += "request_memory = {}\n".format(memory)
 			job_config += "Queue 1\n"
 		
