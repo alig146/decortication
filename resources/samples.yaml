@@ -77,7 +77,8 @@ sqto4j:
                 aod: /Sq200To4J/elhughes-aod_sq200to4j_cutht700_moriond17-cd4d375aba4ea180dd20f8c96b358a6b/USER
                 instance: phys03
                 lhe_cut: ht700
-                preweight: 0.0481
+                preweight: 0.04827
+              # The following stuff is out of date.
               - generation: moriond17
                 name: /Sq200To4J/elhughes-miniaod_sq200to4j_moriond17-c25660a1db7b69b092e620682f3b66ea/USER
                 aod: /Sq200To4J/elhughes-aod_sq200to4j_moriond17-cd4d375aba4ea180dd20f8c96b358a6b/USER
@@ -101,7 +102,8 @@ sqto4j:
                 aod: /Sq250To4J/elhughes-aod_sq250to4j_cutht700_moriond17-cd4d375aba4ea180dd20f8c96b358a6b/USER
                 instance: phys03
                 lhe_cut: ht700
-                preweight: 0.0673
+                preweight: 0.10906
+              # The following stuff is out of date.
               - generation: moriond17
                 name: /Sq250To4J/elhughes-miniaod_sq250to4j_moriond17-c25660a1db7b69b092e620682f3b66ea/USER
                 aod: /Sq250To4J/elhughes-aod_sq250to4j_moriond17-cd4d375aba4ea180dd20f8c96b358a6b/USER
@@ -125,7 +127,8 @@ sqto4j:
                 aod: /Sq300To4J/elhughes-aod_sq300to4j_cutht700_moriond17-cd4d375aba4ea180dd20f8c96b358a6b/USER
                 instance: phys03
                 lhe_cut: ht700
-                preweight: 0.1664
+                preweight: 0.21185
+              # The following stuff is out of date.
               - generation: moriond17
                 name: /Sq300To4J/elhughes-miniaod_sq300to4j_moriond17-c25660a1db7b69b092e620682f3b66ea/USER
                 aod: /Sq300To4J/elhughes-aod_sq300to4j_moriond17-cd4d375aba4ea180dd20f8c96b358a6b/USER

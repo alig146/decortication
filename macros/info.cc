@@ -181,6 +181,7 @@ TFile* get_ana(TString option="") {
 	else if (option == "sqto4jprehtjec") return TFile::Open("~/anatuples/anatuple_sqto4j_moriond17cutht700_cutpt300eta20_prehtjec.root");
 	else if (option == "sgto5j") return TFile::Open("~/anatuples/anatuple_sgto5j_moriond17cutht500_cutpt300eta20.root");
 	else if (option == "sgto5jprehtjec") return TFile::Open("~/anatuples/anatuple_sgto5j_moriond17cutht500_cutpt300eta20_prehtjec.root");
+	else if (option == "wzjets") return TFile::Open("~/anatuples/anatuple_wzjets_moriond17_cutpt300eta20_pre.root");
 	else return TFile::Open("~/anatuples/anatuple_cutpt400eta25_pre.root");
 	
 //	if (cut == "sb2") return TFile::Open("~/anatuples/anatuple_ca12_fall15_cutpt400_presel.root");		// 

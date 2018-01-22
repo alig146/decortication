@@ -242,10 +242,8 @@ TCut get_cut(TString cut, TString run="xwtt", Double_t weight=1, TString ds="", 
 	if (weight != 0) {
 		TString weight_string;
 		weight_string.Form("%f", weight);
-		tcut = tcut * "abs(W)" * weight_string;
 		if (run == "wtt") tcut = tcut * "abs(W)*wtt" * weight_string;
-//		else if (run == "wtt") tcut = tcut * "abs(wpu)*w*wtt" * weight_string;
-//		else tcut = tcut * "abs(W)" * weight_string;
+		else tcut = tcut * "abs(W)" * weight_string;
 		
 	//	tcut = tcut * "w" * "wtt" * weight_string;		// Old way, can delete
 	}
