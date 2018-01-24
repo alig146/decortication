@@ -28,6 +28,7 @@ map<TString, TString> cut_info{
 //	{"fj_sig", "tau43[0]<0.80&&tau42[0]<0.45&&tau21[0]<0.75"},		// Before tau42 0.45 -> 0.50
 	{"fjp_sig", "deta<1.0&&Max$(tau43)<0.80&&Max$(tau42)<0.50&&Max$(tau21)<0.75&&masy_p<0.1"},
 	{"fj_sig", "tau43[0]<0.80&&tau42[0]<0.50&&tau21[0]<0.75"},
+	{"fjp_sigms", "deta<1.0&&Max$(tau43)<0.80&&Max$(tau42)<0.50&&Max$(tau21)<0.75&&masy_s<0.1"},
 	{"fjp_sigprehtjec", "htak8jec>945&&Min$(pt)>400&&Max$(abs(eta))<2.0&&deta<1.0&&Max$(tau43)<0.80&&Max$(tau42)<0.50&&Max$(tau21)<0.75&&masy_p<0.1"},
 	{"fjp_sigprehtjec900", "htak8jec>900&&Min$(pt)>400&&Max$(abs(eta))<2.0&&deta<1.0&&Max$(tau43)<0.80&&Max$(tau42)<0.50&&Max$(tau21)<0.75&&masy_p<0.1"},
 	//// (sig15):

@@ -314,11 +314,11 @@ vector<TCanvas*> same_set(vector<TH1*> hs, TString name) {
 
 
 
-TLatex* style_cut(TString cut, bool pull=false) {
+TLatex* style_cut(TString cut, bool pull=false, double xadjust=0.0) {
 	double scale = 0.025;
 	if (pull) scale *= 1.4;
 	if (cut == "sblb" || cut == "sbtb" || cut == "sbl42b" || cut == "sbl43b" || cut == "sbide" || cut == "pretsbl") scale *= 0.8;
 	if (cut == "sbideb" || cut == "pretsblb") scale *= 0.7;
-	if (cut_proper[cut] != "") return style_write(TString("Selection: #bf{") + cut_proper[cut] + "}",  0.18, 0.94, scale);
-	else  return style_write(TString("Selection: #bf{") + cut + "}",  0.18, 0.94, scale);
+	if (cut_proper[cut] != "") return style_write(TString("Selection: #bf{") + cut_proper[cut] + "}",  0.18 + xadjust, 0.94, scale);
+	else  return style_write(TString("Selection: #bf{") + cut + "}",  0.18 + xadjust, 0.94, scale);
 }
