@@ -176,6 +176,7 @@ TFile* get_ana(TString option="") {
 	if (option == "xpu") return TFile::Open("~/anatuples/anatuple_cutpt400eta25_pre.root.xpu");
 	else if (option == "sq100") return TFile::Open("~/anatuples/anatuple_sq100to4j_cutpt300eta20_pre.root");
 	else if (option == "bosons") return TFile::Open("~/anatuples/anatuple_vbosons_moriond17_cutpt400eta25_pre.root");
+	else if (option == "qcdp") return TFile::Open("~/anatuples/anatuple_qcdp_moriond17_cutpt300eta20_pre.root");
 	else if (option == "qcdmgext") return TFile::Open("~/anatuples/temp/anatuple_qcdmg_moriond17_cutpt400eta25_pre.root");
 	else if (option == "sqto4j") return TFile::Open("~/anatuples/anatuple_sqto4j_moriond17cutht700_cutpt300eta20.root");
 	else if (option == "sqto4jprehtjec") return TFile::Open("~/anatuples/anatuple_sqto4j_moriond17cutht700_cutpt300eta20_prehtjec.root");

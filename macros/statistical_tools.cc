@@ -24,7 +24,7 @@ TH1D* make_qcd_garwood(TFile* tf_in, TString ds, TString cut, int nrebin=30) {
 		cuts_weight.push_back(TCut("qcdmg1500", "sigma>100&&sigma<200"));
 		cuts_weight.push_back(TCut("qcdmg1000", "sigma>1000&&sigma<2000"));
 		cuts_weight.push_back(TCut("qcdmg700", "sigma>6000&&sigma<7000"));
-//		cuts_weight.push_back(TCut("qcdmg500", "sigma>30000"));
+		cuts_weight.push_back(TCut("qcdmg500", "sigma>30000"));
 	}
 	else if (ds == "qcdp") {
 		cuts_weight.push_back(TCut("qcdp", "1"));
@@ -36,7 +36,7 @@ TH1D* make_qcd_garwood(TFile* tf_in, TString ds, TString cut, int nrebin=30) {
 		cuts_weight.push_back(TCut("qcdp800", "sigma>30&&sigma<40"));
 		cuts_weight.push_back(TCut("qcdp600", "sigma>180&&sigma<200"));
 		cuts_weight.push_back(TCut("qcdp470", "sigma>600&&sigma<800"));
-//		cuts_weight.push_back(TCut("qcdp300", "sigma>7800"));
+		cuts_weight.push_back(TCut("qcdp300", "sigma>7800"));
 	}
 ////	if (ds == "qcdmg") {
 ////		cuts_weight.push_back(TCut("qcdmg", "1"));
@@ -76,7 +76,12 @@ TH1D* make_qcd_garwood(TFile* tf_in, TString ds, TString cut, int nrebin=30) {
 		tt->Draw("w>>w", (get_cut("fjp_" + cut, "", 0) + cuts_weight[i])*"abs(W)");
 		TH1* w = (TH1*) gDirectory->Get("w");
 		w->SetName("w_" + name);
-		if (i > 0) cout << i << " " << cuts_weight[i].GetName() << " " << w->GetMean() << " (" << w->GetEntries() << ")" << endl;
+		if (i > 0) {
+			cout << "Weight group " << i << ": subprocess = " << cuts_weight[i].GetName() << ", weight = ";
+			if (w->GetMean() > 0) cout << w->GetMean();
+			else cout << "?";
+			cout << ", nentries = " << w->GetEntries() << endl;
+		}
 		
 		if (i > 0 && w->GetMean() > 0) {
 			TH1* h_gar = (TH1*) h->Clone(name + "_gar");

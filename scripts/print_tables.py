@@ -16,8 +16,14 @@ import urllib
 
 # VARIABLES:
 background_info_qcd = [
-	{"process": "qcdmg", "generation": "moriond17"},
-	{"process": "qcdp", "generation": "moriond17"},
+	[
+		{"process": "qcdmg", "generation": "moriond17"},
+		{"process": "qcdmg", "generation": "moriond17ext"},
+	],
+	[
+		{"process": "qcdp", "generation": "moriond17"},
+		{"process": "qcdp", "generation": "moriond17ext"},
+	],
 ]
 background_info_other = [
 	{"process": "ttbar", "generation": "moriond17"},
@@ -149,8 +155,10 @@ def make_dataset_table_mc(dss_infos, name, caption, grouping=True):
 	# Groups:
 	for igroup, dss_info in enumerate(dss_infos):
 		miniaods = OrderedDict()
-		for info in dss_info: miniaods[info["process"]] = dataset.fetch_entries("miniaod", query=info)
-#		print miniaods
+		for info in dss_info:
+			process = info["process"]
+			if process not in miniaods: miniaods[process] = dataset.fetch_entries("miniaod", query=info)
+			else: miniaods[process] += dataset.fetch_entries("miniaod", query=info)
 	
 		for key, maods in miniaods.items():
 			ngroup += 1
@@ -176,9 +184,9 @@ def make_dataset_table_mc(dss_infos, name, caption, grouping=True):
 def main():
 #	make_dataset_table_data(data_info, "data", "JetHT datasets")
 #	make_json_table(data_info, "data", "CMS data luminosities and masks")
-#	make_dataset_table_mc(background_info_qcd, "background_qcd", "QCD background Monte Carlo samples")
+	make_dataset_table_mc(background_info_qcd, "background_qcd", "QCD background Monte Carlo samples")
 #	make_dataset_table_mc(background_info_other, "background_other", "$\TTBAR$ and bosonic background Monte Carlo samples", grouping=False)
-	make_dataset_table_mc(signal_info, "signal", "Signal Monte Carlo samples")
+#	make_dataset_table_mc(signal_info, "signal", "Signal Monte Carlo samples")
 # :FUNCTIONS
 
 # MAIN:

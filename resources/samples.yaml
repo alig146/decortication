@@ -779,6 +779,17 @@ ttbar:
                 aod: /TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM
                 gen: /TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/RunIISummer15wmLHEGS-MCRUN2_71_V1-v1/GEN-SIM
                 lhe: /TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/RunIISummer15wmLHEGS-MCRUN2_71_V1-v1/LHE
+    ttbarhg:
+        - name: TT_TuneEE5C_13TeV-powheg-herwigpp
+          subprocess: ttbarhg
+          m: 173.34
+          sigma: 730.0
+          miniaods:
+              - generation: moriond17
+                name: /TT_TuneEE5C_13TeV-powheg-herwigpp/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM
+                aod: /TT_TuneEE5C_13TeV-powheg-herwigpp/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM
+                gen: /TT_TuneEE5C_13TeV-powheg-herwigpp/RunIISummer15wmLHEGS-MCRUN2_71_V1-v1/GEN-SIM
+                lhe: /TT_TuneEE5C_13TeV-powheg-herwigpp/RunIISummer15wmLHEGS-MCRUN2_71_V1-v1/LHE
     ttbarmg:
         - name: TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
           subprocess: ttbarmg

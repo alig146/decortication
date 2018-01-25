@@ -1166,6 +1166,7 @@ def sort_datasets(dss, collapse=True):
 			results_collapsed["_".join([key for i, key in enumerate(keys) if i not in i_collapse])] = value
 		
 		return results_collapsed
+	return results
 
 def fetch_sqto4j_samples():
 	return fetch_entries("sample", dict(category="sqto4j"))
