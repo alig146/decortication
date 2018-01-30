@@ -42,6 +42,7 @@ map<TString, TString> variable_proper {
 	{"ht", "#it{H}_{T}"},
 	{"m", "mass"},
 	{"msq", "#it{m}_{#tilde{q}}"},
+	{"msg", "#it{m}_{#tilde{g}}"},
 	{"m0", "#it{m} of leading fatjet"},
 	{"m0ak8", "#it{m} of leading AK8 jet"},
 	{"m0ca12", "#it{m} of leading CA12 jet"},
@@ -68,6 +69,7 @@ map<TString, TString> unit_proper {
 	{"ht", "GeV"},
 	{"m", "GeV"},
 	{"msq", "GeV"},
+	{"msg", "GeV"},
 	{"m0", "GeV"},
 	{"m0ak8", "GeV"},
 	{"m0ca12", "GeV"},
@@ -177,6 +179,7 @@ TFile* get_ana(TString option="") {
 	else if (option == "sq100") return TFile::Open("~/anatuples/anatuple_sq100to4j_cutpt300eta20_pre.root");
 	else if (option == "bosons") return TFile::Open("~/anatuples/anatuple_vbosons_moriond17_cutpt400eta25_pre.root");
 	else if (option == "qcdp") return TFile::Open("~/anatuples/anatuple_qcdp_moriond17_cutpt300eta20_pre.root");
+	else if (option == "ttbarhg") return TFile::Open("~/anatuples/anatuple_ttbarhg_moriond17_cutpt300eta20_pre.root");
 	else if (option == "qcdmgext") return TFile::Open("~/anatuples/temp/anatuple_qcdmg_moriond17_cutpt400eta25_pre.root");
 	else if (option == "sqto4j") return TFile::Open("~/anatuples/anatuple_sqto4j_moriond17cutht700_cutpt300eta20.root");
 	else if (option == "sqto4jprehtjec") return TFile::Open("~/anatuples/anatuple_sqto4j_moriond17cutht700_cutpt300eta20_prehtjec.root");
@@ -184,7 +187,8 @@ TFile* get_ana(TString option="") {
 	else if (option == "sgto5jprehtjec") return TFile::Open("~/anatuples/anatuple_sgto5j_moriond17cutht500_cutpt300eta20_prehtjec.root");
 	else if (option == "wzjets") return TFile::Open("~/anatuples/anatuple_wzjets_moriond17_cutpt300eta20_pre.root");
 	else if (option == "sigxtau4") return TFile::Open("~/anatuples/anatuple_cutpt400eta25_pre_sigxtau4.root");
-	else return TFile::Open("~/anatuples/anatuple_cutpt400eta25_pre.root");
+	else if (option == "v6") return TFile::Open("~/anatuples/anatuple_cutpt400eta25_pre.root.bkp");
+	else return TFile::Open("~/anatuples/anatuple_cutpt300eta20_pre.root");
 	
 //	if (cut == "sb2") return TFile::Open("~/anatuples/anatuple_ca12_fall15_cutpt400_presel.root");		// 
 ////	else return TFile::Open("~/anatuples/anatuple_dalitz_predeta.root");		// Contains dalitz variables

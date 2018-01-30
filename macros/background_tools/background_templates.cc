@@ -119,6 +119,7 @@ TH1* make_template(TFile* tf_out, TString prefix, TH3* h, TString ds, TString cu
 	}
 	else {
 		// ht-reweight:
+		cout << "[..] Applying HT re-weighting." << endl;
 	//	check_reweight(cut);
 		TH2* temp_proto_htre = (TH2*) temp_proto->Clone(prefix + "_protohtre");
 		TH1* hht_proto = (TH1*) temp_proto->ProjectionY();
@@ -131,14 +132,18 @@ TH1* make_template(TFile* tf_out, TString prefix, TH3* h, TString ds, TString cu
 			htbinfirst = htbin;
 			if (n > 0) break;
 		}
-		cout << htbinfirst << endl;
-		cout << htnormfirst << endl;
+		cout << "[DEBUG] Starting with htbin = " << htbinfirst << ", ht = " << htnormfirst << endl;
+//		cout << htbinfirst << endl;
+//		cout << htnormfirst << endl;
 		// Loop over HT bins:
 		for (int htbin = htbinfirst; htbin <= temp_proto->GetNbinsY(); htbin++) {
 			double ht = hht_proto->GetBinCenter(htbin);
-//			cout << ht << endl;
-			double w = htnormfirst/hht_proto->GetBinContent(htbin);		// make the ht distribution flat
-			w = w*correction_function(ht, ds, cut, "", f)/correction_function(htnormfirst, ds, cut, dir, f);		// weight the ht distribution to the measured.
+			double n = hht_proto->GetBinContent(htbin);
+			double n_desired = correction_function(ht, ds, cut, dir, f);
+			double w = n_desired/n;
+			cout << "[DEBUG] htbin = " << htbin << ", nevents = " << n << ", nevents_desired = " << n_desired << ", re-weight = " << w << endl;
+//			double w = htnormfirst/hht_proto->GetBinContent(htbin);		// make the ht distribution flat
+//			w = w*correction_function(ht, ds, cut, dir, f)/correction_function(htnormfirst, ds, cut, dir, f);		// weight the ht distribution to the measured.
 			for (int mbin = 1; mbin <= temp_proto->GetNbinsX(); mbin++) {
 				temp_proto_htre->SetBinContent(mbin, htbin, temp_proto->GetBinContent(mbin, htbin)*w);
 				temp_proto_htre->SetBinError(mbin, htbin, 0);

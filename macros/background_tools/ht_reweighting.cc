@@ -2,7 +2,7 @@
 
 TString reweight_path = "background_tools/ht_reweighting_functions/";
 
-double correction_function(double x, TString ds, TString cut, TString dir="fix", int f=1) {
+double correction_function(double x, TString ds, TString cut, TString dir="", int f=1) {
 //	if (ds == "jetht") ds = "qcdmg";		// Use qcdmg corrections for data.
 	if (cut == "sbb") cut = "sb";
 	if (cut == "sblb") cut = "sbl";
