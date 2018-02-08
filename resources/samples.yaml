@@ -238,8 +238,10 @@ sgto5j:
               - generation: moriond17cutht500
                 das: True
                 instance: phys03
-                name: /Sg150To5J/agarabag-miniaod_sg150to5j_moriond17_cutht500-c25660a1db7b69b092e620682f3b66ea/USER
-                aod: /Sg150To5J/agarabag-aod_sg150to5j_moriond17_cutht500-cd4d375aba4ea180dd20f8c96b358a6b/USER
+                name: /Sg150To5J/agarabag-miniaod_sg150to5j_moriond17_cutht500_v3-c25660a1db7b69b092e620682f3b66ea/USER
+                aod: /Sg150To5J/agarabag-aod_sg150to5j_moriond17_cutht500_v3-cd4d375aba4ea180dd20f8c96b358a6b/USER
+#                name: /Sg150To5J/agarabag-miniaod_sg150to5j_moriond17_cutht500-c25660a1db7b69b092e620682f3b66ea/USER
+#                aod: /Sg150To5J/agarabag-aod_sg150to5j_moriond17_cutht500-cd4d375aba4ea180dd20f8c96b358a6b/USER
                 preweight: 0.06425
     sg175to5j:
         - name: Sg175To5J
@@ -250,8 +252,10 @@ sgto5j:
               - generation: moriond17cutht500
                 das: True
                 instance: phys03
-                name: /Sg175To5J/agarabag-miniaod_sg175to5j_moriond17_cutht500-c25660a1db7b69b092e620682f3b66ea/USER
-                aod: /Sg175To5J/agarabag-aod_sg175to5j_moriond17_cutht500-cd4d375aba4ea180dd20f8c96b358a6b/USER
+                name: /Sg175To5J/agarabag-miniaod_sg175to5j_moriond17_cutht500_v3-c25660a1db7b69b092e620682f3b66ea/USER
+                aod: /Sg175To5J/agarabag-aod_sg175to5j_moriond17_cutht500_v3-cd4d375aba4ea180dd20f8c96b358a6b/USER
+#                name: /Sg175To5J/agarabag-miniaod_sg175to5j_moriond17_cutht500-c25660a1db7b69b092e620682f3b66ea/USER
+#                aod: /Sg175To5J/agarabag-aod_sg175to5j_moriond17_cutht500-cd4d375aba4ea180dd20f8c96b358a6b/USER
                 preweight: 0.11914
     sg200to5j:
         - name: Sg200To5J
@@ -262,8 +266,10 @@ sgto5j:
               - generation: moriond17cutht500
                 das: True
                 instance: phys03
-                name: /Sg200To5J/agarabag-miniaod_sg200to5j_moriond17_cutht500-c25660a1db7b69b092e620682f3b66ea/USER
-                aod: /Sg200To5J/agarabag-aod_sg200to5j_moriond17_cutht500-cd4d375aba4ea180dd20f8c96b358a6b/USER
+                name: /Sg200To5J/agarabag-miniaod_sg200to5j_moriond17_cutht500_v4-c25660a1db7b69b092e620682f3b66ea/USER
+                aod: /Sg200To5J/agarabag-aod_sg200to5j_moriond17_cutht500_v4-cd4d375aba4ea180dd20f8c96b358a6b/USER
+#                name: /Sg200To5J/agarabag-miniaod_sg200to5j_moriond17_cutht500-c25660a1db7b69b092e620682f3b66ea/USER
+#                aod: /Sg200To5J/agarabag-aod_sg200to5j_moriond17_cutht500-cd4d375aba4ea180dd20f8c96b358a6b/USER
                 preweight: 0.20544
     sg250to5j:
         - name: Sg250To5J
@@ -274,8 +280,10 @@ sgto5j:
               - generation: moriond17cutht500
                 das: True
                 instance: phys03
-                name: /Sg250To5J/agarabag-miniaod_sg250to5j_moriond17_cutht500-c25660a1db7b69b092e620682f3b66ea/USER
-                aod: /Sg250To5J/agarabag-aod_sg250to5j_moriond17_cutht500-cd4d375aba4ea180dd20f8c96b358a6b/USER
+                name: /Sg250To5J/agarabag-miniaod_sg250to5j_moriond17_cutht500_v3-c25660a1db7b69b092e620682f3b66ea/USER
+                aod: /Sg250To5J/agarabag-aod_sg250to5j_moriond17_cutht500_v3-cd4d375aba4ea180dd20f8c96b358a6b/USER
+#                name: /Sg250To5J/agarabag-miniaod_sg250to5j_moriond17_cutht500-c25660a1db7b69b092e620682f3b66ea/USER
+#                aod: /Sg250To5J/agarabag-aod_sg250to5j_moriond17_cutht500-cd4d375aba4ea180dd20f8c96b358a6b/USER
                 preweight: 0.48698
     sg300to5j:
         - name: Sg300To5J

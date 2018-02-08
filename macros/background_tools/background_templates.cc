@@ -168,7 +168,9 @@ TH1* fetch_template(TString ds, TString cut, TString dir="", int f=1, bool ht=tr
 	if (!ht) name = name + "_xht";
 	
 //	TFile* tf_in = TFile::Open("/home/tote/decortication/macros/background_tools/template_plots.root");
-	TString fname = "template_plots_" + cut + ".root";
+	TString fname = "template_plots_" + cut;
+	if (!ht) fname += "_xht";
+	fname += ".root";
 	TFile* tf_in = TFile::Open(TString(getenv("CMSSW_BASE")) + "/src/Deracination/Straphanger/test/decortication/macros/" + template_path + fname);
 	TH1* temp = (TH1*) tf_in->Get(name + "_temp");
 	return temp;

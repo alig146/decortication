@@ -24,7 +24,7 @@ TH1D* make_qcd_garwood(TFile* tf_in, TString ds, TString cut, int nrebin=30) {
 		cuts_weight.push_back(TCut("qcdmg1500", "sigma>100&&sigma<200"));
 		cuts_weight.push_back(TCut("qcdmg1000", "sigma>1000&&sigma<2000"));
 		cuts_weight.push_back(TCut("qcdmg700", "sigma>6000&&sigma<7000"));
-		cuts_weight.push_back(TCut("qcdmg500", "sigma>30000"));
+//		cuts_weight.push_back(TCut("qcdmg500", "sigma>30000"));		// KLUDGE
 	}
 	else if (ds == "qcdp") {
 		cuts_weight.push_back(TCut("qcdp", "1"));

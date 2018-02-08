@@ -322,3 +322,4 @@ TLatex* style_cut(TString cut, bool pull=false, double xadjust=0.0) {
 	if (cut_proper[cut] != "") return style_write(TString("Selection: #bf{") + cut_proper[cut] + "}",  0.18 + xadjust, 0.94, scale);
 	else  return style_write(TString("Selection: #bf{") + cut + "}",  0.18 + xadjust, 0.94, scale);
 }
+

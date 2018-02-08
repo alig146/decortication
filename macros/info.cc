@@ -15,6 +15,7 @@ map<TString, TString> name_proper {
 	{"sq700to4j", "#it{m}_{#tilde{q}} = 700 GeV"},
 	{"sg100to5j", "#it{m}_{#tilde{g}} = 100 GeV"},
 	{"sg150to5j", "#it{m}_{#tilde{g}} = 150 GeV"},
+	{"sg175to5j", "#it{m}_{#tilde{g}} = 175 GeV"},
 	{"sg200to5j", "#it{m}_{#tilde{g}} = 200 GeV"},
 	{"sg250to5j", "#it{m}_{#tilde{g}} = 250 GeV"},
 	{"sg300to5j", "#it{m}_{#tilde{g}} = 300 GeV"},
@@ -165,6 +166,22 @@ void set_xtitle(TGraph* g, TString var) {
 void set_xtitle(THStack* hs, TString var) {
 	hs->GetXaxis()->SetTitle(get_xtitle(var));
 }
+
+
+void set_title(TH1* h, TString var_x, TString var_y="Events") {
+	// Plot title:
+	h->SetTitle("");
+	
+	// x-title:
+	set_xtitle(h, var_x);
+	
+	// y-title:
+	TString unit_x = unit_proper[var_x];
+	std::ostringstream oss;
+	oss << var_y << "/" << h->GetXaxis()->GetBinWidth(1) << " " << unit_x;
+	h->GetYaxis()->SetTitle(oss.str().c_str());
+}
+
 
 Double_t get_weight(TString ds="", TString era="") {
 	if (ds == "jetht") return 1.0;
