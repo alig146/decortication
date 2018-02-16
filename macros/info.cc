@@ -30,9 +30,9 @@ map<TString, TString> name_proper {
 	{"qcdmg", "QCD (2 #rightarrow 4)"},
 	{"ttbar", "t#bar{t}"},
 	{"wjets", "W #rightarrow 2q"},
-	{"jetht", "JetHT '15 + '16"},
-	{"jetht15", "JetHT 2015"},
-	{"jetht16", "JetHT 2016"},
+	{"jetht", "Data"},
+	{"jetht15", "Data 2015"},
+	{"jetht16", "Data 2016"},
 	{"all", "Total MC"},
 	{"inj", "JetHT + #it{m}_{#tilde{q}} = 150 GeV"},
 	{"data", "Data"},
@@ -64,6 +64,7 @@ map<TString, TString> variable_proper {
 	{"tau210", "#tau_{21} of the leading fatjet"},
 	{"tau420", "#tau_{42} of the leading fatjet"},
 	{"tau430", "#tau_{43} of the leading fatjet"},
+	{"gnpt0", "#it{p}_{T} of leading gen-level particle"},
 };
 
 map<TString, TString> unit_proper {
@@ -90,6 +91,7 @@ map<TString, TString> unit_proper {
 	{"tau210", ""},
 	{"tau420", ""},
 	{"tau430", ""},
+	{"gnpt0", "GeV"},
 };
 
 vector<TString> significance_proper {
