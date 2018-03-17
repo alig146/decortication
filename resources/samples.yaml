@@ -215,6 +215,19 @@ sqto4j:
                 instance: phys03
                 lhe_cut: ht700
                 preweight: 0.99934
+    
+    sq800to4j:
+        - name: Sq800To4J
+          signal: True
+          ms: [800, 600]
+          sigma: 0.0283338
+          miniaods:
+              - generation: moriond17cutht700
+                name: /Sq800To4J/elhughes-miniaod_sq800to4j_moriond17cutht700-c25660a1db7b69b092e620682f3b66ea/USER
+                aod: /Sq800To4J/elhughes-aod_sq800to4j_cutht700_moriond17-cd4d375aba4ea180dd20f8c96b358a6b/USER
+                instance: phys03
+                lhe_cut: ht700
+                preweight: 1.0
 
 sgto5j:
     sg100to5j:
@@ -397,6 +410,30 @@ sgto5j:
                 instance: phys03
                 name: /Sg650To5J/agarabag-miniaod_sg650to5j_moriond17_cutht500_v2-c25660a1db7b69b092e620682f3b66ea/USER
                 aod: /Sg650To5J/agarabag-aod_sg650to5j_moriond17_cutht500_v2-cd4d375aba4ea180dd20f8c96b358a6b/USER
+                preweight: 1.0
+    sg1000to5j:
+        - name: Sg1000To5J
+          signal: True
+          m: 1000
+          sigma: 0.325388
+          miniaods:
+              - generation: moriond17cutht500
+                das: True
+                instance: phys03
+                name: /Sg1000To5J/agarabag-miniaod_sg1000to5j_moriond17_cutht500_v2-c25660a1db7b69b092e620682f3b66ea/USER
+                aod: uknown
+                preweight: 1.0
+    sg1500to5j:
+        - name: Sg1500To5J
+          signal: True
+          m: 1500
+          sigma: 0.0141903
+          miniaods:
+              - generation: moriond17cutht500
+                das: True
+                instance: phys03
+                name: /Sg1500To5J/agarabag-miniaod_sg1500to5j_moriond17_cutht0-c25660a1db7b69b092e620682f3b66ea/USER
+                aod: uknown
                 preweight: 1.0
 
 sgto3j:

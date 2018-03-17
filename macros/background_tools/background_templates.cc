@@ -72,7 +72,7 @@ TH1* make_template(TFile* tf_out, TString prefix, TH3* h, TString ds, TString cu
 	// Information:
 	cout << "There are " << zbins << " HT bins." << endl;
 	cout << "There are " << ybins << " eta bins between -2.0 and 2.0." << endl;
-	cout << "There are " << xbins << " m bins between 0 and 1200." << endl;
+	cout << "There are " << xbins << " m bins between 0 and 2400." << endl;
 	
 	/// Make output histogram:
 	TH1* hht_fj = (TH1*) h->ProjectionZ();
