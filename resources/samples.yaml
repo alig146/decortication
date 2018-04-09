@@ -251,6 +251,7 @@ sgto5j:
               - generation: moriond17cutht500
                 das: True
                 instance: phys03
+#                name: /Sg150To5J/agarabag-miniaod_sg150to5j_moriond17_cutht500_v4-c25660a1db7b69b092e620682f3b66ea/USER      # Switch to this one.
                 name: /Sg150To5J/agarabag-miniaod_sg150to5j_moriond17_cutht500_v3-c25660a1db7b69b092e620682f3b66ea/USER
                 aod: /Sg150To5J/agarabag-aod_sg150to5j_moriond17_cutht500_v3-cd4d375aba4ea180dd20f8c96b358a6b/USER
 #                name: /Sg150To5J/agarabag-miniaod_sg150to5j_moriond17_cutht500-c25660a1db7b69b092e620682f3b66ea/USER
