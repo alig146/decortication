@@ -549,6 +549,120 @@ sqto2j:
                 name: /RPVStopStopToJets_UDD312_M-800-madgraph/algomez-RunIISpring15DR74_MiniAOD_Asympt25ns-612faf0bd9dc3ce1d1b2e0252700e0a7/USER
                 instance: phys03
                 das: True
+
+stto6j:
+    st300to6j:
+        - name: StealthSYY_2t6j_mStop-300_mSo-100_TuneCP5_13TeV-madgraphMLM-pythia8
+          signal: True
+          m: 300
+          sigma: 8.51615
+          miniaods:
+              - generation: fall17
+                das: True
+                instance: global
+                name: /StealthSYY_2t6j_mStop-300_mSo-100_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM
+
+    st500to6j:
+        - name: StealthSYY_2t6j_mStop-500_mSo-100_TuneCP5_13TeV-madgraphMLM-pythia8
+          signal: True
+          m: 500
+          sigma: 0.51848 
+          miniaods:
+              - generation: fall17
+                das: True
+                instance: global
+                name: /StealthSYY_2t6j_mStop-500_mSo-100_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM
+
+    st700to6j:
+        - name: StealthSYY_2t6j_mStop-700_mSo-100_TuneCP5_13TeV-madgraphMLM-pythia8
+          signal: True
+          m: 700
+          sigma: 0.0670476
+          miniaods:
+              - generation: fall17
+                das: True
+                instance: global
+                name: /StealthSYY_2t6j_mStop-700_mSo-100_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v3/MINIAODSIM
+
+stto4b:
+    st300to4b:
+        - name: StealthSHH_2t4b_mStop-300_mSo-100_TuneCP5_13TeV-madgraphMLM-pythia8
+          signal: True
+          m: 300
+          sigma: 8.51615
+          miniaods:
+              - generation: fall17
+                das: True
+                instance: global
+                name: /StealthSHH_2t4b_mStop-300_mSo-100_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM
+
+    st500to4b:
+        - name: StealthSHH_2t4b_mStop-500_mSo-100_TuneCP5_13TeV-madgraphMLM-pythia8
+          signal: True
+          m: 500
+          sigma: 0.51848
+          miniaods:
+              - generation: fall17
+                das: True
+                instance: global
+                name: /StealthSHH_2t4b_mStop-500_mSo-100_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM
+
+rpvst:
+    st300TuneCP5:
+        - name: RPV_2t6j_mStop-300_mN1-100_TuneCP5_13TeV-madgraphMLM-pythia8
+          signal: True
+          m: 300
+          sigma: 8.51615
+          miniaods:
+              - generation: fall17
+                das: True
+                instance: global
+                name: /RPV_2t6j_mStop-300_mN1-100_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM
+
+    st300TuneCP2:
+        - name: RPV_2t6j_mStop-300_mN1-100_TuneCP2_13TeV-madgraphMLM-pythia8
+          signal: True
+          m: 300
+          sigma: 8.51615
+          miniaods:
+              - generation: fall17
+                das: True
+                instance: global
+                name: /RPV_2t6j_mStop-300_mN1-100_TuneCP2_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM
+
+    st500TuneCP5:
+        - name: RPV_2t6j_mStop-500_mN1-100_TuneCP5_13TeV-madgraphMLM-pythia8
+          signal: True
+          m: 500                                                                                                                                                                                          
+          sigma: 0.51848
+          miniaods:
+              - generation: fall17
+                das: True
+                instance: global
+                name: /RPV_2t6j_mStop-500_mN1-100_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM 
+
+    st500TuneCP2:
+        - name: RPV_2t6j_mStop-500_mN1-100_TuneCP2_13TeV-madgraphMLM-pythia8
+          signal: True
+          m: 500
+          sigma: 0.51848
+          miniaods:
+              - generation: fall17
+                das: True
+                instance: global
+                name: /RPV_2t6j_mStop-500_mN1-100_TuneCP2_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM
+
+    st700TuneCP5:
+        - name: RPV_2t6j_mStop-700_mN1-100_TuneCP5_13TeV-madgraphMLM-pythia8
+          signal: True
+          m: 700
+          sigma: 0.0670476
+          miniaods:
+              - generation: fall17
+                das: True
+                instance: global
+                name: /RPV_2t6j_mStop-700_mN1-100_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM
+
 qcd:
     qcdp:
         - name: QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8
